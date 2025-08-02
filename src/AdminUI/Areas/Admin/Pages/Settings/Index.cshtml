@@ -1,0 +1,157 @@
+@page
+@model AdminUI.Areas_Admin_Pages_Settings.IndexModel
+@{
+    ViewData["Title"] = "Site Settings";
+    var s = Model.Setting;
+
+    
+}
+
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="h3">Site Settings</h2>
+        <a href="/Admin/Settings/Edit" class="btn btn-primary">Edit Settings</a>
+    </div>
+
+    <div class="row">
+        <!-- Site Info -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Basic Info</h5>
+                    <p><strong>Title:</strong> @s.SiteTitle</p>
+                    <p><strong>Description:</strong> @Html.Raw(s.SiteDescription)</p>
+                    <p><strong>Tagline:</strong> @s.SiteTagline</p>
+                    <p><strong>Image Upload Max Size (KB):</strong> @s.MaxImageSizeKB</p>
+                    <p><strong>Video Upload Max Size (KB):</strong> @s.MaxVideoSizeKB</p>
+
+                    @if (!string.IsNullOrWhiteSpace(s.SiteLogoUrl))
+                    {
+                        <p><strong>Logo:</strong></p>
+                        <img src="@s.SiteLogoUrl" alt="Site Logo" class="img-fluid rounded mb-2" style="max-height:100px;" />
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(s.FaviconUrl))
+                    {
+                        <p><strong>Favicon:</strong></p>
+                        <img src="@s.FaviconUrl" alt="Favicon" style="height:32px;" />
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(s.SiteBreadcrumbImageUrl))
+                    {
+                        <p><strong>Breadcrumb Image:</strong></p>
+                        <img src="@s.SiteBreadcrumbImageUrl" class="img-fluid rounded mb-2" style="max-height:60px;" />
+                    }
+
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO & Meta -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">SEO & Meta</h5>
+                    <p><strong>Keywords:</strong> @s.MetaKeywords</p>
+                    <p><strong>Description:</strong> @s.MetaDescription</p>
+                    <p><strong>Author:</strong> @s.MetaAuthor</p>
+
+                    @if (!string.IsNullOrWhiteSpace(s.MetaHeaderCode))
+                    {
+                        <p><strong>Header Code:</strong></p>
+                        <pre class="bg-light p-2 rounded small">@Html.Raw(s.MetaHeaderCode)</pre>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Info -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Contact Info</h5>
+                    <p><strong>Email:</strong> @s.ContactEmail</p>
+                    <p><strong>Phone:</strong> @s.ContactPhone</p>
+                    <p><strong>Address:</strong> @s.Address</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Media -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Social Media</h5>
+                    @if (!string.IsNullOrWhiteSpace(s.FacebookUrl))
+                    {<p><strong>Facebook:</strong> <a href="@s.FacebookUrl" target="_blank">@s.FacebookUrl</a></p>}
+                    @if (!string.IsNullOrWhiteSpace(s.TwitterUrl))
+                    {<p><strong>Twitter:</strong> <a href="@s.TwitterUrl" target="_blank">@s.TwitterUrl</a></p>}
+                    @if (!string.IsNullOrWhiteSpace(s.InstagramUrl))
+                    {<p><strong>Instagram:</strong> <a href="@s.InstagramUrl" target="_blank">@s.InstagramUrl</a></p>}
+                    @if (!string.IsNullOrWhiteSpace(s.LinkedInUrl))
+                    {<p><strong>LinkedIn:</strong> <a href="@s.LinkedInUrl" target="_blank">@s.LinkedInUrl</a></p>}
+                    @if (!string.IsNullOrWhiteSpace(s.YouTubeUrl))
+                    {<p><strong>YouTube:</strong> <a href="@s.YouTubeUrl" target="_blank">@s.YouTubeUrl</a></p>}
+                    @if (!string.IsNullOrWhiteSpace(s.TikTokUrl))
+                    {<p><strong>TikTok:</strong> <a href="@s.TikTokUrl" target="_blank">@s.TikTokUrl</a></p>}
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Scripts -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Custom Code</h5>
+                    @if (!string.IsNullOrWhiteSpace(s.CustomHeadScript))
+                    {
+                        <p><strong>Head Script:</strong></p>
+                        <pre class="bg-light p-2 small">@(s.CustomHeadScript)</pre>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(s.CustomFooterScript))
+                    {
+                        <p><strong>Footer Script:</strong></p>
+                        <pre class="bg-light p-2 small">@(s.CustomFooterScript)</pre>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(s.CustomCSS))
+                    {
+                        <p><strong>Custom CSS:</strong></p>
+                        <pre class="bg-light p-2 small">@(s.CustomCSS)</pre>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(s.CustomJS))
+                    {
+                        <p><strong>Custom JS:</strong></p>
+                        <pre class="bg-light p-2 small">@(s.CustomJS)</pre>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(s.GoogleAnalyticsIframeWidget))
+                    {
+                        <p><strong>Custom JS:</strong></p>
+                        <pre class="bg-light p-2 small">@(s.GoogleAnalyticsIframeWidget)</pre>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Maintenance Mode -->
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Maintenance</h5>
+                    <p><strong>Status:</strong> @(s.IsMaintenanceMode ? "Enabled" : "Disabled")</p>
+                    @if (!string.IsNullOrWhiteSpace(s.MaintenanceMessage))
+                    {
+                        <p><strong>Message:</strong></p>
+                        <blockquote class="blockquote">@s.MaintenanceMessage</blockquote>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @if (User.IsInRole("SuperAdmin"))
+        {
+            <a href="/Admin/Users/SeedDefaultAccounts" class="btn btn-primary">Seed Default Accounts</a>
+            
+        }
+    </div>
+</div>

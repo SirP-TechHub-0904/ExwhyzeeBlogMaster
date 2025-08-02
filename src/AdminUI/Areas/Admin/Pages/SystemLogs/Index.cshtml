@@ -1,0 +1,97 @@
+﻿@page
+@model AdminUI.Areas.Admin.Pages.SystemLogs.IndexModel
+@{
+}
+@{
+    ViewData["Title"] = "System Logs";
+}
+
+<div class="container mt-4">
+    <h2>System Logs</h2>
+
+    <form method="get" class="mb-3 d-flex">
+        <input type="text" name="Search" value="@Model.Search" class="form-control me-2" placeholder="Search logs..." />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Date</th>
+                <th>Username</th>
+                <th>IP Address</th>
+                <th>Details</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var log in Model.Logs)
+            {
+                <tr>
+                    <td>@log.Timestamp.ToLocalTime().ToString("yyyy-MM-dd HH:mm")</td>
+                    <td>@log.Username</td>
+                    <td>@log.IpAddress</td>
+                    <td>@(log.Details?.Length > 50 ? log.Details.Substring(0, 50) + "..." : log.Details)</td>
+                    <td>
+                        <a asp-page="Details" asp-route-id="@log.Id" class="btn btn-sm btn-outline-info">View</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav>
+            <ul class="pagination">
+
+                <!-- First page «« -->
+                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link" href="?PageNumber=1&Search=@Model.Search">&laquo;&laquo;</a>
+                </li>
+
+                <!-- Previous page « -->
+                <li class="page-item @(Model.PageNumber == 1 ? "disabled" : "")">
+                    <a class="page-link" href="?PageNumber=@(Model.PageNumber - 1)&Search=@Model.Search">&laquo;</a>
+                </li>
+
+                <!-- First 3 pages -->
+                @for (int i = 1; i <= Math.Min(3, Model.TotalPages); i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="?PageNumber=@i&Search=@Model.Search">@i</a>
+                    </li>
+                }
+
+                <!-- Ellipsis -->
+                @if (Model.TotalPages > 6)
+                {
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                }
+
+                <!-- Last 3 pages -->
+                @for (int i = Model.TotalPages - 2; i <= Model.TotalPages; i++)
+                {
+                    if (i > 3)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                            <a class="page-link" href="?PageNumber=@i&Search=@Model.Search">@i</a>
+                        </li>
+                    }
+                }
+
+                <!-- Next page » -->
+                <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" href="?PageNumber=@(Model.PageNumber + 1)&Search=@Model.Search">&raquo;</a>
+                </li>
+
+                <!-- Last page »» -->
+                <li class="page-item @(Model.PageNumber == Model.TotalPages ? "disabled" : "")">
+                    <a class="page-link" href="?PageNumber=@Model.TotalPages&Search=@Model.Search">&raquo;&raquo;</a>
+                </li>
+
+            </ul>
+        </nav>
+    }
+
+</div>

@@ -1,0 +1,117 @@
+﻿@page "{id:int}"
+@model AdminUI.Areas.Admin.Pages.Forms.EditModel
+@{
+    ViewData["Title"] = "Edit Form";
+}
+
+ 
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Edit Form - @Model.Form.Title</h2>
+    <a asp-page="./Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Back to List
+    </a>
+</div>
+<div class="card card-body mb-4">
+    <p><strong>Description:</strong> @Model.Form.Description</p>
+    <p><strong>Active:</strong> @Model.Form.IsActive</p>
+    <p><strong>Anonymous Allowed:</strong> @Model.Form.AllowAnonymousResponses</p>
+</div>
+
+<h4>Add New Field</h4>
+<form method="post">
+    <input type="hidden" asp-for="NewField.WebPageFormId" value="@Model.Form.Id" />
+
+    <div class="row">
+        <div class="col-md-3 mb-2">
+            <label asp-for="NewField.Label" class="form-label">Label</label>
+            <input asp-for="NewField.Label" placeholder="Label" required class="form-control" />
+        </div>
+
+        <div class="col-md-2 mb-2">
+            <label asp-for="NewField.FieldType" class="form-label">Field Type</label>
+            <select asp-for="NewField.FieldType" class="form-select" required>
+                <option value="text">Text</option>
+                <option value="textarea">Textarea</option>
+                <option value="email">Email</option>
+                <option value="number">Number</option>
+                <option value="dropdown">Dropdown</option>
+                <option value="checkbox">Checkbox</option>
+            </select>
+        </div>
+
+        <div class="col-md-2 mb-2">
+            <label asp-for="NewField.Placeholder" class="form-label">Placeholder</label>
+            <input asp-for="NewField.Placeholder" placeholder="Placeholder" class="form-control" />
+        </div>
+
+        <div class="col-md-3 mb-2">
+            <label asp-for="NewField.OptionsJson" class="form-label">Options (JSON) <small class="text-muted">e.g. ["Yes", "No"] - you can type...</small></label>
+
+            <input asp-for="NewField.OptionsJson" placeholder='["Yes", "No"]' class="form-control" id="optionsJson" />
+            <div class="btn-group mt-1">
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOptions(['Yes','No'])">Yes/No</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOptions(['Male','Female'])">Gender</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOptions(['Beginner','Intermediate','Expert'])">Skill</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="setOptions(['Red','Green','Blue','Yellow'])">Colors</button>
+            </div>
+        </div>
+
+        <div class="col-md-1 mb-2 text-center">
+            <div class="form-check mt-4">
+                <input asp-for="NewField.IsRequired" class="form-check-input" />
+                <label asp-for="NewField.IsRequired" class="form-check-label">Required</label>
+            </div>
+        </div>
+
+        <div class="col-md-1 mb-2 d-flex align-items-end">
+            <button type="submit" asp-page-handler="AddField" class="btn btn-success">+</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    function setOptions(arr) {
+        document.getElementById("optionsJson").value = JSON.stringify(arr);
+    }
+</script>
+
+
+<h4 class="mt-4">Fields</h4>
+@if (Model.Form.Fields.Any())
+{
+    <table class="table table-bordered">
+        <thead class="table-light">
+            <tr>
+                <th>Label</th>
+                <th>Type</th>
+                <th>Placeholder</th>
+                <th>Required</th>
+                <th>Options</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var field in Model.Form.Fields)
+            {
+                <tr>
+                    <td>@field.Label</td>
+                    <td>@field.FieldType</td>
+                    <td>@field.Placeholder</td>
+                    <td>@(field.IsRequired ? "Yes" : "No")</td>
+                    <td>@field.OptionsJson</td>
+                    <td>
+                        <form method="post" asp-page-handler="DeleteField">
+                            <input type="hidden" name="formId" value="@Model.Form.Id" />
+                            <input type="hidden" name="fieldId" value="@field.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No fields added yet.</p>
+}

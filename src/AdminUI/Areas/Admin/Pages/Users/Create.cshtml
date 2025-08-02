@@ -1,0 +1,49 @@
+﻿@page
+@model AdminUI.Areas.Admin.Pages.Users.CreateModel
+@{
+    ViewData["Title"] = "Add New User";
+}
+
+<h2 class="mb-3">Add New User</h2>
+
+<div class="card p-4 shadow-sm">
+    <form method="post">
+        <div class="mb-3">
+            <label asp-for="Input.FullName" class="form-label"></label>
+            <input asp-for="Input.FullName" class="form-control" />
+            <span asp-validation-for="Input.FullName" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Input.Email" class="form-label"></label>
+            <input asp-for="Input.Email" class="form-control" />
+            <span asp-validation-for="Input.Email" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Input.PhoneNumber" class="form-label"></label>
+            <input asp-for="Input.PhoneNumber" class="form-control" />
+            <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Input.City" class="form-label"></label>
+            <input asp-for="Input.City" class="form-control" />
+            <span asp-validation-for="Input.City" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Input.Country" class="form-label"></label>
+            <input asp-for="Input.Country" class="form-control" />
+            <span asp-validation-for="Input.Country" class="text-danger"></span>
+        </div>
+         
+
+        <button type="submit" class="btn btn-primary">Create User</button>
+        <a asp-page="./Index" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

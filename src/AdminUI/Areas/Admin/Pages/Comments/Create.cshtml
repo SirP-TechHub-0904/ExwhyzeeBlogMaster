@@ -1,0 +1,58 @@
+@page
+@model AdminUI.Areas_Admin_Pages_Comments.CreateModel
+
+        @{
+        ViewData["Title"] = "Create";
+        }
+        
+        <h1>Create</h1>
+        
+    <h4>Comment</h4>
+    <hr />
+    <div class="row">
+    <div class="col-md-4">
+    <form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Comment.PostId" class="control-label"></label>
+                <select asp-for="Comment.PostId" class ="form-control" asp-items="ViewBag.PostId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Comment.AuthorName" class="control-label"></label>
+                <input asp-for="Comment.AuthorName" class="form-control" />
+                <span asp-validation-for="Comment.AuthorName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Comment.AuthorEmail" class="control-label"></label>
+                <input asp-for="Comment.AuthorEmail" class="form-control" />
+                <span asp-validation-for="Comment.AuthorEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Comment.Content" class="control-label"></label>
+                <input asp-for="Comment.Content" class="form-control" />
+                <span asp-validation-for="Comment.Content" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Comment.CreatedAt" class="control-label"></label>
+                <input asp-for="Comment.CreatedAt" class="form-control" />
+                <span asp-validation-for="Comment.CreatedAt" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Comment.IsApproved" /> @Html.DisplayNameFor(model => model.Comment.IsApproved)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-page="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

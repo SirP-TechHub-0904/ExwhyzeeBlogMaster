@@ -1,0 +1,55 @@
+﻿@page
+@model AdminUI.Areas.Admin.Pages.Forms.IndexModel
+
+@{
+    ViewData["Title"] = "Web Page Forms";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Web Page Forms (@Model.Forms.Count())</h2>
+    <a class="btn btn-primary" asp-page="Create">
+        <i class="bi bi-plus-circle"></i> Create New
+    </a>
+</div> 
+
+<table class="table table-bordered table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Status</th>
+            <th>Anonymous</th>
+            <th>Fields</th>
+            <th>Responses</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var form in Model.Forms)
+        {
+            <tr>
+                <td>@form.Title</td>
+                <td>@form.Description</td>
+                <td>
+                    @if (form.IsActive)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Inactive</span>
+                    }
+                </td>
+                <td>
+                    @(form.AllowAnonymousResponses ? "Yes" : "No")
+                </td>
+                <td>@form.Fields?.Count()</td>
+                <td>
+                    <a asp-page="Responses" asp-route-id="@form.Id">@form.Responses?.Count()</a>
+                </td>
+                <td>
+                    <a asp-page="Edit" asp-route-id="@form.Id" class="btn btn-sm btn-warning">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

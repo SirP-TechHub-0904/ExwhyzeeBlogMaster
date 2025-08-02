@@ -1,0 +1,37 @@
+﻿@page
+@model AdminUI.Areas.Admin.Pages.Users.SeedDefaultAccountsModel
+@{
+    ViewData["Title"] = "Seed Default Accounts";
+}
+
+<h2>Default Accounts</h2>
+
+<form method="post">
+    <button type="submit" class="btn btn-danger mb-3">
+        🔄 Reset to Default
+    </button>
+</form>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Role</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var acc in Model.DefaultAccounts)
+        {
+            <tr>
+                <td>@acc.Email</td>
+                <td>@acc.Password</td>
+                <td>@acc.Role</td>
+            </tr>
+        }
+    </tbody>
+</table>
+ 
+    
+    <a href="/Admin/Settings/SeedData" class="btn btn-primary" style="margin-top:20px;">Click to Generate Demo Data</a>
+ 

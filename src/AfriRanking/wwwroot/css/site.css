@@ -1,0 +1,460 @@
+﻿html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+ .marquee-container {
+    overflow: hidden;
+    position: relative;
+    height: 40px;
+}
+.marquee-content {
+    display: inline-block;
+    white-space: nowrap;
+    position: absolute;
+    animation: scroll-left 50s linear infinite;
+    animation-delay: 3s; /* waits 3 seconds before first scroll */
+    margin-top: 10px;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.ticker-content a {
+    margin-right: 10px;
+    color: #000;
+    text-decoration: none;
+    position: relative;
+}
+
+    .ticker-content a::after {
+        content: "|";
+        margin-left: 10px;
+        color: #999; /* optional: a lighter color for the separator */
+    }
+
+    /* Remove the last separator */
+    .ticker-content a:last-child::after {
+        content: "";
+        margin: 0;
+    }
+
+
+
+
+
+
+
+
+
+
+.hero-style-1 .row.tab-space1 {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+}
+
+    /* First post (left side) */
+    .hero-style-1 .row.tab-space1 > .col-lg-6:first-child {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Right posts */
+    .hero-style-1 .row.tab-space1 > .col-lg-6:last-child {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+        /* Second post - top full */
+        .hero-style-1 .row.tab-space1 > .col-lg-6:last-child .col-12 {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Third + Fourth in a row */
+        .hero-style-1 .row.tab-space1 > .col-lg-6:last-child .row {
+            flex: 1;
+            display: flex;
+            gap: 1rem;
+        }
+
+        /* Each of bottom 2 */
+        .hero-style-1 .row.tab-space1 > .col-lg-6:last-child .col-sm-6 {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+/* Shared image card style */
+.hero-style-1 .img-overlay-70 {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background-color: #000;
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    height: 100%;
+}
+
+    .hero-style-1 .img-overlay-70 img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .hero-style-1 .img-overlay-70:hover img {
+        transform: scale(1.05);
+    }
+
+/* Overlay text */
+.hero-style-1 .mask-content-lg,
+.hero-style-1 .mask-content-sm {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1rem;
+    color: #fff;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+}
+
+/* Topic Label */
+.hero-style-1 .topic-box-sm {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    border-radius: 2px;
+    display: inline-block;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+/* Title */
+.hero-style-1 .title-medium-light {
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    margin-top: 0.25rem;
+}
+
+/* 🔧 Mobile View */
+@media (max-width: 991.98px) {
+    .hero-style-1 .row.tab-space1 {
+        flex-direction: column;
+    }
+
+        .hero-style-1 .row.tab-space1 > .col-lg-6 {
+            width: 100%;
+        }
+
+            .hero-style-1 .row.tab-space1 > .col-lg-6:last-child .row {
+                flex-direction: column;
+            }
+
+            .hero-style-1 .row.tab-space1 > .col-lg-6:last-child .col-sm-6 {
+                width: 100%;
+            }
+
+    .hero-style-1 .img-overlay-70 {
+        height: auto;
+        aspect-ratio: 16 / 9;
+    }
+}
+
+
+
+/* Hero Section Styles */
+/* Hero Section Container */
+/* Left big image */
+.story-h-01 .img-overlay-70 {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #000;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+}
+
+    .story-h-01 .img-overlay-70 img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+/* Right list thumbnails */
+.story-h-01 .media {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+    .story-h-01 .media a img {
+        width: 100px;
+        height: 75px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+/* Control image container sizes on small screens */
+@media (max-width: 767.98px) {
+    .story-h-01 .media a img {
+        width: 80px;
+        height: 60px;
+    }
+}
+
+/* Media text block spacing */
+.story-h-01 .media-body {
+    flex: 1;
+    min-width: 0;
+}
+
+    /* Truncate long titles to 3 lines */
+    .story-h-01 .media-body h3.title-medium-dark {
+        font-size: 0.95rem;
+        font-weight: 600;
+        line-height: 1.3;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+/* Smaller post date size */
+.story-h-01 .post-date-dark {
+    font-size: 0.75rem;
+    color: #999;
+    margin-bottom: 0.25rem;
+}
+
+/* Left post (overlay mask) */
+.story-h-01 .mask-content-lg {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.2rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    color: #fff;
+}
+.story-h-01 .row {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+}
+
+.story-h-01 .col-md-6 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+@media (max-width: 767.98px) {
+    /* Stack left and right columns */
+    .story-h-01 .row > .col-md-6 {
+        width: 100%;
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    /* Ensure media items also stack nicely */
+    .story-h-01 .media {
+        flex-direction: row;
+        align-items: flex-start;
+    }
+
+        .story-h-01 .media a img {
+            width: 90px;
+            height: 70px;
+        }
+
+    .story-h-01 .media-body h3.title-medium-dark {
+        -webkit-line-clamp: 2; /* Slightly fewer lines on small screens */
+    }
+}
+@media (max-width: 767.98px) {
+    /* Reset absolute positioning for mobile */
+    .story-h-01 .featuredContainer {
+        position: relative !important;
+        height: auto !important;
+    }
+
+        .story-h-01 .featuredContainer > .row {
+            position: static !important;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+    /* Ensure both columns take full width */
+    .story-h-01 .col-md-6,
+    .story-h-01 .col-sm-12 {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+    }
+}
+
+
+
+.mq-height {
+    margin-top: 84px;
+}
+
+@media (max-width: 768px) {
+    .mq-height {
+        margin-top: 40px;
+    }
+}
+@media (max-width: 768px) {
+    .topic-box {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+
+    .ticker-content a {
+        font-size: 13px;
+        line-height: 1.4;
+    }
+}
+
+
+.tab-rec-0-lay .img-overlay-70 {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    height: 250px; /* 👈 Fixed height for uniform shape */
+    background-color: #000;
+}
+
+    .tab-rec-0-lay .img-overlay-70 img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* 👈 Ensures image fills and crops properly */
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+.tab-rec-0-lay .mask-content-xs {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 15px;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+    color: white;
+    z-index: 2;
+}
+
+@media (max-width: 767.98px) {
+    .tab-rec-0-lay .col-12,
+    .tab-rec-0-lay .col-sm-6,
+    .tab-rec-0-lay .col-md-6,
+    .tab-rec-0-lay .col-lg-4 {
+        max-width: 100%;
+        flex: 0 0 100%;
+    }
+
+    .tab-rec-0-lay .img-overlay-70 {
+        height: 200px; /* 👈 slightly smaller on mobile */
+    }
+}
+ .comment-box {
+    background-color: #f9f9f9;
+    border-left: 4px solid #007bff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.comment-box:hover {
+    background-color: #f1f1f1;
+    border-left-color: #0056b3;
+}
+
+.comment-text {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.comments-area h2 {
+    font-size: 1.5rem;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 0.5rem;
+}
+
+#loadMoreBtn {
+    padding: 0.5rem 1.5rem;
+}
+
+.comments-area ul li:nth-child(even) {
+    margin-left: 0;
+}
+.social-default .whatsapp {
+    color: #25D366;
+}
+.post-share-area ul.social-default li a.whatsapp {
+    background: #25D366;
+    border: 2px solid #25D366;
+    -webkit-transition: all .3s ease-out;
+    -moz-transition: all .3s ease-out;
+    -ms-transition: all .3s ease-out;
+    -o-transition: all .3s ease-out;
+    transition: all .3s ease-out;
+}
+.btn-primary {
+    background-color: #000 !important;
+    border-color: #000 !important;
+    color: #fff !important;
+}
+
+    .btn-primary:hover {
+        background-color: #222 !important;
+        border-color: #222 !important;
+        color: #fff !important;
+    }
+body {
+    margin-bottom: 0;
+}

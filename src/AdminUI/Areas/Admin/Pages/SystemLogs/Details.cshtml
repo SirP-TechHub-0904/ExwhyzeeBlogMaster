@@ -1,0 +1,22 @@
+﻿@page
+@model AdminUI.Areas.Admin.Pages.SystemLogs.DetailsModel
+ 
+@{
+    ViewData["Title"] = "Log Details";
+}
+
+<div class="container mt-4">
+    <h3>Log Details</h3>
+    <div class="card">
+        <div class="card-body">
+            <p><strong>Date:</strong> @Model.Log.Timestamp.ToLocalTime()</p>
+            <p><strong>Username:</strong> @Model.Log.Username</p>
+            <p><strong>Full Name:</strong> @Model.Log.FullName</p>
+            <p><strong>IP Address:</strong> @Model.Log.IpAddress</p>
+            <p><strong>Action Type:</strong> @Model.Log.ActionType</p>
+            <p><strong>Entity:</strong> @Model.Log.EntityName</p>
+            <p><strong>Details:</strong> @Model.Log.Details</p>
+        </div>
+    </div>
+    <a asp-page="Index" class="btn btn-secondary mt-3">Back</a>
+</div>

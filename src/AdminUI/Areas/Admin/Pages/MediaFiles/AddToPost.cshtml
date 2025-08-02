@@ -1,0 +1,38 @@
+﻿@page "{id:int}"
+@model AdminUI.Areas.Admin.Pages.MediaFiles.AddToPostModel
+@{
+    ViewData["Title"] = "Attach Image to Post";
+}
+
+<h2 class="mb-3">Attach Image to Post</h2>
+
+<div class="card mb-4">
+    <div class="card-body text-center">
+        <img src="@Model.Media.Url" class="img-fluid mb-3 rounded shadow-sm" style="max-height:250px;" />
+        <h5 class="fw-bold">@Model.Media.AltText</h5>
+        <p class="text-muted small">@Model.Media.Url</p>
+    </div>
+</div>
+
+<form method="post">
+    <input type="hidden" asp-for="Media.Id" />
+
+    <div class="form-group mb-3">
+        <label class="fw-bold">Select Post <span class="text-danger">*</span></label>
+        <select asp-for="SelectedPostId" class="form-control"
+                asp-items="Model.PostsDropdown" required>
+            <option value="">-- Choose a Post --</option>
+        </select>
+        <span asp-validation-for="SelectedPostId" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="SetAsDefault" class="form-check-input" />
+        <label class="form-check-label">Set as Default Image</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Attach to Post
+    </button>
+    <a asp-page="./Index" class="btn btn-secondary">Back to Media Manager</a>
+</form>

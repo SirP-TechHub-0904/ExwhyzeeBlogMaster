@@ -1,0 +1,79 @@
+@page
+@model AdminUI.Areas_Admin_Pages_Categories.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Category</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category.Title)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.Title)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category.Slug)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.Slug)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category.IsPublished)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.IsPublished)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category.SortOrder)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.SortOrder)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category.ShowInMenu)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.ShowInMenu)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category.ShowInFooter)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.ShowInFooter)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category.ShowInHome)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.ShowInHome)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category.ShowInHomeMain)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.ShowInHomeMain)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category.ShowInHomeList)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.ShowInHomeList)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Category.ParentCategory)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.ParentCategory.Slug)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Category.Id">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>

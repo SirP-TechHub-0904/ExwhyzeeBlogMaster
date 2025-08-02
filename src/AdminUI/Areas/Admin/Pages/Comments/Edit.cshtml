@@ -1,0 +1,56 @@
+@page
+@model AdminUI.Areas_Admin_Pages_Comments.EditModel
+@{
+    ViewData["Title"] = "Edit Comment";
+}
+
+<section class="content-header mb-4">
+    <h2 class="h3">Edit Comment</h2>
+    <a asp-page="./Index" class="btn btn-secondary btn-sm">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
+</section>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="Comment.Id" />
+            <input type="hidden" asp-for="Comment.AuthorName" />
+            <input type="hidden" asp-for="Comment.AuthorEmail" />
+            <input type="hidden" asp-for="Comment.PostId" />
+            <input type="hidden" asp-for="Comment.UserId" />
+            <input type="hidden" asp-for="Comment.CreatedAt" />
+
+
+
+            <!-- Comment Content -->
+            <div class="mb-3">
+                <label asp-for="Comment.Content" class="form-label fw-bold">Comment</label>
+                <textarea asp-for="Comment.Content" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Comment.Content" class="text-danger"></span>
+            </div>
+             
+
+            <!-- Is Approved -->
+            <div class="form-check mb-3">
+                <input class="form-check-input" asp-for="Comment.IsApproved" />
+                <label class="form-check-label fw-bold" asp-for="Comment.IsApproved"></label>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Changes
+                </button>
+                <a asp-page="./Index" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

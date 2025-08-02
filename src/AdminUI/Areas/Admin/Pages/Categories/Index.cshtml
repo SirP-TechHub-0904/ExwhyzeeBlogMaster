@@ -1,0 +1,54 @@
+@page
+@using ModelData.Models
+@using AdminUI.Areas.Admin.ViewModels
+@model AdminUI.Areas_Admin_Pages_Categories.IndexModel
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Categories (@Model.Category.Count())</h2>
+    <a class="btn btn-primary btn-sm" asp-page="Create">+ Add Category</a>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Title</th>
+                <th>Published</th>
+                <th>Sort</th>
+                <th>Menu</th>
+                <th>Footer</th>
+                <th>Home</th>
+                <th>Main</th>
+                <th>List</th>
+                <th>Parent</th>
+                <th class="text-end">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var rootCategories = Model.Category
+                    .Where(c => c.ParentCategoryId == null)
+                    .OrderBy(c => c.SortOrder)
+                    .ToList();
+
+                for (int i = 0; i < rootCategories.Count; i++)
+                {
+                    var vm = new CategoryRowViewModel
+                    {
+                        Cat = rootCategories[i],
+                        Indent = 0,
+                        Prefix = "",
+                        AllCategories = Model.Category,
+                        SerialNumber = i + 1
+                    };
+
+                    await Html.RenderPartialAsync("_CategoryRow", vm);
+                }
+            }
+        </tbody>
+    </table>
+</div>

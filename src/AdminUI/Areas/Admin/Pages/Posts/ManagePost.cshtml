@@ -1,0 +1,391 @@
+﻿@page "{id?}/{tab?}"
+@model AdminUI.Areas.Admin.Pages.Posts.ManagePostModel
+@{
+    string activeTab = (string)RouteData.Values["tab"] ?? "post";
+    bool isEditing = Model.Post.Id > 0;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">@(isEditing ? "Edit Post" : "Create Post")</h2>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div class="d-flex align-items-center gap-2">
+            @if (isEditing)
+            {
+                <a asp-page="./Preview" asp-route-slug="@Model.Post.Slug" class="btn btn-outline-primary">
+                    <i class="bi bi-eye"></i> Preview
+                </a>
+
+                <form method="post" asp-page-handler="TogglePublish" class="d-inline">
+                    <input type="hidden" name="postId" value="@Model.Post.Id" />
+                    <button type="submit" class="btn @(Model.Post.IsPublished ? "btn-danger" : "btn-success")">
+                        <i class="bi @(Model.Post.IsPublished ? "bi-x-circle" : "bi-check2-circle")"></i>
+                        @(Model.Post.IsPublished ? "Unpublish" : "Publish Now")
+                    </button>
+                </form>
+
+
+                @if (!Model.Post.IsPublished)
+                {
+                    if (Model.Post.IsScheduled && Model.Post.PublishedAt != null)
+                    {
+                        <!-- Show Scheduled Info -->
+                        <div class="d-inline-flex align-items-center gap-2">
+                            <button class="btn btn-outline-warning btn-sm text-black">
+                                <i class="bi bi-clock-history"></i> Scheduled at @Model.Post.PublishedAt?.ToString("yyyy-MM-dd HH:mm")
+                            </button>
+                            <form method="post" asp-page-handler="CancelSchedule" class="d-inline">
+                                <input type="hidden" name="postId" value="@Model.Post.Id" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Schedule Publish Form -->
+                        <form method="post" asp-page-handler="SchedulePublish" class="d-inline-flex align-items-center gap-2">
+                            <input type="hidden" name="postId" value="@Model.Post.Id" />
+                            <input type="datetime-local" name="scheduleDate" class="form-control form-control-sm" style="max-width:220px;width:60%;" required />
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-clock-history"></i> Schedule
+                            </button>
+                        </form>
+                    }
+                }
+
+            }
+
+            <a asp-page="./Index" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+
+</div>
+
+<!-- ✅ Show Success/Error Alerts -->
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+@if (Model.Post.IsPublished && Model.Post.PublishedAt != null)
+{
+    <hr />
+    <div class="d-inline-flex align-items-center gap-2 mb-2">
+        <span class="badge bg-success">
+            <i class="bi bi-check-circle"></i> Published at @Model.Post.PublishedAt?.ToString("yyyy-MM-dd HH:mm")
+
+            @if (!string.IsNullOrEmpty(Model.Post.PostBy))
+            {
+                @: by @Model.Post.PostBy
+            }
+        </span>
+    </div>
+}
+<!-- ✅ Tabs -->
+<ul class="nav nav-tabs">
+    <li class="nav-item">
+        <a class="nav-link @(activeTab=="post" ? "active" : "")" data-bs-toggle="tab" href="#tab-post">Post</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(activeTab=="images" ? "active" : "") @(isEditing ? "" : "disabled")" data-bs-toggle="tab" href="#tab-images">Images</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(activeTab=="settings" ? "active" : "") @(isEditing ? "" : "disabled")" data-bs-toggle="tab" href="#tab-settings">Settings</a>
+    </li>
+    @if (isEditing)
+    {
+        @if (Model.Post.CommentsEnabled)
+        {
+            <li class="nav-item">
+                <a class="nav-link @(activeTab=="comments" ? "active" : "") @(isEditing ? "" : "disabled")" data-bs-toggle="tab" href="#tab-comments">Comments</a>
+            </li>
+        }
+    }
+</ul>
+
+
+<div class="tab-content border p-3">
+    <!-- 🔹 TAB 1 – Post Info -->
+    <div class="tab-pane fade @(activeTab=="post" ? "show active" : "")" id="tab-post">
+        <form method="post" asp-page-handler="SavePost">
+            <input type="hidden" asp-for="Post.Id" />
+
+            <div class="form-group">
+                <label>Title</label>
+                <input asp-for="Post.Title" class="form-control" required />
+            </div>
+            <div class="form-group">
+                <label>Short Description</label>
+                <textarea asp-for="Post.ShortDescription" class="form-control" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Content</label>
+                <textarea asp-for="Post.Content" class="form-control summernote_basic" rows="5"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save & Continue</button>
+        </form>
+    </div>
+
+    <!-- 🔹 TAB 2 – Images -->
+    <div class="tab-pane fade @(activeTab=="images" ? "show active" : "")" id="tab-images">
+        @if (isEditing)
+        {
+            <form method="post" enctype="multipart/form-data" asp-page-handler="UploadImages">
+                <input type="hidden" name="id" value="@Model.Post.Id" />
+                <input type="hidden" asp-for="Post.Slug" value="@Model.Post.Slug" />
+
+                <div class="form-group">
+                    <label>Upload Images</label>
+                    <input type="file" name="ImageFiles" multiple class="form-control" />
+                </div>
+
+                <button type="submit" class="btn btn-success" style="margin-top:10px;">Upload & Continue</button>
+            </form>
+
+            <hr />
+            <h5>Existing Images</h5>
+            @if (Model.Post.PostImages != null && Model.Post.PostImages.Any())
+            {
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Image</th>
+                        <th>Default</th>
+                        <th>Actions</th>
+                    </tr>
+                    @foreach (var img in Model.Post.PostImages)
+                    {
+                        <tr>
+                            <td><img src="@img.ImageUrl" style="height:80px" /></td>
+                            <td>@(img.IsDefault ? "✅" : "❌")</td>
+                            <td>
+                                <form method="post" asp-page-handler="SetDefaultImage" style="display:inline">
+                                    <input type="hidden" name="imageId" value="@img.Id" />
+                                    <button type="submit" class="btn btn-sm btn-warning">Set Default</button>
+                                </form>
+
+                                <form method="post" asp-page-handler="RemoveImage" style="display:inline">
+                                    <input type="hidden" name="imageId" value="@img.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p>No images uploaded yet.</p>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Save the post first to upload images.</p>
+        }
+    </div>
+
+    <!-- 🔹 TAB 3 – Settings -->
+    <div class="tab-pane fade @(activeTab=="settings" ? "show active" : "")" id="tab-settings">
+        @if (isEditing)
+        {
+            <form method="post" asp-page-handler="SaveSettings">
+                <input type="hidden" asp-for="Post.Id" />
+
+                <div class="form-group mb-3">
+                    <label>Category <span class="text-danger">*</span></label>
+                    <select asp-for="Post.CategoryId" class="form-control" asp-items="Model.CategoryDropdown">
+                        <option value="">-- Select Category --</option>
+                    </select>
+                    <span asp-validation-for="Post.CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="form-check mb-2">
+                    <input asp-for="Post.IsFeatured" class="form-check-input" />
+                    <label class="form-check-label" for="Post_IsFeatured">Featured</label>
+                </div>
+
+                <div class="form-check mb-2">
+                    <input asp-for="Post.IsBreakingNews" class="form-check-input" />
+                    <label class="form-check-label" for="Post_IsFeatured">Is Breaking News</label>
+                </div>
+
+                <div class="form-check mb-2">
+                    <input asp-for="Post.ShowInHero" class="form-check-input" />
+                    <label class="form-check-label" for="Post_ShowInHero">Show in Hero</label>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label>Hero Order</label>
+                    <input asp-for="Post.HeroOrder" type="number" class="form-control" />
+                </div>
+
+                <div class="form-check mb-2">
+                    <input asp-for="Post.ShowInSurface" class="form-check-input" />
+                    <label class="form-check-label" for="Post_ShowInSurface">Show in Surface</label>
+                </div>
+
+                <div class="form-check mb-2">
+                    <input asp-for="Post.CommentsEnabled" class="form-check-input" />
+                    <label class="form-check-label" for="Post_CommentsEnabled">Enable Comments</label>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label>Sort Order</label>
+                    <input asp-for="Post.SortOrder" type="number" class="form-control" />
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold">Tags</label>
+                    <div id="tag-container" class="d-flex flex-wrap border rounded p-2">
+                        @foreach (var tag in Model.Post.Tags ?? new List<string>())
+                        {
+                            <span class="badge bg-primary me-2 mb-2 tag-chip">
+                                @tag <button type="button" class="btn-close btn-close-white btn-sm ms-2 remove-tag"></button>
+                            </span>
+                        }
+                        <input type="text" id="tag-input" class="border-0 flex-grow-1" placeholder="Type tag and press Enter" />
+                    </div> 
+                    <input type="hidden" name="TagsJson" id="tags-json" />
+
+                </div>
+                <button type="submit" class="btn btn-primary">Save Settings</button>
+            </form>
+        }
+        else
+        {
+            <p class="text-muted">Save the post first to edit settings.</p>
+        }
+    </div>
+    <div class="tab-pane fade @(activeTab=="comments" ? "show active" : "")" id="tab-comments">
+        @if (isEditing)
+        {
+            @if (Model.Post.Comments != null && Model.Post.Comments.Any())
+            {
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Author</th>
+                            <th>Comment</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var c in Model.Post.Comments.OrderByDescending(x => x.CreatedAt))
+                        {
+                            <tr>
+                                <td>
+                                    @if (c.User != null)
+                                    {
+                                        <strong>@c.User.FullName</strong> <br />
+                                        <small>@c.User.Email</small>
+                                    }
+                                    else
+                                    {
+                                        <strong>@c.AuthorName</strong> <br />
+                                        <small>@c.AuthorEmail</small>
+                                    }
+                                </td>
+
+                                <td>@c.Content</td>
+                                <td>@c.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td>
+                                    @if (c.IsApproved)
+                                    {
+                                        <span class="text-success fw-bold">
+                                            <i class="bi bi-check-circle-fill"></i> Approved
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-danger fw-bold">
+                                            <i class="bi bi-x-circle-fill"></i> Not Approved
+                                        </span>
+                                    }
+                                </td>
+                                <td>
+                                    <form method="post" asp-page-handler="DeleteComment" style="display:inline">
+                                        <input type="hidden" name="commentId" value="@c.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                    <form method="post" asp-page-handler="ToggleCommentApproval" style="display:inline">
+                                        <input type="hidden" name="commentId" value="@c.Id" />
+                                        <button class="btn @(c.IsApproved ? "btn-warning" : "btn-success") btn-sm" type="submit">
+                                            @(c.IsApproved ? "Disapprove" : "Approve")
+                                        </button>
+                                    </form>
+
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="text-muted">No comments yet.</p>
+            }
+        }
+        else
+        {
+            <p class="text-muted">Save the post first to manage comments.</p>
+        }
+    </div>
+
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+ 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const tagContainer = document.getElementById("tag-container");
+        const tagInput = document.getElementById("tag-input");
+        const tagsJson = document.getElementById("tags-json");
+
+        function updateHiddenInput() {
+            const tags = [...tagContainer.querySelectorAll(".tag-chip")].map(chip => chip.dataset.tag);
+            tagsJson.value = JSON.stringify(tags);
+        }
+
+        function addTag(tag) {
+            if (!tag) return;
+            const chip = document.createElement("span");
+            chip.className = "badge bg-primary me-2 mb-2 tag-chip";
+            chip.dataset.tag = tag;
+            chip.innerHTML = `${tag} <button type="button" class="btn-close btn-close-white btn-sm ms-2 remove-tag"></button>`;
+            tagContainer.insertBefore(chip, tagInput);
+            updateHiddenInput();
+        }
+
+        tagInput.addEventListener("keydown", function (e) {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                const tag = tagInput.value.trim();
+                if (tag) {
+                    addTag(tag);
+                    tagInput.value = "";
+                }
+            }
+        });
+
+        tagContainer.addEventListener("click", function (e) {
+            if (e.target.classList.contains("remove-tag")) {
+                e.target.parentElement.remove();
+                updateHiddenInput();
+            }
+        });
+
+        updateHiddenInput();
+    });
+</script>
+}

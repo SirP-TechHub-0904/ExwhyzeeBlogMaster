@@ -1,0 +1,43 @@
+﻿@page
+@model AdminUI.Areas.Admin.Pages.Forms.CreateModel
+
+
+@{
+    ViewData["Title"] = "Create Form";
+}
+
+ <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Create New Form</h2>
+    <a asp-page="./Index" class="btn btn-secondary">
+        <i class="bi bi-arrow-left-circle"></i> Back to List
+    </a>
+</div>
+<form method="post" class="card card-body">
+    <div class="mb-3">
+        <label asp-for="Form.Title" class="form-label">Form Title</label>
+        <input asp-for="Form.Title" class="form-control" />
+        <span asp-validation-for="Form.Title" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Form.Description" class="form-label">Description</label>
+        <textarea asp-for="Form.Description" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input asp-for="Form.IsActive" class="form-check-input" />
+        <label asp-for="Form.IsActive" class="form-check-label">Is Active</label>
+    </div>
+
+    <div class="mb-3 form-check">
+        <input asp-for="Form.AllowAnonymousResponses" class="form-check-input" />
+        <label asp-for="Form.AllowAnonymousResponses" class="form-check-label">Allow Anonymous Submissions</label>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary">Create and Add Fields</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

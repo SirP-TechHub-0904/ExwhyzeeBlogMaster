@@ -1,0 +1,109 @@
+﻿@page
+@model AdminUI.Areas.Admin.Pages.SearchPanel.IndexModel
+@{
+    ViewData["Title"] = "Advanced Search";
+
+    int totalPages = (int)Math.Ceiling((double)Model.TotalResults / Model.FlatPageSize);
+    int currentPage = Model.ResultPage;
+
+}
+
+<h2>Advanced Search</h2>
+
+<form method="get" class="mb-3">
+    <input type="text" asp-for="Query" value="@Model.Query" placeholder="Search..." class="form-control" />
+    <button type="submit" class="btn btn-primary mt-2">Search</button>
+</form>
+
+@if (Model.Results.Any())
+{
+    <h5>Found @Model.TotalResults result(s) for <strong>@Model.Query</strong></h5>
+    <table class="table table-bordered table-hover" style="margin-bottom:20px;">
+        <thead class="thead-dark">
+            <tr>
+                <th>S/N</th>
+                <th>Snippet</th>
+                <th>Type</th>
+                <th>Title/Location</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Results.Count; i++)
+            {
+                var r = Model.Results[i];
+                <tr>
+                    <td>@((Model.ResultPage - 1) * Model.FlatPageSize + i + 1)</td>
+                    <td>@Html.Raw(r.Snippet)</td>
+                    <td>@r.SourceType</td>
+                    <td>@r.Title</td>
+                    <td>
+
+                        <a class="btn btn-sm btn-outline-primary" asp-area="Admin" asp-page="@r.EditUrl" asp-route-id="@r.Id">Edit</a>
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.TotalResults > Model.FlatPageSize)
+    {
+
+        
+        @if (totalPages > 1)
+        {
+            <nav>
+                <ul class="pagination">
+
+                    @* First page «« *@
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="?query=@Model.Query&resultPage=1">&laquo;&laquo;</a>
+                    </li>
+
+                    @* Previous page « *@
+                    <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                        <a class="page-link" href="?query=@Model.Query&resultPage=@(currentPage - 1)">&laquo;</a>
+                    </li>
+
+                    @* First 3 pages *@
+                    @for (int i = 1; i <= Math.Min(3, totalPages); i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="?query=@Model.Query&resultPage=@i">@i</a>
+                        </li>
+                    }
+
+                    @* Middle ellipsis if needed *@
+                    @if (totalPages > 6)
+                    {
+                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                    }
+
+                    @* Last 3 pages *@
+                    @for (int i = totalPages - 2; i <= totalPages; i++)
+                    {
+                        if (i > 3)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" href="?query=@Model.Query&resultPage=@i">@i</a>
+                            </li>
+                        }
+                    }
+
+                    @* Next page » *@
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="?query=@Model.Query&resultPage=@(currentPage + 1)">&raquo;</a>
+                    </li>
+
+                    @* Last page »» *@
+                    <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                        <a class="page-link" href="?query=@Model.Query&resultPage=@totalPages">&raquo;&raquo;</a>
+                    </li>
+
+                </ul>
+            </nav>
+        }
+
+    }
+}

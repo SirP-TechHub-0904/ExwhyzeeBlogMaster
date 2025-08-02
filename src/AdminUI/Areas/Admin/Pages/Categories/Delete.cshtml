@@ -1,0 +1,52 @@
+@page
+@model AdminUI.Areas_Admin_Pages_Categories.DeleteModel
+
+@{
+    ViewData["Title"] = "Delete Category";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger mb-3">Delete Category</h2>
+
+    <p>Are you sure you want to delete the following category?</p>
+
+    <div class="border p-3 mb-3">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Title</dt>
+            <dd class="col-sm-9">@Model.Category.Title</dd>
+
+            <dt class="col-sm-3">Slug</dt>
+            <dd class="col-sm-9">@Model.Category.Slug</dd>
+
+            <dt class="col-sm-3">Published</dt>
+            <dd class="col-sm-9">@Model.Category.IsPublished</dd>
+
+            <dt class="col-sm-3">Sort Order</dt>
+            <dd class="col-sm-9">@Model.Category.SortOrder</dd>
+
+            <dt class="col-sm-3">Show In Menu</dt>
+            <dd class="col-sm-9">@Model.Category.ShowInMenu</dd>
+
+            <dt class="col-sm-3">Show In Footer</dt>
+            <dd class="col-sm-9">@Model.Category.ShowInFooter</dd>
+
+            <dt class="col-sm-3">Show On Home</dt>
+            <dd class="col-sm-9">@Model.Category.ShowInHome</dd>
+
+            <dt class="col-sm-3">Show In Home Main</dt>
+            <dd class="col-sm-9">@Model.Category.ShowInHomeMain</dd>
+
+            <dt class="col-sm-3">Show In Home List</dt>
+            <dd class="col-sm-9">@Model.Category.ShowInHomeList</dd>
+
+            <dt class="col-sm-3">Parent Category</dt>
+            <dd class="col-sm-9">@Model.Category.ParentCategory?.Title ?? "None"</dd>
+        </dl>
+    </div>
+
+    <form method="post">
+        <input type="hidden" asp-for="Category.Id" />
+        <button type="submit" class="btn btn-danger">Delete</button>
+        <a asp-page="./Index" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+</div>

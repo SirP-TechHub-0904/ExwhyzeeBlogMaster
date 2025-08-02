@@ -1,0 +1,205 @@
+﻿@page
+@model AdminUI.Areas_Admin_Pages_Comments.IndexModel
+@{
+    ViewData["Title"] = "Comments List";
+}
+@{
+    int a = 90;
+}
+
+<h2>Comments (@Model.Comment.Count())</h2>
+<form method="get" class="mb-3">
+    <div class="input-group">
+        <input type="text" class="form-control" name="query" value="@Model.Query" placeholder="Search comments..." />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+</form>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>S/N</th>
+            <th>Post Title</th>
+            <th>Author</th>
+            <th>Email</th>
+            <th>Comment</th>
+            <th>Created At</th>
+            <th>Approved?</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    @{ int sn = 0;}
+
+    <tbody>
+        @foreach (var item in Model.Comment)
+        {
+            <tr>
+                <td>
+                    @{ sn++;}
+                    @sn
+                </td>
+                <td style="max-width: 250px; height: 60px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-overflow: ellipsis;">
+                    <a asp-page="/Posts/ManagePost" asp-route-slug="@item.Post.Slug" asp-route-id="@item.PostId" style="text-decoration:none;">
+                        @item.Post.Title
+                    </a>
+                </td>
+
+
+
+                <td>@(item.User != null ? item.User.UserName : item.AuthorName)</td>
+                <td>@(item.User != null ? item.User.Email : item.AuthorEmail)</td>
+
+                <td>
+                    @{
+                        var contentText = string.IsNullOrWhiteSpace(item.Content) ? "[No Comment]" : item.Content;
+                        string previewText = contentText;
+
+                        if (!string.IsNullOrWhiteSpace(item.Content) && item.Content.Length > 150)
+                        {
+                            var subText = contentText.Substring(0, 70);
+                            var lastSpace = subText.LastIndexOf(' ');
+
+                            previewText = lastSpace > 0
+                                ? subText.Substring(0, lastSpace) + "..."
+                                : subText + "...";
+                        }
+
+                        var safeAuthor = item.User != null ? item.User.UserName : item.AuthorName;
+                        var safeTitle = item.Post.Title;
+                    }
+
+                    @previewText
+
+                    @if (!string.IsNullOrWhiteSpace(item.Content) && item.Content.Length > 150)
+                    {
+                        <button type="button" class="btn btn-link btn-sm text-primary p-0"
+                                onclick='showComment(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(safeAuthor)),
+                                     @Html.Raw(System.Text.Json.JsonSerializer.Serialize(safeTitle)),
+                                     @Html.Raw(System.Text.Json.JsonSerializer.Serialize(contentText)))'>
+                            View
+                        </button>
+                    }
+                </td>
+
+
+                <td>@item.CreatedAt.ToString("dd MMM yyyy HH:mm")</td>
+                <td>
+                    <form method="post" asp-page-handler="ToggleApproval" asp-route-id="@item.Id">
+                        <button type="submit" class="btn btn-sm @(item.IsApproved ? "btn-success" : "btn-danger")">
+                            @if (item.IsApproved)
+                            {
+                                <i class="bi bi-check-circle-fill"></i> <span>Approved</span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-x-circle-fill"></i> <span>Disapproved</span>
+                            }
+                        </button>
+                    </form>
+                </td>
+
+
+
+                <td>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                            Actions
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" asp-page="./Edit" asp-route-id="@item.Id"><i class="fas fa-edit"></i> Edit</a></li>
+                            <li><a class="dropdown-item text-danger" asp-page="./Delete" asp-route-id="@item.Id">Delete</a></li>
+                        </ul>
+                    </div>
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav style="margin-top:20px;">
+        <ul class="pagination">
+
+            <!-- First page «« -->
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="?query=@Model.Query&resultPage=1">&laquo;&laquo;</a>
+            </li>
+
+            <!-- Previous page « -->
+            <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="?query=@Model.Query&resultPage=@(Model.CurrentPage - 1)">&laquo;</a>
+            </li>
+
+            <!-- First 3 pages -->
+            @for (int i = 1; i <= Math.Min(3, Model.TotalPages); i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="?query=@Model.Query&resultPage=@i">@i</a>
+                </li>
+            }
+
+            <!-- Ellipsis -->
+            @if (Model.TotalPages > 6)
+            {
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+            }
+
+            <!-- Last 3 pages -->
+            @for (int i = Model.TotalPages - 2; i <= Model.TotalPages; i++)
+            {
+                if (i > 3)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-link" href="?query=@Model.Query&resultPage=@i">@i</a>
+                    </li>
+                }
+            }
+
+            <!-- Next page » -->
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="?query=@Model.Query&resultPage=@(Model.CurrentPage + 1)">&raquo;</a>
+            </li>
+
+            <!-- Last page »» -->
+            <li class="page-item @(Model.CurrentPage == Model.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="?query=@Model.Query&resultPage=@Model.TotalPages">&raquo;&raquo;</a>
+            </li>
+
+        </ul>
+    </nav>
+}
+
+
+<!-- ONE DYNAMIC MODAL -->
+<div class="modal fade" id="commentModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Author:</strong> <span id="commentModalAuthor"></span></p>
+                <p><strong>Post:</strong> <span id="commentModalPost"></span></p>
+                <hr>
+                <p id="commentModalContent" class="text-wrap"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function showComment(author, postTitle, content) {
+            document.getElementById("commentModalTitle").innerText = "Comment Details";
+            document.getElementById("commentModalAuthor").innerText = author;
+            document.getElementById("commentModalPost").innerText = postTitle;
+            document.getElementById("commentModalContent").innerText = content;
+
+            var modal = new bootstrap.Modal(document.getElementById("commentModal"));
+            modal.show();
+        }
+    </script>
+}

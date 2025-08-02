@@ -1,0 +1,92 @@
+﻿@using ModelData.Services;
+@inject ICategoryServices CategoryServices
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var token = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+}
+
+
+@{
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts(showInHero: true);
+
+}
+
+<div class="ne-sidebar sidebar-break-md col-lg-4 col-md-12">
+
+    <div class="sidebar-box">
+        <div class="ne-banner-layout1 text-center">
+            @{
+                ModelData.Models.Advert belowsideAdvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.SidebarBottom);
+            }
+            @if (belowsideAdvert != null)
+            {
+                <a href="@belowsideAdvert.Link" target="_blank">
+                    <img src="@belowsideAdvert.ImageUrl" alt="@belowsideAdvert.Title" class="img-fluid">
+                </a>
+            }
+
+        </div>
+    </div>
+    <div class="sidebar-box">
+        <div class="topic-border color-cod-gray mb-30">
+            <div class="topic-box-lg color-cod-gray">Newsletter</div>
+        </div>
+        <div class="newsletter-area bg-primary">
+            <h2 class="title-medium-light size-xl pl-30 pr-30">
+                Subscribe to our mailing list to get the new updates!
+            </h2>
+            <p>Subscribe our newsletter to stay updated</p>
+
+            <div class="input-group stylish-input-group">
+                <input type="email" id="newsletterEmail" placeholder="Enter your mail" class="form-control" />
+                <input type="hidden" id="__RequestVerificationToken" value="@token" />
+                <span class="input-group-addon">
+                    <button type="button" id="subscribeBtn">
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </button>
+                </span>
+            </div>
+
+            <small id="subscribeMessage" class="text-white"></small>
+        </div>
+    </div>
+     
+
+
+
+    <div class="sidebar-box">
+        <div class="topic-border color-cod-gray mb-25">
+            <div class="topic-box-lg color-cod-gray">Tags</div>
+        </div>
+        @{
+            // Get recent posts (adjust service method as needed)
+            var postTags = (await PostServices.GetRecentPosts())
+                .OrderByDescending(p => p.PublishedAt ?? p.Date)
+                .Take(10)
+                .ToList();
+
+            // Flatten tags and remove duplicates
+            var tags = postTags
+                .Where(p => p.Tags != null)
+                .SelectMany(p => p.Tags)
+                .Distinct()
+                .OrderBy(t => t)
+                .ToList();
+        }
+
+        <ul class="sidebar-tags">
+            @foreach (var tag in tags)
+            {
+                <li>
+                    <a asp-page="/Blog/Tag" asp-route-tag="@tag">@tag</a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,30 @@
+﻿@page
+@model AdminUI.Areas.Admin.Pages.Settings.SeedDataModel
+@{
+}
+
+<h1>Seed Data</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (TempData["seed"] == null)
+            {
+                <div class="form-group m-5">
+                    <input type="submit" value="Click to Seed Data" class="btn btn-primary" />
+                </div>
+            }
+
+            <div>
+                <a asp-page="/Dashboard/Index">Back to Dashboard</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,229 @@
+@page
+@model AdminUI.Areas_Admin_Pages_Settings.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Setting</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.SiteTitle)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.SiteTitle)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.SiteDescription)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.SiteDescription)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.SiteTagline)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.SiteTagline)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.SiteLogoUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.SiteLogoUrl)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.FaviconUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.FaviconUrl)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.MetaKeywords)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.MetaKeywords)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.MetaDescription)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.MetaDescription)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.MetaAuthor)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.MetaAuthor)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.MetaHeaderCode)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.MetaHeaderCode)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.ContactEmail)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.ContactEmail)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.ContactPhone)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.ContactPhone)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.Address)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.Address)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.CustomCSS)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.CustomCSS)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.CustomJS)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.CustomJS)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.CustomHeadScript)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.CustomHeadScript)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.CustomFooterScript)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.CustomFooterScript)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.FacebookUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.FacebookUrl)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.TwitterUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.TwitterUrl)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.InstagramUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.InstagramUrl)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.YouTubeUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.YouTubeUrl)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.LinkedInUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.LinkedInUrl)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.TikTokUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.TikTokUrl)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.FacebookWidget)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.FacebookWidget)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.TwitterWidget)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.TwitterWidget)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.InstagramWidget)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.InstagramWidget)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.YouTubeWidget)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.YouTubeWidget)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.LinkedInWidget)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.LinkedInWidget)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.TikTokWidget)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.TikTokWidget)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.EnableLiveChat)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.EnableLiveChat)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.LiveChatScript)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.LiveChatScript)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.GoogleAnalyticsId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.GoogleAnalyticsId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.GoogleTagManagerId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.GoogleTagManagerId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.FacebookPixelId)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.FacebookPixelId)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.IsMaintenanceMode)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.IsMaintenanceMode)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Setting.MaintenanceMessage)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Setting.MaintenanceMessage)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.Setting.Id">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>

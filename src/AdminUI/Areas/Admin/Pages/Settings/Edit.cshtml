@@ -1,0 +1,165 @@
+@page
+@model AdminUI.Areas.Admin.Pages.Settings.EditModel
+@{
+    ViewData["Title"] = "Site Settings";
+}
+
+<h2 class="mb-4">Edit Site Settings</h2>
+
+@if (TempData["success"] != null)
+{
+    <div class="alert alert-success">@TempData["success"]</div>
+}
+
+<form method="post" enctype="multipart/form-data">
+    <div class="row">
+        <!-- Left column -->
+        <div class="col-md-6">
+            <h5 class="mt-3">Basic Info</h5>
+            <div class="mb-2">
+                <label>Site Title</label>
+                <input asp-for="Setting.SiteTitle" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label>Tagline</label>
+                <input asp-for="Setting.SiteTagline" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label>Description</label>
+                <textarea asp-for="Setting.SiteDescription" class="form-control summernote_basic"></textarea>
+            </div>
+            <div class="mb-2">
+                <label>Site Logo</label><br />
+                @if (!string.IsNullOrEmpty(Model.Setting.SiteLogoUrl))
+                {
+                    <img src="@Model.Setting.SiteLogoUrl" class="img-thumbnail mb-2" style="max-height: 80px;" />
+                }
+                <input type="file" asp-for="LogoFile" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label>Favicon</label><br />
+                @if (!string.IsNullOrEmpty(Model.Setting.FaviconUrl))
+                {
+                    <img src="@Model.Setting.FaviconUrl" class="img-thumbnail mb-2" style="max-height: 40px;" />
+                }
+                <input type="file" asp-for="FaviconFile" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label>Breadcrumb Image</label><br />
+                @if (!string.IsNullOrEmpty(Model.Setting.SiteBreadcrumbImageUrl))
+                {
+                    <img src="@Model.Setting.SiteBreadcrumbImageUrl" class="img-thumbnail mb-2" style="max-height: 60px;" />
+                }
+                <input type="file" name="BreadcrumbImageFile" class="form-control" />
+            </div>
+
+            <h5 class="mt-4">Contact Info</h5>
+            <div class="mb-2">
+                <label>Email</label>
+                <input asp-for="Setting.ContactEmail" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label>Phone</label>
+                <input asp-for="Setting.ContactPhone" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label>Address</label>
+                <textarea asp-for="Setting.Address" class="form-control"></textarea>
+            </div>
+
+            <h5 class="mt-4">Upload Limits</h5>
+            <div class="mb-2">
+                <label>Max Image Size (KB)</label>
+                <input asp-for="Setting.MaxImageSizeKB" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label>Max Video Size (KB)</label>
+                <input asp-for="Setting.MaxVideoSizeKB" class="form-control" />
+            </div>
+        </div>
+
+        <!-- Right column -->
+        <div class="col-md-6">
+            <h5 class="mt-3">SEO / Meta</h5>
+            <div class="mb-2">
+                <label>Meta Keywords</label>
+                <input asp-for="Setting.MetaKeywords" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label>Meta Description</label>
+                <textarea asp-for="Setting.MetaDescription" class="form-control"></textarea>
+            </div>
+            <div class="mb-2">
+                <label>Meta Author</label>
+                <input asp-for="Setting.MetaAuthor" class="form-control" />
+            </div>
+            <div class="mb-2">
+                <label>Header Meta Code</label>
+                <textarea asp-for="Setting.MetaHeaderCode" class="form-control" rows="3"></textarea>
+            </div>
+
+            <h5 class="mt-4">Custom Code</h5>
+            <div class="mb-2">
+                <label>Custom CSS</label>
+                <textarea asp-for="Setting.CustomCSS" class="form-control"></textarea>
+            </div>
+            <div class="mb-2">
+                <label>Custom JS</label>
+                <textarea asp-for="Setting.CustomJS" class="form-control"></textarea>
+            </div>
+            <div class="mb-2">
+                <label>Custom Head Script</label>
+                <textarea asp-for="Setting.CustomHeadScript" class="form-control"></textarea>
+            </div>
+            <div class="mb-2">
+                <label>Custom Footer Script</label>
+                <textarea asp-for="Setting.CustomFooterScript" class="form-control"></textarea>
+            </div>
+
+            <h5 class="mt-4">Social Media</h5>
+            <input asp-for="Setting.FacebookUrl" class="form-control mb-2" placeholder="Facebook URL" />
+            <input asp-for="Setting.TwitterUrl" class="form-control mb-2" placeholder="Twitter URL" />
+            <input asp-for="Setting.InstagramUrl" class="form-control mb-2" placeholder="Instagram URL" />
+            <input asp-for="Setting.LinkedInUrl" class="form-control mb-2" placeholder="LinkedIn URL" />
+            <input asp-for="Setting.YouTubeUrl" class="form-control mb-2" placeholder="YouTube URL" />
+            <input asp-for="Setting.TikTokUrl" class="form-control mb-2" placeholder="TikTok URL" />
+
+            <label class="mt-3">Social Widgets</label>
+            <textarea asp-for="Setting.FacebookWidget" class="form-control mb-2" placeholder="Facebook Widget"></textarea>
+            <textarea asp-for="Setting.TwitterWidget" class="form-control mb-2" placeholder="Twitter Widget"></textarea>
+            <textarea asp-for="Setting.InstagramWidget" class="form-control mb-2" placeholder="Instagram Widget"></textarea>
+            <textarea asp-for="Setting.LinkedInWidget" class="form-control mb-2" placeholder="LinkedIn Widget"></textarea>
+            <textarea asp-for="Setting.YouTubeWidget" class="form-control mb-2" placeholder="YouTube Widget"></textarea>
+            <textarea asp-for="Setting.TikTokWidget" class="form-control mb-2" placeholder="TikTok Widget"></textarea>
+
+            <h5 class="mt-4">Live Chat & Analytics</h5>
+            <div class="form-check form-switch mb-2">
+                <input asp-for="Setting.EnableLiveChat" class="form-check-input" type="checkbox" />
+                <label class="form-check-label">Enable Live Chat</label>
+            </div>
+            <textarea asp-for="Setting.LiveChatScript" class="form-control mb-3" placeholder="Live Chat Script"></textarea>
+
+            <label>Google Analytics ID</label>
+            <input asp-for="Setting.GoogleAnalyticsId" class="form-control mb-2" />
+            <label>Google Tag Manager ID</label>
+            <input asp-for="Setting.GoogleTagManagerId" class="form-control mb-2" />
+            <label>Facebook Pixel ID</label>
+            <input asp-for="Setting.FacebookPixelId" class="form-control mb-2" />
+
+            <h5 class="mt-4">Maintenance Mode</h5>
+            <div class="form-check form-switch mb-2">
+                <input asp-for="Setting.IsMaintenanceMode" class="form-check-input" type="checkbox" />
+                <label class="form-check-label">Enable Maintenance Mode</label>
+            </div>
+            <textarea asp-for="Setting.MaintenanceMessage" class="form-control" placeholder="Maintenance Message"></textarea>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button type="submit" class="btn btn-primary">Save Settings</button>
+    </div>
+</form>
+
+@section Scripts {
+     
+}

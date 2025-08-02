@@ -1,0 +1,46 @@
+﻿@model AdminUI.Areas.Admin.ViewModels.CategoryRowViewModel
+@using ModelData.Models
+
+@{
+    var currentPrefix = string.IsNullOrEmpty(Model.Prefix)
+        ? $"{Model.SerialNumber}"
+        : $"{Model.Prefix}.{Model.SerialNumber}";
+}
+
+<tr>
+    @{ int newpadding = (Model.Indent * 20) + 10; }
+    <td style="padding-left:@(newpadding)px">@currentPrefix. @Model.Cat.Title</td>
+    <td>@Model.Cat.IsPublished</td>
+    <td>@Model.Cat.SortOrder</td>
+    <td>@Model.Cat.ShowInMenu</td>
+    <td>@Model.Cat.ShowInFooter</td>
+    <td>@Model.Cat.ShowInHome</td>
+    <td>@Model.Cat.ShowInHomeMain</td>
+    <td>@Model.Cat.ShowInHomeList</td>
+    <td>@Model.Cat.ParentCategory?.Title</td>
+    <td class="text-end">
+        <a asp-page="Edit" asp-route-id="@Model.Cat.Id" asp-route-slug="@Model.Cat.Slug" class="btn btn-sm btn-outline-primary">Edit</a>
+        <a asp-page="Delete" asp-route-id="@Model.Cat.Id" class="btn btn-sm btn-outline-danger">Delete</a>
+    </td>
+</tr>
+
+@{
+    var children = Model.AllCategories
+        .Where(c => c.ParentCategoryId == Model.Cat.Id)
+        .OrderBy(c => c.SortOrder)
+        .ToList();
+
+    for (int i = 0; i < children.Count; i++)
+    {
+        var childModel = new AdminUI.Areas.Admin.ViewModels.CategoryRowViewModel
+        {
+            Cat = children[i],
+            Indent = Model.Indent + 1,
+            Prefix = currentPrefix,
+            AllCategories = Model.AllCategories,
+            SerialNumber = i + 1
+        };
+
+        await Html.RenderPartialAsync("_CategoryRow", childModel);
+    }
+}

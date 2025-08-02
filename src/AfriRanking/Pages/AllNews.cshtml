@@ -1,0 +1,126 @@
+﻿@page "/allnews"
+@model AfriRanking.Pages.AllNewsModel
+
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+}
+
+<section class="breadcrumbs-area" style="background-image: url('@(siteSettings.SiteBreadcrumbImageUrl ?? "")');">
+    <div class="container">
+        <div class="breadcrumbs-content">
+            <h1>All News</h1>
+            <ul>
+                <li><a href="/">Home</a> -</li>
+                <li>AllCategoryModel News </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="bg-body section-space-less30">
+    <div class="container">
+        <div class="row">
+            <!-- Main Post Content -->
+            <div class="col-lg-8 col-md-12 mb-30">
+                <div class="row" id="post-container">
+                    @foreach (var post in Model.Posts)
+                    {
+                        var imageUrl = Url.Content(post.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "~/assets/default.jpg");
+                        <div class="col-xl-12 col-lg-6 col-md-6 col-sm-12 post-entry">
+                            <div class="media media-none--lg mb-30">
+                                <div class="position-relative width-40">
+                                    <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="img-opacity-hover img-overlay-70">
+                                        <div class="post-thumb" style="width: 100%; height: 200px; background-image: url('@imageUrl'); background-size: cover; background-position: center; border-radius: 6px;"></div>
+                                    </a>
+                                    <div class="topic-box-top-xs">
+                                        <div class="topic-box-sm color-cod-gray mb-20">@post.Category?.Title</div>
+                                    </div>
+                                </div>
+                                <div class="media-body p-mb-none-child media-margin30">
+                                    <div class="post-date-dark">
+                                        <ul>
+                                            <li><span>by</span> <a href="#">@post.PostBy</a></li>
+                                            <li>
+                                                <span><i class="fa fa-calendar"></i></span>
+                                                @(post.PublishedAt?.ToString("MMMM dd, yyyy hh:mm tt"))
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <h3 class="title-semibold-dark size-lg mb-15">
+                                        <a asp-page="/PostPage" asp-route-slug="@post.Slug">@post.Title</a>
+                                    </h3>
+                                    <p>@post.ShortDescription</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (Model.TotalPages > 1 && Model.CurrentPage < Model.TotalPages)
+                {
+                    <div class="text-center">
+                        <button id="load-more-btn" class="btn btn-primary mt-4" data-page="@Model.CurrentPage" data-total="@Model.TotalPages">
+                            Load More
+                        </button>
+                    </div>
+                }
+            </div>
+
+
+            <partial name="_FullSideBar" />
+
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        $(document).on("click", "#load-more-btn", function () {
+            var button = $(this);
+            var page = parseInt(button.data("page")) + 1;
+            var total = parseInt(button.data("total"));
+
+            $.get(`/allnews?handler=LoadMore&page=${page}`, function (response) {
+                if (response.success && response.posts.length > 0) {
+                    $.each(response.posts, function (i, post) {
+                        var html = `
+                                                    <div class="col-xl-12 col-lg-6 col-md-6 col-sm-12 post-entry">
+                                                        <div class="media media-none--lg mb-30">
+                                                            <div class="position-relative width-40">
+                                                                <a href="/postpage?slug=${post.slug}" class="img-opacity-hover img-overlay-70">
+                                                                    <div class="post-thumb" style="width: 100%; height: 200px; background-image: url('${post.imageUrl}'); background-size: cover; background-position: center; border-radius: 6px;"></div>
+                                                                </a>
+                                                                <div class="topic-box-top-xs">
+                                                                    <div class="topic-box-sm color-cod-gray mb-20">${post.category}</div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="media-body p-mb-none-child media-margin30">
+                                                                <div class="post-date-dark">
+                                                                    <ul>
+                                                                        <li><span>by</span> <a href="#">${post.postBy}</a></li>
+                                                                        <li><span><i class="fa fa-calendar"></i></span> ${post.publishedAt}</li>
+                                                                    </ul>
+                                                                </div>
+                                                                <h3 class="title-semibold-dark size-lg mb-15">
+                                                                    <a href="/postpage?slug=${post.slug}">${post.title}</a>
+                                                                </h3>
+                                                                <p>${post.shortDescription}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>`;
+                        $("#post-container").append(html);
+                    });
+
+                    button.data("page", page);
+                    if (page >= total) {
+                        button.remove();
+                    }
+                }
+            });
+        });
+    </script>
+}

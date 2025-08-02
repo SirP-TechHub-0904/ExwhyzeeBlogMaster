@@ -1,0 +1,370 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+@using ModelData.Services;
+@inject ICategoryServices CategoryServices
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+
+
+@{
+    List<ModelData.Models.Category> itemCategories = await CategoryServices.GetCategoriesAsync();
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts(showInHero: true);
+
+}
+
+<!-- News Slider Area Start Here -->
+<section class="bg-accent section-space-less2 hero-style-1">
+    <div class="container">
+        <div class="row tab-space1">
+            @{
+                var heroPosts = itemPost?
+                    .Where(x => x != null)
+                    .OrderBy(x => x.HeroOrder)
+                    .Take(4)
+                    .ToList() ?? new List<ModelData.Models.Post>();
+
+                ModelData.Models.Post? firstPost = heroPosts.Count > 0 ? heroPosts[0] : null;
+                ModelData.Models.Post? secondPost = heroPosts.Count > 1 ? heroPosts[1] : null;
+                ModelData.Models.Post? thirdPost = heroPosts.Count > 2 ? heroPosts[2] : null;
+                ModelData.Models.Post? fourthPost = heroPosts.Count > 3 ? heroPosts[3] : null;
+            }
+
+            @if (firstPost is not null)
+            {
+                <div class="col-lg-6 col-md-12">
+                    <div class="img-overlay-70 img-scale-animate mb-2">
+                        <img src="@(firstPost?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@firstPost.Title" class="img-fluid width-100">
+                        <div class="mask-content-lg">
+                            <div class="topic-box-sm color-cinnabar mb-20">@firstPost.Category.Title</div>
+                            <div class="post-date-light">
+                                <ul>
+                                    <li>
+                                        <span>by</span>
+                                        <a asp-page="/PostPage" asp-route-slug="@firstPost.Slug">@firstPost.PostBy</a>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <i class="fa fa-calendar" aria-hidden="true"></i>
+                                        </span>@(firstPost.PublishedAt.HasValue
+    ? firstPost.PublishedAt.Value.ToString("MMM dd yyyy")
+    : "")
+                                    </li>
+                                </ul>
+                            </div>
+                            <h1 class="title-medium-light">
+                                <a asp-page="/PostPage" asp-route-slug="@firstPost.Slug">@firstPost.Title</a>
+                            </h1>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="col-lg-6 col-md-12">
+                <div class="row tab-space1">
+                    @if (secondPost is not null)
+                    {
+                        <div class="col-12">
+                            <div class="img-overlay-70 img-scale-animate mb-2">
+                                <div class="mask-content-sm">
+                                    <div class="topic-box-sm color-azure-radiance mb-10">@secondPost.Category.Title</div>
+                                    <h2 class="title-medium-light">
+                                        <a asp-page="/PostPage" asp-route-slug="@secondPost.Slug">@secondPost.Title</a>
+                                    </h2>
+                                </div>
+                                <img src="@(secondPost?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@secondPost.Title" class="img-fluid width-100">
+                            </div>
+                        </div>
+                    }
+                    @if (thirdPost is not null)
+                    {
+                        <div class="col-sm-6 col-12">
+                            <div class="img-overlay-70 img-scale-animate mb-2">
+                                <div class="mask-content-sm">
+                                    <div class="topic-box-sm color-apple mb-10">@thirdPost.Category.Title</div>
+                                    <h3 class="title-medium-light">
+                                        <a asp-page="/PostPage" asp-route-slug="@thirdPost.Slug">@thirdPost.Title</a>
+                                    </h3>
+                                </div>
+                                <img src="@(thirdPost?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@thirdPost.Title" class="img-fluid width-100">
+                            </div>
+                        </div>
+                    }
+                    @if (fourthPost is not null)
+                    {
+                        <div class="col-sm-6 col-12">
+                            <div class="img-overlay-70 img-scale-animate mb-2">
+                                <div class="mask-content-sm">
+                                    <div class="topic-box-sm color-razzmatazz mb-10">@fourthPost.Category.Title</div>
+                                    <h3 class="title-medium-light">
+                                        <a asp-page="/PostPage" asp-route-slug="@fourthPost.Slug">@fourthPost.Title</a>
+                                    </h3>
+                                </div>
+                                <img src="@(fourthPost?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@fourthPost.Title" class="img-fluid width-100">
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+<!-- News Slider Area End Here -->
+<!-- Top Story Area Start Here -->
+<section class="bg-body section-space-default">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-md-12">
+                <div class="mb-20-r ne-isotope story-h-01">
+                    <div class="topic-border color-cinnabar mb-30">
+                        <div class="topic-box-lg color-cinnabar">Top Stories</div>
+                        <div class="isotope-classes-tab isotop-btn">
+                            @{
+                                int index = 0;
+                            }
+                            @foreach (var list in itemCategories.Where(x => x.ShowInHomeMain).Take(5))
+                            {
+                                var categoryClass = list.Title.Replace(" ", "-").ToLower();
+                                <a asp-page="/CategoryPage" data-filter=".@categoryClass" class="@(index == 0 ? "current" : "")">@list.Title</a>
+                                index++;
+                            }
+
+
+                        </div>
+                        <div class="more-info-link">
+                            <a asp-page="/AllCategory">
+                                More
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="featuredContainer" style="position: relative; height: 536px;">
+                        @foreach (var list in itemCategories.Where(x => x.ShowInHomeMain).Take(5))
+                        {
+                            <div class="row @list.Title.Replace(" ", "-").ToLower()" style="position: absolute; left: 0px; top: 0px;">
+
+                                @{
+                                    List<ModelData.Models.Post> listsectionpost = await PostServices.GetPostsByCategory(list.Id);
+
+                                }
+                                @if (listsectionpost.Count() > 0)
+                                {
+                                    <div class="col-md-6 col-sm-12">
+                                        @{
+
+                                            ModelData.Models.Post firstpostcol6 = listsectionpost.FirstOrDefault();
+
+                                        }
+
+
+                                        <div class="img-overlay-70 img-scale-animate mb-30">
+                                            <a asp-page="/PostPage" asp-route-slug="@firstpostcol6.Slug">
+                                                <img src="@(firstpostcol6?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@firstpostcol6.Title" class="img-fluid width-100">
+                                            </a>
+                                            <div class="mask-content-lg">
+                                                <div class="topic-box-sm color-cinnabar mb-20">@firstpostcol6.Category.Title</div>
+                                                <div class="post-date-light">
+                                                    <ul>
+                                                        <li>
+                                                            <span>by</span>
+                                                            <a href="#">@firstpostcol6.PostBy</a>
+                                                        </li>
+                                                        <li>
+                                                            <span>
+                                                                <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                            </span>@{
+                                                                var displayDate = firstpostcol6.PublishedAt ?? firstpostcol6.Date;
+                                                            }
+                                                            @displayDate.ToString("MMMM dd, yyyy")
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <h2 class="title-medium-light size-lg">
+                                                    <a asp-page="/PostPage" asp-route-slug="@firstpostcol6.Slug">@firstpostcol6.Title</a>
+                                                </h2>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-12">
+                                        @foreach (var itemlist in listsectionpost.Skip(1).Take(4).ToList())
+                                        {
+
+                                            <div class="media mb-30">
+                                                <a class="width38-lg width40-md img-opacity-hover" asp-page="/PostPage" asp-route-slug="@itemlist.Slug">
+                                                    <img src="@(itemlist?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@itemlist.Title" class="img-fluid">
+                                                </a>
+                                                <div class="media-body">
+                                                    <div class="post-date-dark">
+                                                        <ul>
+                                                            <li>
+                                                                <span>
+                                                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                                                </span>@{
+                                                                    var itemlistdisplayDate = itemlist.PublishedAt ?? itemlist.Date;
+                                                                }
+                                                                @itemlistdisplayDate.ToString("MMMM dd, yyyy")
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                    <h3 class="title-medium-dark size-md mb-none">
+                                                        <a asp-page="/PostPage" asp-route-slug="@itemlist.Slug">@itemlist.Title</a>
+                                                    </h3>
+                                                </div>
+                                            </div>
+                                        }
+
+                                    </div>
+
+                                }
+                            </div>
+
+                        }
+
+                    </div>
+                </div>
+                @{
+                    // Get the 6th category (skip first 5 and take 1)
+                    var targetCategory = itemCategories
+                        .Where(c => c.ShowInHomeMain)
+                        .Skip(5)
+                        .FirstOrDefault();
+                }
+
+                @if (targetCategory != null)
+                {
+                    // Fetch posts for this category
+                    var posts = await PostServices.GetPostsByCategory(targetCategory.Id);
+
+                    if (posts.Any())
+                    {
+                        <div class="row tab-space1 mb-25 tab-rec-0-lay">
+                            <div class="col-12">
+                                <div class="topic-border color-apple mb-30 width-100">
+                                    <div class="topic-box-lg color-apple">@targetCategory.Title</div>
+                                </div>
+                            </div>
+
+                            @foreach (var post in posts.Take(6))@* ✅ take 6 posts for display *@
+                            {
+                                var imageUrl = post.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "~/assets/default.jpg";
+                                var displayDate = (post.PublishedAt ?? post.Date).ToString("MMMM dd, yyyy");
+
+                                <div class="col-lg-4 col-md-6 col-sm-6 col-6">
+                                    <div class="img-overlay-70 img-scale-animate mb-2">
+                                        <div class="mask-content-xs">
+                                            <div class="post-date-light">
+                                                <ul>
+                                                    <li>
+                                                        <span><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                                                        @displayDate
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <h3 class="title-medium-light">
+                                                <a asp-page="/PostPage" asp-route-slug="@post.Slug">@post.Title</a>
+                                            </h3>
+                                        </div>
+                                        <img src="@imageUrl" alt="@post.Title" class="img-fluid width-100">
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+
+            <partial name="_TopSideBar" />
+
+
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="ne-banner-layout1 mt-20-r text-center">
+                    @{
+                        ModelData.Models.Advert footerAdvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.Footer);
+                    }
+                    @if (footerAdvert != null)
+                    {
+                        <a href="@footerAdvert.Link" target="_blank" style="display: block; width: 100%;">
+                            <div style="width: 100%; height: 200px; background-image: url('@footerAdvert.ImageUrl'); background-size: cover; background-position: center; border-radius: 6px;"></div>
+                        </a>
+                    }
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</section>
+<section class="bg-body section-space-less30">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-12">
+                <div class="row">
+                    @{
+                        // Get the 4 most recent posts
+                        var otherPosts = (await PostServices.GetRecentPosts()) // Or GetPosts() depending on your service
+                                            .OrderByDescending(p => p.PublishedAt ?? p.Date)
+                                            .Skip(8)
+                                            .ToList();
+                    }
+                    @foreach (var post in otherPosts.Take(5))
+                    {
+                        var imageUrl = post.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "~/assets/default.jpg";
+
+                        <div class="col-xl-12 col-lg-6 col-md-6 col-sm-12">
+                            <div class="media media-none--lg mb-30">
+                                <div class="position-relative width-40">
+                                    <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="img-opacity-hover img-overlay-70">
+                                        @*<img src="@imageUrl" alt="@post.Title" class="img-fluid">*@
+                                        <div class="post-thumb" style="width: 100%; height: 200px; background-image: url('@imageUrl'); background-size: cover; background-position: center; border-radius: 6px;"></div>
+
+                                    </a>
+                                    <div class="topic-box-top-xs">
+                                        <div class="topic-box-sm color-cod-gray mb-20">@post.Category?.Title</div>
+                                    </div>
+                                </div>
+                                <div class="media-body p-mb-none-child media-margin30">
+                                    <div class="post-date-dark">
+                                        <ul>
+                                            <li><span>by</span> <a href="#">@post.PostBy</a></li>
+                                            <li>
+                                                <span><i class="fa fa-calendar"></i></span>
+                                                @(post.PublishedAt?.ToString("MMMM dd, yyyy"))
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <h3 class="title-semibold-dark size-lg mb-15">
+                                        <a asp-page="/PostPage" asp-route-slug="@post.Slug">@post.Title</a>
+                                    </h3>
+                                    <p>@post.ShortDescription</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="text-center mt-3">
+                    <a asp-page="/AllNews" class="btn btn-primary px-4">View More News</a>
+                </div>
+            </div>
+            <partial name="_TopSideBarBottom" />
+
+        </div>
+    </div>
+</section>
+
+
+
+
+
+@section Scripts {
+    
+
+
+}

@@ -1,0 +1,198 @@
+﻿@page
+@model AdminUI.Areas.Admin.Pages.Dashboard.IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var chartLabels = string.Join(",", Model.PostsByDay.Keys.Select(x => $"'{x}'"));
+    var chartData = string.Join(",", Model.PostsByDay.Values);
+}
+
+<div class="container">
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <a asp-area="Admin" asp-page="/Posts/Index" class="text-decoration-none text-dark">
+                <div class="card p-3 h-100 shadow-sm">
+                    <h5>Total Posts</h5>
+                    <p class="mb-0 fs-4">@Model.TotalPosts</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-area="Admin" asp-page="/Posts/Index" asp-route-filter="published" class="text-decoration-none text-dark">
+                <div class="card p-3 h-100 shadow-sm">
+                    <h5>Published</h5>
+                    <p class="mb-0 fs-4">@Model.PublishedPosts</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-area="Admin" asp-page="/Posts/Index" asp-route-filter="scheduled" class="text-decoration-none text-dark">
+                <div class="card p-3 h-100 shadow-sm">
+                    <h5>Scheduled</h5>
+                    <p class="mb-0 fs-4">@Model.ScheduledPosts</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a asp-area="Admin" asp-page="/Posts/Index" asp-route-filter="unpublished" class="text-decoration-none text-dark">
+                <div class="card p-3 h-100 shadow-sm">
+                    <h5>Unpublished</h5>
+                    <p class="mb-0 fs-4">@Model.UnpublishedPosts</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <a asp-area="Admin" asp-page="/Categories/Index" class="text-decoration-none text-dark">
+                <div class="card p-3 h-100 shadow-sm">
+                    <h5>Categories</h5>
+                    <p class="mb-0 fs-4">@Model.TotalCategories</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-area="Admin" asp-page="/Comments/Index" class="text-decoration-none text-dark">
+                <div class="card p-3 h-100 shadow-sm">
+                    <h5>Comments</h5>
+                    <p class="mb-0 fs-4">@Model.TotalComments</p>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-area="Admin" asp-page="/MediaFiles/Index" class="text-decoration-none text-dark">
+                <div class="card p-3 h-100 shadow-sm">
+                    <h5>Media Files</h5>
+                    <p class="mb-0 fs-4">@Model.TotalMediaFiles</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+
+    <div class="card mb-4 p-4">
+        <h4>Post Activity</h4>
+        <form method="get" class="form-inline mb-3">
+
+
+            <div class="row g-2 align-items-end">
+                <div class="col-auto"> 
+                    <input type="date" name="selectedDate" class="form-control" value="@Model.SelectedDate.ToString("yyyy-MM-dd")" />
+                </div>
+                <div class="col-auto">
+                    <select name="filterType" class="form-select">
+                        <option value="Week" selected="@("Week" == Model.FilterType)">Week</option>
+                        <option value="Month" selected="@("Month" == Model.FilterType)">Month</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" type="submit">Filter</button>
+                </div>
+            </div>
+
+        </form>
+        <canvas id="postChart" height="120"></canvas>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card p-3 mb-4">
+                <h5>Recent Comments</h5>
+                <ul class="list-group">
+                    @foreach (var comment in Model.RecentComments)
+                    {
+                        <li class="list-group-item">
+                            <strong>@comment.AuthorName</strong> on
+                            <a asp-page="/PostPage" asp-route-slug="@comment.Post.Slug" target="_blank">@comment.Post.Title</a> <br />
+                            <small>@comment.CreatedAt.ToString("g")</small><br />
+                            <span>@(comment.Content.Length > 50 ? comment.Content[..50] + "..." : comment.Content)</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-3 mb-4">
+                <h5>Top 10 Last Logged-in Users</h5>
+                <ul class="list-group">
+                    @foreach (var user in Model.LastLoggedInUsers)
+                    {
+                        <li class="list-group-item">
+                            <strong>@(user.FullName ?? user.UserName)</strong><br />
+                            Last login: @user.LastLoginAt?.ToLocalTime().ToString("g")
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Analytics Widget -->
+    <div class="card p-4">
+        <h5>Google Analytics</h5>
+        <!-- ✅ Replace the embed below with your own Analytics widget code -->
+        @if (!String.IsNullOrEmpty(Model.Setting.GoogleAnalyticsIframeWidget))
+        {
+            @Html.Raw(Model.Setting.GoogleAnalyticsIframeWidget)
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+    const labels = @Html.Raw(Json.Serialize(Model.PostsByDay.Keys));
+    const data = @Html.Raw(Json.Serialize(Model.PostsByDay.Values));
+
+    new Chart(document.getElementById('postChart'), {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Posts',
+                data: data,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        callback: function (value) {
+                            return Number.isInteger(value) ? value : null;
+                        }
+                    },
+                    afterDataLimits(scale) {
+                        const max = scale.max ?? 0;
+
+                        if (!scale.ticks) {
+                            scale.ticks = {};
+                        }
+
+                        if (max <= 10) {
+                            scale.ticks.stepSize = 1;
+                        } else if (max <= 50) {
+                            scale.ticks.stepSize = 5;
+                        } else if (max <= 100) {
+                            scale.ticks.stepSize = 10;
+                        } else if (max <= 300) {
+                            scale.ticks.stepSize = 20;
+                        } else if (max <= 1000) {
+                            scale.ticks.stepSize = 50;
+                        } else {
+                            scale.ticks.stepSize = 100;
+                        }
+                    }
+                }
+            }
+
+        }
+
+    });
+    </script>
+}

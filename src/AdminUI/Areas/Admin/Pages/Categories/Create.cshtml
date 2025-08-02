@@ -1,0 +1,68 @@
+@page
+@model AdminUI.Areas_Admin_Pages_Categories.CreateModel
+@{
+    ViewData["Title"] = "Create Category";
+}
+
+<h2>Create Category</h2>
+<hr />
+<form method="post">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="mb-3">
+                <label asp-for="Category.Title" class="form-label"></label>
+                <input asp-for="Category.Title" class="form-control" />
+                <span asp-validation-for="Category.Title" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Category.SortOrder" class="form-label"></label>
+                <input asp-for="Category.SortOrder" class="form-control" value="1" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Category.ParentCategoryId" class="form-label">Parent</label>
+                <select asp-for="Category.ParentCategoryId" asp-items="Model.ParentOptions" class="form-select">
+                    <option value="">None</option>
+                </select>
+            </div>
+
+            <div class="form-check form-switch">
+                <input asp-for="Category.IsPublished" class="form-check-input" />
+                <label asp-for="Category.IsPublished" class="form-check-label"></label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input asp-for="Category.ShowInMenu" class="form-check-input" />
+                <label asp-for="Category.ShowInMenu" class="form-check-label"></label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input asp-for="Category.ShowInFooter" class="form-check-input" />
+                <label asp-for="Category.ShowInFooter" class="form-check-label"></label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input asp-for="Category.ShowInHome" class="form-check-input" />
+                <label asp-for="Category.ShowInHome" class="form-check-label"></label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input asp-for="Category.ShowInHomeMain" class="form-check-input" />
+                <label asp-for="Category.ShowInHomeMain" class="form-check-label"></label>
+            </div>
+
+            <div class="form-check form-switch mb-3">
+                <input asp-for="Category.ShowInHomeList" class="form-check-input" />
+                <label asp-for="Category.ShowInHomeList" class="form-check-label"></label>
+            </div>
+
+            <button type="submit" class="btn btn-success">Save</button>
+            <a asp-page="Index" class="btn btn-secondary">Cancel</a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

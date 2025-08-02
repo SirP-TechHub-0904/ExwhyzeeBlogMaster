@@ -1,0 +1,59 @@
+ 
+.custom-form-x {
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+    padding: 2rem;
+}
+
+.custom-form-x .form-label {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.custom-form-x .form-check {
+    margin-bottom: 0.4rem;
+}
+
+.custom-form-x input[type="radio"],
+.custom-form-x input[type="checkbox"] {
+    transform: scale(1.2);
+    margin-right: 8px;
+}
+
+.custom-form-x .form-check-label {
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.custom-form-x textarea.form-control,
+.custom-form-x input.form-control {
+    min-height: 45px;
+    border-radius: 0.3rem;
+    font-size: 1rem;
+}
+
+.custom-form-x button[type="submit"] {
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.6rem 1.2rem;
+}
+
+@@media (max-width: 576px) {
+    .custom-form-x {
+        padding: 1.25rem;
+    }
+
+        .custom-form-x .form-check {
+            display: flex;
+            align-items: center;
+        }
+}
+
+.custom-form-x .form-check-input {
+    position: absolute;
+    margin-top: .25rem;
+    margin-left: 0;
+}
+
+ 

@@ -1,0 +1,91 @@
+@page
+@model AdminUI.Areas_Admin_Pages_WebPages.EditModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Edit Web Page</h2>
+        <a asp-page="./Index" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle"></i> Back to List
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="post">
+                <input type="hidden" asp-for="WebPage.Id" />
+                <input type="hidden" asp-for="WebPage.Slug" />
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="WebPage.Title" class="form-label fw-semibold"></label>
+                    <input asp-for="WebPage.Title" class="form-control" />
+                    <span asp-validation-for="WebPage.Title" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="WebPage.Content" class="form-label fw-semibold"></label>
+                    <textarea asp-for="WebPage.Content" class="form-control summernote_basic"></textarea>
+                    <span asp-validation-for="WebPage.Content" class="text-danger"></span>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" asp-for="WebPage.IsPublished" />
+                    <label class="form-check-label" asp-for="WebPage.IsPublished"></label>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" asp-for="WebPage.ShowInMenu" />
+                    <label class="form-check-label" asp-for="WebPage.ShowInMenu"></label>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" asp-for="WebPage.ShowInFooter" />
+                    <label class="form-check-label" asp-for="WebPage.ShowInFooter"></label>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="WebPage.MenuSortOrder" class="form-label fw-semibold"></label>
+                    <input asp-for="WebPage.MenuSortOrder" class="form-control" value="1" />
+                    <span asp-validation-for="WebPage.MenuSortOrder" class="text-danger"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="WebPage.SortOrder" class="form-label fw-semibold"></label>
+                    <input asp-for="WebPage.SortOrder" class="form-control" value="1" />
+                    <span asp-validation-for="WebPage.SortOrder" class="text-danger"></span>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" asp-for="WebPage.EnableDirectLink" />
+                    <label class="form-check-label" asp-for="WebPage.EnableDirectLink"></label>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="WebPage.DirectLinkUrl" class="form-label fw-semibold"></label>
+                    <input asp-for="WebPage.DirectLinkUrl" class="form-control" />
+                    <span asp-validation-for="WebPage.DirectLinkUrl" class="text-danger"></span>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" asp-for="WebPage.DirectLinkOpenInNewTab" />
+                    <label class="form-check-label" asp-for="WebPage.DirectLinkOpenInNewTab"></label>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Linked Form</label>
+                    <select asp-for="WebPage.WebPageFormId" class="form-select" asp-items="Model.FormOptions">
+                        <option value="">-- None --</option>
+                    </select>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-save"></i> Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

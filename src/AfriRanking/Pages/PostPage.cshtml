@@ -1,0 +1,267 @@
+﻿@page "/post/{slug}"
+@model AfriRanking.Pages.PostPageModel
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+}
+
+
+@{
+    var post = Model.Post;
+    var footerAd = Model.FooterAdvert;
+}
+
+<section class="breadcrumbs-area" style="background-image: url('@(siteSettings.SiteBreadcrumbImageUrl ?? "")');">
+    <div class="container">
+        <div class="breadcrumbs-content">
+            <h1>@post?.Category?.Title</h1>
+            <ul>
+                <li><a href="/">Home</a> -</li>
+                <li><a href="#">@post?.Category?.Title</a> -</li>
+                <li>@post?.Title</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="bg-body section-space-less30">
+    <div class="container">
+        <div class="row">
+            <!-- Main Post Content -->
+            <div class="col-lg-8 col-md-12 mb-30">
+                @if (post != null)
+                {
+                    <div class="news-details-layout1">
+                        <div class="position-relative mb-30">
+                            <img src="@post.PostImages?.FirstOrDefault()?.ImageUrl" alt="@post.Title" class="img-fluid w-100" style="max-height:400px; object-fit:cover;" />
+                            <div class="topic-box-top-sm">
+                                <div class="topic-box-sm color-cinnabar mb-20">@post.Category?.Title</div>
+                            </div>
+                        </div>
+                        <h2 class="title-semibold-dark size-c30">@post.Title</h2>
+                        <ul class="post-info-dark mb-30">
+                            <li><span>By</span> @post.PostBy</li>
+                            <li><i class="fa fa-calendar" aria-hidden="true"></i> @(post.PublishedAt?.ToString("MMM dd, yyyy"))</li>
+                            <li><i class="fa fa-eye" aria-hidden="true"></i> @post.ViewCount</li>
+                            <li><i class="fa fa-comments" aria-hidden="true"></i> @post.Comments?.Count</li>
+                        </ul>
+
+                        <div class="post-content" id="postContent">
+                            @Html.Raw(Model.ModifiedContentHtml)
+                        </div>
+
+
+                        @* Add your tags, share buttons, and related content if needed *@
+                    </div>
+                }
+            </div>
+
+            <!-- Sidebar Partial -->
+            <partial name="_TopSideBar" />
+
+        </div>
+    </div>
+</section>
+
+<section class="bg-body section-space-less30">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-md-12 mb-30">
+                <div class="news-details-layout1">
+
+
+
+                    <div class="post-share-area mb-40 item-shadow-1">
+                        <p>You can share this post!</p>
+                        <ul class="social-default item-inline">
+                            <li>
+                                <a href="https://www.facebook.com/sharer/sharer.php?u=@Model.PostUrl" target="_blank" class="facebook">
+                                    <i class="fa fa-facebook"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://twitter.com/intent/tweet?url=@Model.PostUrl&text=@Model.Post?.Title" target="_blank" class="twitter">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Model.PostUrl&title=@Model.Post?.Title" target="_blank" class="linkedin">
+                                    <i class="fa fa-linkedin"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://pinterest.com/pin/create/button/?url=@Model.PostUrl" target="_blank" class="pinterest">
+                                    <i class="fa fa-pinterest"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://wa.me/?text=@Uri.EscapeDataString($"{Model.Post?.Title} - {Model.PostUrl}")" target="_blank" class="whatsapp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="row no-gutters divider blog-post-slider mt-5">
+                        @if (Model.PreviousPost != null)
+                        {
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-6">
+                                <a asp-page="/PostPage" asp-route-slug="@Model.PreviousPost.Slug" class="prev-article">
+                                    <i class="fa fa-angle-left" aria-hidden="true"></i> Previous article
+                                </a>
+                                <h3 class="title-medium-dark pr-50">@Model.PreviousPost.Title</h3>
+                            </div>
+                        }
+                        @if (Model.NextPost != null)
+                        {
+                            <div class="col-lg-6 col-md-6 col-sm-6 col-6 text-right">
+                                <a asp-page="/PostPage" asp-route-slug="@Model.NextPost.Slug" class="next-article">
+                                    Next article <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                </a>
+                                <h3 class="title-medium-dark pl-50">@Model.NextPost.Title</h3>
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Comments Section -->
+                    @if (Model.Comments != null && Model.Comments.Any())
+                    {
+                        <div class="comments-area mt-5">
+                            <h2 class="fw-bold mb-4">Comments (<span id="commentCount">@Model.Comments?.Count</span>)</h2>
+
+                            <ul id="commentList" class="list-unstyled">
+                                @foreach (var comment in Model.Comments.Take(5))
+                                {
+                                    <li class="comment-box p-3 mb-3 border rounded bg-light">
+                                        <div class="d-flex justify-content-between align-items-center mb-1">
+                                            <strong>@comment.AuthorName</strong>
+                                            <small class="text-muted">@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")</small>
+                                        </div>
+                                        <div class="comment-text text-dark">@comment.Content</div>
+                                    </li>
+                                }
+                            </ul>
+
+                            @if (Model.Comments.Count > 5)
+                            {
+                                <div class="text-center mt-3">
+                                    <button id="loadMoreBtn" class="btn btn-outline-primary" data-skip="5" data-postid="@Model.Post.Id">
+                                        Load More Comments
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    }
+
+
+
+                    <div class="leave-comments">
+                        <h2 class="title-semibold-dark size-xl mb-40">Leave a Comment</h2>
+
+                        <form method="post">
+                            <div class="row">
+                                @if (!User.Identity.IsAuthenticated)
+                                {
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <input asp-for="NewComment.AuthorName" class="form-control" placeholder="Name*" required />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <div class="form-group">
+                                            <input asp-for="NewComment.AuthorEmail" class="form-control" placeholder="Email*" required />
+                                        </div>
+                                    </div>
+                                }
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <textarea asp-for="NewComment.Content" class="form-control" rows="5" placeholder="Your Comment*" required></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <div class="form-group mb-none">
+                                        <button type="submit" class="btn-ftg-ptp-45">Post Comment</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+            <partial name="_TopSideBarBottom" />
+
+
+
+        </div>
+    </div>
+</section>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#loadMoreBtn').on('click', function () {
+                let btn = $(this);
+                let skip = parseInt(btn.data('skip'));
+                let postId = btn.data('postid');
+
+                $.get(`/PostPage?handler=LoadComments&postId=${postId}&skip=${skip}&take=5`, function (data) {
+                    if (data.length === 0) {
+                        btn.remove(); // No more comments
+                    } else {
+                        data.forEach(c => {
+                            $('#commentList').append(`
+                                                            <li class="comment-box p-3 mb-3 border rounded bg-light">
+                                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                                    <strong>${c.authorName}</strong>
+                                                                    <small class="text-muted">${c.createdAt}</small>
+                                                                </div>
+                                                                <div class="comment-text text-dark">${c.content}</div>
+                                                            </li>
+                                                        `);
+                        });
+
+                        // Increment skip
+                        btn.data('skip', skip + data.length);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+    <script>
+    $(document).ready(function () {
+        var alreadyViewed = sessionStorage.getItem("viewedPost_@Model.Post.Id");
+        if (alreadyViewed) return;
+
+        var postId = @Model.Post.Id;
+
+        var observer = new IntersectionObserver(function (entries, obs) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    $.get(window.location.pathname + "?handler=ViewCount&postId=" + postId, function (res) {
+                        if (res.success) {
+                            sessionStorage.setItem("viewedPost_" + postId, "true");
+                        }
+                    });
+                    obs.disconnect();
+                }
+            });
+        }, { threshold: 0.4 });
+
+        var target = document.getElementById("postContent");
+        if (target) observer.observe(target);
+    });
+    </script>
+
+
+
+
+}
+

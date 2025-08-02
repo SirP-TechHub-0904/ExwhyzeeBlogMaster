@@ -1,0 +1,63 @@
+﻿@page
+@model AfriRanking.Pages.AllCategoryModel
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+}
+<section class="breadcrumbs-area" style="background-image: url('@(siteSettings.SiteBreadcrumbImageUrl ?? "")');">
+    <div class="container">
+        <div class="breadcrumbs-content">
+            <h1>Browse Categories</h1>
+            <ul>
+                <li><a href="/">Home</a> -</li>
+                <li>Browse Categories</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="bg-body section-space-less30">
+    <div class="container">
+        <div class="row">
+            <!-- Main Post Content -->
+            <div class="col-lg-8 col-md-12 mb-30">
+                <div class="row">
+
+                    @foreach (var category in Model.MainCategories)
+                    {
+                        <div class="col-md-6 mb-4">
+                            <div class="p-4 bg-white shadow-sm rounded h-100">
+                                <h5 class="mb-2">
+                                    <a asp-page="/CategoryPage" asp-route-slug="@category.Slug" class="text-primary fw-bold">
+                                        @category.Title
+                                    </a>
+                                </h5>
+
+                                @if (category.Children?.Any() == true)
+                                {
+                                    <ul class="list-unstyled ms-3 mt-2">
+                                        @foreach (var sub in category.Children.OrderBy(c => c.SortOrder))
+                                        {
+                                            <li class="mb-1">
+                                                <i class="bi bi-chevron-right small text-muted"></i>
+                                                <a asp-page="/CategoryPage" asp-route-slug="@sub.Slug" class="text-secondary">@sub.Title</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            <!-- Sidebar Partial -->
+            <partial name="_TopSideBar" />
+        </div>
+    </div>
+</section>
+
