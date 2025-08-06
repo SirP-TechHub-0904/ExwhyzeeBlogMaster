@@ -1,0 +1,110 @@
+﻿@page
+@model Enewspaper.Pages.SearchModel
+@{
+    ViewData["Title"] = $"Search Results for '{Model.Query}'";
+}
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+}
+<section class="breadcrumbs-area" style="background-image: url('@(siteSettings.SiteBreadcrumbImageUrl ?? "")');">
+    <div class="container">
+        <div class="breadcrumbs-content">
+            <h1>Search</h1>
+            <ul>
+                <li><a href="/">Home</a> -</li>
+                <li>Search </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="bg-body section-space-less30">
+    <div class="container">
+        <div class="row">
+            <!-- Main Post Content -->
+            <div class="col-lg-8 col-md-12 mb-30">
+                <form method="get" class="mb-5">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search..." asp-for="Query" />
+                        <button class="btn btn-dark" type="submit">Search</button>
+                    </div>
+                </form>
+                <h2 class="mb-4">Search Results for "<strong>@Model.Query</strong>"</h2>
+
+
+                @if (Model.Results.Any())
+                {
+                    <div class="row">
+
+                        <div id="searchResults" class="row">
+                            @foreach (var result in Model.Results.Take(20))
+                            {
+                                <partial name="_SearchCard" model="result" />
+                            }
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <button id="loadMoreBtn" class="btn btn-dark" data-page="2" data-query="@Model.Query">Load More</button>
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    <p>No results found.</p>
+                }
+            </div>
+
+
+            <partial name="_FullSideBar" />
+
+        </div>
+    </div>
+</section>
+
+
+
+
+@section Scripts {
+    <script>
+        document.getElementById('loadMoreBtn')?.addEventListener('click', async function () {
+            const btn = this;
+            const page = parseInt(btn.dataset.page);
+            const query = btn.dataset.query;
+
+            btn.disabled = true;
+            btn.textContent = 'Loading...';
+
+            const response = await fetch(`/search?handler=LoadMore&query=${encodeURIComponent(query)}&page=${page}`);
+            const result = await response.json();
+
+            if (result.success && result.data.length > 0) {
+                result.data.forEach(item => {
+                    const card = document.createElement('div');
+                    card.classList.add('col-md-12', 'mb-4', 'search-card');
+                    card.innerHTML = `
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body">
+                                    <h5 class="card-title"><a href="${item.url}" class="text-decoration-none text-primary">${item.title}</a></h5>
+                                    <small class="text-muted">${item.sourceType}</small>
+                                    ${item.publishedAt ? `<div><small class="text-muted">Published: ${new Date(item.publishedAt).toLocaleDateString()}</small></div>` : ''}
+                                    <p class="card-text mt-2">${item.snippet}</p>
+                                    <a href="${item.url}" class="btn btn-sm btn-outline-dark mt-2">Read More</a>
+                                </div>
+                            </div>`;
+                    document.getElementById('searchResults').appendChild(card);
+                });
+
+                btn.dataset.page = page + 1;
+                btn.disabled = false;
+                btn.textContent = 'Load More';
+            } else {
+                btn.style.display = 'none';
+            }
+        });
+    </script>
+}

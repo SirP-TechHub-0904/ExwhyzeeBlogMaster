@@ -58,6 +58,9 @@ namespace AfriRanking.Pages
             ViewData["MetaAuthor"] = Post.PostBy;
             ViewData["MetaPublished"] = Post.PublishedAt?.ToString("o");
             ViewData["MetaUrl"] = $"{Request.Scheme}://{Request.Host}/postpage?slug={Post.Slug}";
+            ViewData["MetaKeywords"] = (Post.Tags != null && Post.Tags.Any())
+    ? string.Join(", ", Post.Tags)
+    : string.Empty;
 
             // Handle MetaImage (absolute URL)
             var relativeImageUrl = Post.PostImages?.FirstOrDefault(p => p.IsDefault)?.ImageUrl ?? "/assets/default.jpg";
@@ -66,7 +69,7 @@ namespace AfriRanking.Pages
                 : $"{Request.Scheme}://{Request.Host}{relativeImageUrl}";
 
 
-            FooterAdvert = await _advertService.GetAdvertByPositionAsync(AdvertPosition.Footer);
+            FooterAdvert = await _advertService.GetAdvertByPositionAsync(AdvertPosition.BetweenPosts);
 
             if (!string.IsNullOrWhiteSpace(Post.Content) && FooterAdvert != null)
             {

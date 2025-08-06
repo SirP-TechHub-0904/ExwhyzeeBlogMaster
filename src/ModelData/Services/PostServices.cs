@@ -28,7 +28,7 @@ namespace ModelData.Services
         Task<List<Comment>> GetApprovedCommentsByPostIdAsync(int postId);
         Task AddCommentAsync(Comment comment);
 
-
+         
     }
 
 
@@ -36,6 +36,7 @@ namespace ModelData.Services
     {
         private readonly ApplicationDbContext _context;
 
+       
         public PostServices(ApplicationDbContext context)
         {
             _context = context;
@@ -121,6 +122,9 @@ namespace ModelData.Services
         public async Task<Post?> GetPreviousPostAsync(DateTime currentPostDate)
         {
             return await _context.Posts
+                                .Include(x => x.Category)
+                                .Include(x => x.PostImages)
+
                 .Where(p => p.IsPublished && (p.PublishedAt ?? p.Date) < currentPostDate)
                 .OrderByDescending(p => p.PublishedAt ?? p.Date)
                 .FirstOrDefaultAsync();
@@ -129,6 +133,8 @@ namespace ModelData.Services
         public async Task<Post?> GetNextPostAsync(DateTime currentPostDate)
         {
             return await _context.Posts
+                .Include(x=>x.Category)
+                .Include(x=>x.PostImages)
                 .Where(p => p.IsPublished && (p.PublishedAt ?? p.Date) > currentPostDate)
                 .OrderBy(p => p.PublishedAt ?? p.Date)
                 .FirstOrDefaultAsync();

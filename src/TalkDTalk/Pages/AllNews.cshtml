@@ -1,0 +1,170 @@
+﻿@page "/allnews"
+@model TalkDTalk.Pages.AllNewsModel
+
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+}
+
+ 
+<div class="main--breadcrumb">
+    <div class="container">
+        <ul class="breadcrumb">
+            <li>
+                <a href="/" class="btn-link">
+                    <i class="fa fm fa-home">
+                    </i>Home
+                </a>
+            </li>
+            <li>
+                <a asp-page="/AllCategory" class="btn-link">
+                    All Categories
+                </a>
+            </li>
+            <li class="active">
+                <span>
+                    All News
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="main-content--section pbottom--30">
+
+    <div class="container">
+
+        <div class="row" style="transform: none;">
+            <div class="main--content col-md-8">
+                <div class="col-md-12 ptop--30 pbottom--30">
+
+
+
+                    @if (!Model.Posts.Any())
+                    {
+                        <div class="col-12">
+                            <div class="alert alert-info">No posts available in this category.</div>
+                        </div>
+                    }
+                    @{
+                        // Get the 4 most recent posts
+                        var otherPosts = Model.Posts;
+
+                    }
+
+                    <div class="row">
+                        <div class="post-col" style="width: 100%;">
+                            <div class="post--items post--items-3" data-ajax-content="outer">
+                                <ul class="nav new-xm-post" data-ajax-content="inner" id="post-container">
+                                    @foreach (var post in otherPosts)
+                                    {
+                                        <li style="float: left; width: 50%; padding: 10px 15px 30px;">
+                                            <div class="post--item post--layout-3">
+                                                <div class="post--img">
+                                                    <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="thumb">
+                                                        <img src="@(post?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@post.Title" data-rjs="2" />
+                                                    </a>
+                                                    <div class="post--info">
+                                                        <ul class="nav meta">
+                                                            <li>
+                                                                <a asp-page="/PostPage" asp-route-slug="@post.Slug">
+                                                                    @(post.PublishedAt?.ToString("MMMM dd, yyyy"))
+                                                                </a>
+                                                            </li>
+                                                        </ul>
+                                                        <div class="title">
+                                                            <h3 class="h4">
+                                                                <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="btn-link">
+                                                                    @post.Title
+                                                                </a>
+                                                            </h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    @if (Model.TotalPages > 1 && Model.CurrentPage < Model.TotalPages)
+                    {
+                        <div class="text-center">
+                            <button id="load-more-btn" class="btn btn-primary mt-4" data-page="@Model.CurrentPage" data-total="@Model.TotalPages">
+                                Load More
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="main--sidebar col-md-4 col-sm-5 ptop--30 pbottom--30" data-sticky-content="true" style="position: relative; overflow: visible; box-sizing: border-box; min-height: 1px;">
+                <div class="sticky-content-inner" style="padding-top: 0px; padding-bottom: 1px; position: static; transform: none;">
+
+                    <partial name="_TopSideBar" />
+
+                    <partial name="_TopSideBarBottom" />
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        $(document).on("click", "#load-more-btn", function () {
+            var button = $(this);
+            var currentPage = parseInt(button.data("page")) || 1;
+            var page = currentPage + 1;
+            var total = parseInt(button.data("total")) || 1;
+            var tab = button.data("tab") || "featured";
+
+            console.log("➡ Load More: tab =", tab, ", page =", page);
+
+            $.get(`/allnews?handler=LoadMore&page=${page}`, function (response) {
+                if (response.success && response.posts.length > 0) {
+                    let postsHtml = '';
+
+                    $.each(response.posts, function (i, post) {
+                        postsHtml += `
+<li style="float: left; width: 50%; padding: 0 15px 30px;">
+        <div class="post--item post--layout-3">
+            <div class="post--img">
+                <a href="/postpage?slug=${post.slug}" class="thumb">
+                    <img src="${post.imageUrl}" alt="${post.title}" data-rjs="2" />
+                </a>
+                <div class="post--info">
+                    <ul class="nav meta">
+                        <li><a href="/postpage?slug=${post.slug}">${post.publishedAt}</a></li>
+                    </ul>
+                    <div class="title">
+                        <h3 class="h4">
+                            <a href="/postpage?slug=${post.slug}" class="btn-link">${post.title}</a>
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+</li>`;
+                    });
+
+                    $('#post-container').append(postsHtml);
+
+                    button.data("page", page); // Update page
+                    if (page >= total) {
+                        button.remove(); // remove if no more pages
+                    }
+                }
+            });
+        });
+    </script>
+}
+ 

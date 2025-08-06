@@ -1,0 +1,620 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+@using ModelData.Services;
+@inject ICategoryServices CategoryServices
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+@{
+    List<ModelData.Models.Category> itemCategories = await CategoryServices.GetCategoriesAsync();
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts();
+}
+<!-- Hero Section Start -->
+
+@{
+    var heroPosts = itemPost?
+        .Where(x => x != null)
+        .OrderBy(x => x.HeroOrder)
+        .Take(5)
+        .ToList() ?? new();
+
+    var p1 = heroPosts.ElementAtOrDefault(0);
+    var p2 = heroPosts.ElementAtOrDefault(1);
+    var p3 = heroPosts.ElementAtOrDefault(2);
+    var p4 = heroPosts.ElementAtOrDefault(3);
+    var p5 = heroPosts.ElementAtOrDefault(4);
+}
+
+<div class="hero-section section fix hero-01-post">
+    <div class="container-fluid p-0">
+        <div class="row">
+            <div class="col">
+                <div class="row row-1">
+
+                    @* First Post *@
+                    @if (p1 != null)
+                    {
+                        <div class="col-lg-4 col-md-6 col-12">
+                            <div class="post post-large post-overlay hero-post">
+                                <div class="post-wrap">
+                                    <div class="image">
+                                        <img src="@(p1?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@p1.Title" />
+                                    </div>
+                                    <a asp-page="/CategoryPage" asp-route-slug="@p1.Category?.Slug" class="category @p1.Category?.Title?.ToLowerInvariant()">
+                                        @p1.Category?.Title
+                                    </a>
+                                    <div class="content">
+                                        <h2 class="title">
+                                            <a asp-page="/PostPage" asp-route-slug="@p1.Slug">@p1.Title</a>
+                                        </h2>
+                                        <div class="meta fix">
+                                            <span class="meta-item date">
+                                                <i class="fa fa-clock-o"></i>
+                                                @(p1.PublishedAt?.ToString("dd MMMM yyyy") ?? "")
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @* Second Post *@
+                    @if (p2 != null)
+                    {
+                        <div class="col-lg-4 col-md-6 col-12">
+                            <div class="post post-large post-overlay hero-post">
+                                <div class="post-wrap">
+                                    <div class="image">
+                                        <img src="@(p2?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@p2.Title" />
+                                    </div>
+                                    <a asp-page="/CategoryPage" asp-route-slug="@p2.Category?.Slug" class="category @p2.Category?.Title?.ToLowerInvariant()">
+                                        @p2.Category?.Title
+                                    </a>
+                                    <div class="content">
+                                        <h2 class="title">
+                                            <a asp-page="/PostPage" asp-route-slug="@p2.Slug">@p2.Title</a>
+                                        </h2>
+                                        <div class="meta fix">
+                                            <span class="meta-item date">
+                                                <i class="fa fa-clock-o"></i>
+                                                @(p2.PublishedAt?.ToString("dd MMMM yyyy") ?? "")
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @* Third, Fourth, Fifth Posts (Right Column) *@
+                    <div class="order-lg-2 col-lg-4 col-12">
+                        @if (p3 != null)
+                        {
+                            <div class="post post-overlay hero-post">
+                                <div class="post-wrap">
+                                    <div class="image">
+                                        <img src="@(p3?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@p3.Title" />
+                                    </div>
+                                    <a asp-page="/CategoryPage" asp-route-slug="@p3.Category?.Slug" class="category @p3.Category?.Title?.ToLowerInvariant()">
+                                        @p3.Category?.Title
+                                    </a>
+                                    <div class="content">
+                                        <h4 class="title">
+                                            <a asp-page="/PostPage" asp-route-slug="@p3.Slug">@p3.Title</a>
+                                        </h4>
+                                        <div class="meta fix">
+                                            <span class="meta-item date">
+                                                <i class="fa fa-clock-o"></i>
+                                                @(p3.PublishedAt?.ToString("dd MMMM yyyy") ?? "")
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                        <div class="row row-1">
+                            @if (p4 != null)
+                            {
+                                <div class="col-md-6 col-12">
+                                    <div class="post post-overlay hero-post">
+                                        <div class="post-wrap">
+                                            <div class="image">
+                                                <img src="@(p4?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@p4.Title" />
+                                            </div>
+                                            <a asp-page="/CategoryPage" asp-route-slug="@p4.Category?.Slug" class="category @p4.Category?.Title?.ToLowerInvariant()">
+                                                @p4.Category?.Title
+                                            </a>
+                                            <div class="content">
+                                                <h4 class="title">
+                                                    <a asp-page="/PostPage" asp-route-slug="@p4.Slug">@p4.Title</a>
+                                                </h4>
+                                                <div class="meta fix">
+                                                    <span class="meta-item date">
+                                                        <i class="fa fa-clock-o"></i>
+                                                        @(p4.PublishedAt?.ToString("dd MMMM yyyy") ?? "")
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            @if (p5 != null)
+                            {
+                                <div class="col-md-6 col-12">
+                                    <div class="post post-overlay hero-post">
+                                        <div class="post-wrap">
+                                            <div class="image">
+                                                <img src="@(p5?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@p5.Title" />
+                                            </div>
+                                            <a asp-page="/CategoryPage" asp-route-slug="@p5.Category?.Slug" class="category @p5.Category?.Title?.ToLowerInvariant()">
+                                                @p5.Category?.Title
+                                            </a>
+                                            <div class="content">
+                                                <h4 class="title">
+                                                    <a asp-page="/PostPage" asp-route-slug="@p5.Slug">@p5.Title</a>
+                                                </h4>
+                                                <div class="meta fix">
+                                                    <span class="meta-item date">
+                                                        <i class="fa fa-clock-o"></i>
+                                                        @(p5.PublishedAt?.ToString("dd MMMM yyyy") ?? "")
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Hero Section End -->
+<!-- Popular Section Start -->
+<div class="pp-most-pp popular-section section bg-dark pt-50 pb-50 ">
+    <div class="container-fluid">
+        <!-- Popular Post Slider Start -->
+        <div class="popular-post-slider">
+            <!-- Repeat this block dynamically -->
+            @{ var isFeaturedPosts = itemPost?
+                         .Where(x => x != null)
+                         .OrderBy(x => x.IsFeatured)
+                         .Take(5)
+                         .ToList() ?? new();
+
+            }
+            @foreach (var list in isFeaturedPosts)
+            {
+                <div class="post post-small post-list post-dark popular-post">
+                    <div class="post-wrap">
+                        <!-- Image -->
+                        <a class="image" asp-page="/PostPage" asp-route-slug="@list.Slug">
+                            <img src="@(list?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@list.Title">
+                        </a>
+                        <!-- Content -->
+                        <div class="content fix">
+                            <h5 class="title">
+                                <a asp-page="/PostPage" asp-route-slug="@list.Slug">@list.Title</a>
+                            </h5>
+                            <p>@list.ShortDescription</p>
+                            <a asp-page="/PostPage" asp-route-slug="@list.Slug" class="read-more">continue reading</a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+            <!-- Add more post blocks as needed -->
+        </div>
+        <!-- Popular Post Slider End -->
+    </div>
+</div>
+
+<!-- Popular Section End -->
+<!-- Post Section Start -->
+<div class="post-section section mt-50">
+    <div class="container">
+        <!-- Feature Post Row Start -->
+        <div class="row">
+            <div class="col-lg-8 col-12 mb-50">
+                @if(itemCategories.Count() > 0){   
+                    <!-- Post Block Wrapper Start -->
+                <div class="post-block-wrapper">
+                    <!-- Post Block Head Start -->
+                    @{
+                        // Get the 6th category (skip first 5 and take 1)
+                        var targetCategory = itemCategories
+                            .Where(c => c.ShowInHomeMain)
+                            .Take(1)
+                            .FirstOrDefault();
+                    }
+
+                    <div class="head fashion-head">
+                        <!-- Title -->
+                        <h4 class="title">
+                            @targetCategory.Title
+                        </h4>
+                    </div>
+                    <!-- Post Block Head End -->
+                    <!-- Post Block Body Start -->
+                    <div class="body pb-0">
+                        <!-- Tab Content Start-->
+                        <div class="tab-content">
+                            <!-- Tab Pane Start-->
+                            <div class="tab-pane fade show active" id="fashion-cat-2" role="tabpanel">
+                                @{
+                                    var posts = await PostServices.GetPostsByCategory(targetCategory.Id);
+
+                                    if (posts.Any())
+                                    {
+                                        var leftColumnPosts = posts.Where((post, index) => index % 2 == 0).Take(3).ToList();  // Even indexes
+                                        var rightColumnPosts = posts.Where((post, index) => index % 2 != 0).Take(3).ToList(); // Odd indexes
+                                        <div class="row">
+                                            <div class="col-md-6 col-12 mb-20">
+                                                <!-- Post Small Start -->
+                                                @foreach (var list in leftColumnPosts)
+                                                {
+                                                    <div class="post post-small post-list fashion-post post-separator-border post-list-pull">
+                                                        <div class="post-wrap">
+                                                            <!-- Image -->
+                                                            <a class="image" asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                                <img src="@(list?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@list.Title">
+                                                            </a>
+                                                            <!-- Content -->
+                                                            <div class="content">
+                                                                <!-- Title -->
+                                                                <h5 class="title">
+                                                                    <a asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                                        @list.Title
+                                                                    </a>
+                                                                </h5>
+                                                                <!-- Meta -->
+                                                                <div class="meta fix">
+                                                                    <span class="meta-item date">
+                                                                        <i class="fa fa-clock-o">
+                                                                        </i>@(list.PublishedAt?.ToString("MMMM dd, yyyy"))
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                                <!-- Post Small End -->
+
+                                            </div>
+                                            <!-- Small Post Wrapper End -->
+                                            <div class="col-md-6 col-12 mb-20">
+                                                @foreach (var list in rightColumnPosts)
+                                                {
+                                                    <div class="post post-small post-list fashion-post post-separator-border post-list-pull">
+                                                        <div class="post-wrap">
+                                                            <!-- Image -->
+                                                            <a class="image" asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                                <img src="@(list?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@list.Title">
+                                                            </a>
+                                                            <!-- Content -->
+                                                            <div class="content">
+                                                                <!-- Title -->
+                                                                <h5 class="title">
+                                                                    <a asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                                        @list.Title
+                                                                    </a>
+                                                                </h5>
+                                                                <!-- Meta -->
+                                                                <div class="meta fix">
+                                                                    <span class="meta-item date">
+                                                                        <i class="fa fa-clock-o">
+                                                                        </i>@(list.PublishedAt?.ToString("MMMM dd, yyyy"))
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                            <!-- Tab Pane End-->
+                        </div>
+                        <!-- Tab Content End-->
+                    </div>
+                    <!-- Post Block Body End -->
+                </div>
+                <!-- Post Block Wrapper End -->
+                <!-- Post Block Wrapper Start -->
+                <div class="post-block-wrapper">
+                    <!-- Post Block Head Start -->
+                    @{
+                        // Get the 6th category (skip first 5 and take 1)
+                        var subTCategory = itemCategories
+                            .Where(c => c.ShowInHomeMain)
+                            .Skip(1)
+                            .Take(1)
+                            .FirstOrDefault();
+                    }
+
+                    <div class="head life-style-head">
+                        <!-- Title -->
+                        <h4 class="title">
+                            @subTCategory.Title
+                        </h4>
+                    </div>
+                    <!-- Post Block Head End -->
+                    <!-- Post Block Body Start -->
+                    <div class="body">
+                        <!-- Tab Content Start-->
+                        <div class="tab-content">
+                            <!-- Tab Pane Start-->
+
+                            <div class="tab-pane fade show active" id="life-style-cat-1" role="tabpanel">
+                                <div class="row">
+
+                                    @{
+                                        var listPosts = await PostServices.GetPostsByCategory(subTCategory.Id);
+
+                                        if (listPosts.Any())
+                                        {
+                                            var firstColumnPosts = listPosts.Take(1).FirstOrDefault();
+                                            var listColumnPosts = listPosts.Skip(1).Take(6);
+
+                                            if (firstColumnPosts != null)
+                                            {
+                                                <!-- Overlay Post Start -->
+                                                <div class="post post-large post-overlay life-style-post post-separator-border col-12">
+                                                    <div class="post-wrap">
+                                                        <!-- Image -->
+                                                        <div class="image">
+                                                            <img src="@(firstColumnPosts?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@firstColumnPosts.Title">
+                                                        </div>
+                                                        <!-- Content -->
+                                                        <div class="content">
+                                                            <!-- Title -->
+                                                            <h4 class="title">
+                                                                <a asp-page="/PostPage" asp-route-slug="@firstColumnPosts.Slug">
+                                                                    @firstColumnPosts.Title
+                                                                </a>
+                                                            </h4>
+                                                            <!-- Meta -->
+                                                            <div class="meta fix">
+                                                                <a href="#" class="meta-item author">
+                                                                    <i class="fa fa-user">
+                                                                    </i> @firstColumnPosts.PostBy
+                                                                </a>
+                                                                <span class="meta-item date">
+                                                                    <i class="fa fa-clock-o">
+                                                                    </i>@(firstColumnPosts.PublishedAt?.ToString("MMMM dd, yyyy"))
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Overlay Post End -->
+                                            }
+                                            <!-- Small Post Start -->
+
+                                            @foreach (var list in listColumnPosts)
+                                            {
+
+                                                <div class="post post-small post-list life-style-post post-separator col-md-6 col-12">
+                                                    <div class="post-wrap">
+                                                        <!-- Image -->
+                                                        <a class="image" asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                            <img src="@(list?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt=" @list.Title">
+                                                        </a>
+                                                        <!-- Content -->
+                                                        <div class="content">
+                                                            <!-- Title -->
+                                                            <h5 class="title">
+                                                                <a asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                                    @list.Title
+                                                                </a>
+                                                            </h5>
+                                                            <!-- Meta -->
+                                                            <div class="meta fix">
+                                                                <span class="meta-item date">
+                                                                    <i class="fa fa-clock-o">
+                                                                    </i>@(list.PublishedAt?.ToString("MMMM dd, yyyy"))
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Small Post End -->
+                                            }
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <!-- Tab Pane End-->
+                        </div>
+                        <!-- Tab Content End-->
+                    </div>
+                    <!-- Post Block Body End -->
+                </div>
+                <!-- Post Block Wrapper End -->
+                                        }
+            </div>
+            <!-- Sidebar Start -->
+            <div class="col-lg-4 col-12 mb-50">
+                <div class="row">
+
+                    <partial name="_TopSideBar" />
+
+                </div>
+            </div>
+            <!-- Sidebar End -->
+        </div>
+
+        <div class="row mb-50">
+            <div class="col-12">
+                @{
+                    ModelData.Models.Advert footerAdvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.Footer);
+                }
+                @if (footerAdvert != null)
+                {
+                    <a href="@footerAdvert.Link" target="_blank" class="post-middle-banner">
+                        <div style="width: 100%; height: 200px; background-image: url('@footerAdvert.ImageUrl'); background-size: cover; background-position: center; border-radius: 6px;"></div>
+                    </a>
+                }
+
+            </div>
+        </div>
+
+        <!-- Gadgets Post Row End -->
+        <!-- Sports & Travel Post Row Start -->
+        <div class="row">
+            <div class="col-lg-8 col-md-6 col-12 mb-50">
+                <!-- Post Block Wrapper Start -->
+                <div class="post-block-wrapper">
+                    @{
+                        // Get the 4 most recent posts
+                        var otherPosts = (await PostServices.GetRecentPosts()) // Or GetPosts() depending on your service
+                                            .OrderByDescending(p => p.PublishedAt ?? p.Date)
+                                            .Skip(5)
+                                            .ToList();
+                    }
+
+                    <!-- Post Block Body Start -->
+                    <div class="body p-home-body-01">
+                        <div class="row">
+                            @foreach (var post in otherPosts.Take(6))
+                            {
+                                <div class="col-md-4 col-12 mb-50">
+                                    <div class="post sports-post post-separator-border">
+                                        <div class="post-wrap">
+                                            <!-- Image -->
+                                            <a class="image" asp-page="/PostPage" asp-route-slug="@post.Slug">
+                                                <img src="@(post?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@post.Title">
+                                            </a>
+                                            <!-- Content -->
+                                            <div class="content">
+                                                <!-- Title -->
+                                                <h5 class="title">
+                                                    <a asp-page="/PostPage" asp-route-slug="@post.Slug">
+                                                        @post.Title
+                                                    </a>
+                                                </h5>
+                                                <!-- Meta -->
+                                                <div class="meta fix">
+                                                    <a class="meta-item author">
+                                                        <i class="fa fa-user">
+                                                        </i> @post.PostBy
+                                                    </a>
+                                                    <span class="meta-item date">
+                                                        <i class="fa fa-clock-o">
+                                                        </i>@(post.PublishedAt?.ToString("MMMM dd, yyyy"))
+                                                    </span>
+                                                </div>
+                                                <p>
+                                                    @post.ShortDescription
+                                                </p>
+                                                <!-- Read More -->
+                                                <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="read-more">
+                                                    read-more
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Small Post End -->
+                                </div>
+                            }
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <a asp-page="/AllNews" class="btn btn-primary px-4">View More News</a>
+                        </div>
+                    </div>
+                    <!-- Post Block Body End -->
+                </div>
+                <!-- Post Block Wrapper End -->
+            </div>
+            <div class="col-lg-4 col-12 mb-50">
+                <div class="row">
+                    <partial name="_TopSideBarBottom" />
+                </div>
+            </div>
+        </div>
+        <!-- Banner Row End -->
+        <!-- Intrepreneurship, Entertainment & Food Post Row Start -->
+        <!-- Technology, Fashion & Other Post Row End -->
+    </div>
+</div>
+<!-- Post Section End -->
+@section Scripts {
+
+    <script>
+        $(document).ready(function () {
+            $('.popular-post-slider').slick({
+                infinite: true,
+                slidesToShow: 3,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 3000,
+                arrows: true,
+                dots: true,
+                responsive: [
+                    {
+                        breakpoint: 992,
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 1
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('.four-column-post-carousel').slick({
+                infinite: true,
+                slidesToShow: 4,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 3000,
+                arrows: true,
+                dots: false,
+                responsive: [
+                    {
+                        breakpoint: 1200,
+                        settings: {
+                            slidesToShow: 3
+                        }
+                    },
+                    {
+                        breakpoint: 992,
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    },
+                    {
+                        breakpoint: 576,
+                        settings: {
+                            slidesToShow: 1
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+}

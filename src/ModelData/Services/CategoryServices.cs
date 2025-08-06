@@ -25,31 +25,27 @@ namespace ModelData.Services
         }
 
         public async Task<List<Category>> GetCategoriesAsync()
-        { 
+        {
             var query = _context.Categories
                 .Include(c => c.ParentCategory)
                 .Include(c => c.Children)
                 .Include(c => c.Posts)
-                .Where(c => c.IsPublished);
+                .Where(c => c.IsPublished)
+                .Select(c => new
+                {
+                    Category = c,
+                    LatestPostDate = c.Posts
+                        .Where(p => p.IsPublished)
+                        .Max(p => (DateTime?)p.PublishedAt) ?? DateTime.MinValue
+                });
 
-            //if (showInMenu.HasValue)
-            //    query = query.Where(c => c.ShowInMenu == showInMenu.Value);
-
-            //if (showInFooter.HasValue)
-            //    query = query.Where(c => c.ShowInFooter == showInFooter.Value);
-
-            //if (showInHome.HasValue)
-            //    query = query.Where(c => c.ShowInHome == showInHome.Value);
-
-            //if (showInHomeMain.HasValue)
-            //    query = query.Where(c => c.ShowInHomeMain == showInHomeMain.Value);
-
-            //if (showInHomeList.HasValue)
-            //    query = query.Where(c => c.ShowInHomeList == showInHomeList.Value);
-
-            return await query
-                .OrderBy(c => c.SortOrder)
+            var result = await query
+                .OrderByDescending(x => x.LatestPostDate)
+                .Select(x => x.Category)
                 .ToListAsync();
+
+            return result;
         }
+
     }
 }

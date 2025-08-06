@@ -1,0 +1,93 @@
+﻿@using ModelData.Services;
+@inject ICategoryServices CategoryServices
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+
+
+@{
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts(showInHero: true);
+
+}
+ 
+<div class="widget">
+    <div class="ad--widget">
+        @{
+            ModelData.Models.Advert sideadvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.SidebarTop);
+        }
+        @if (sideadvert != null)
+        {
+            <a href="@sideadvert.Link" target="_blank">
+                <img src="@sideadvert.ImageUrl" alt="@sideadvert.Title" class="img-fluid" data-rjs="2" data-rjs-processed="true">
+            </a>
+        }
+         
+    </div>
+</div>
+<!-- Sidebar End -->
+<div class="widget">
+    <div class="widget--title">
+        <h2 class="h4">
+            Recent News
+        </h2>
+        <i class="icon fa fa-newspaper-o">
+        </i>
+    </div>
+    <div class="list--widget list--widget-1">
+
+        <div class="post--items post--items-3" data-ajax-content="outer">
+            <ul class="nav" data-ajax-content="inner">
+                @{
+                    // Get the 4 most recent posts
+                    var recentPosts = (await PostServices.GetRecentPosts()) // Or GetPosts() depending on your service
+                                        .OrderByDescending(p => p.PublishedAt ?? p.Date)
+                                        .Take(8)
+                                        .ToList();
+                }
+
+                @foreach (var post in recentPosts)
+                {
+                    var imageUrl = post.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "~/assets/default.jpg";
+
+                    <li>
+                        <div class="post--item post--layout-3">
+                            <div class="post--img">
+                                <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="thumb">
+                                    <img src="@imageUrl" alt="@post.Title" data-rjs="2" data-rjs-processed="true">
+                                </a>
+                                <div class="post--info">
+                                    <ul class="nav meta">
+                                        <li>
+                                            <a href="#">
+                                                @post.PostBy
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                @(post.PublishedAt?.ToString("dd MMM, yyyy"))
+
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="title">
+                                        <h3 class="h4">
+                                            <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="btn-link">
+                                                @post.Title
+                                            </a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+

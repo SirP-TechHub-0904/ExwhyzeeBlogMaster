@@ -24,6 +24,8 @@ namespace ModelData.Models
         SidebarBottom,
         Footer,
         HeroSection,
-        BetweenPosts
+        BetweenPosts,
+        MainTop,
+        Middle
     }
 }

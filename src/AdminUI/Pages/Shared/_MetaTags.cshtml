@@ -7,9 +7,12 @@
     string title = ViewData["MetaTitle"] as string ?? siteSettings.SiteTitle ?? "AfriRanking";
     string description = ViewData["MetaDescription"] as string ?? siteSettings.SiteDescription ?? "";
     string author = ViewData["MetaAuthor"] as string ?? siteSettings.MetaAuthor ?? "Admin";
+    string keywords = ViewData["MetaKeywords"] as string ?? siteSettings.MetaKeywords ?? "";
+
     string imageUrl = ViewData["MetaImage"] as string ?? siteSettings.SiteLogoUrl ?? "/assets/default.jpg";
     string url = ViewData["MetaUrl"] as string ?? $"{Context.Request.Scheme}://{Context.Request.Host}{Context.Request.Path}";
     string fullImageUrl = imageUrl.StartsWith("http") ? imageUrl : $"{baseUrl}{imageUrl}";
+
     var plainDescription = System.Text.RegularExpressions.Regex.Replace(description, "<.*?>", "");
 }
 
@@ -17,6 +20,7 @@
 <meta name="description" content="@plainDescription" />
 <meta name="author" content="@author" />
 <meta name="robots" content="index, follow" />
+<meta name="keywords" content="@keywords" />
 
 <!-- Open Graph -->
 <meta property="og:type" content="article" />

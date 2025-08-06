@@ -1,0 +1,376 @@
+﻿@page "/post/{slug}"
+@model Enewspaper.Pages.PostPageModel
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+}
+
+
+@{
+    var post = Model.Post;
+    var footerAd = Model.FooterAdvert;
+}
+<div class="post-header-section section mt-30 mb-30">
+    <div class="container">
+        <div class="row row-1">
+
+            <!-- Page Banner Start -->
+            <div class="col-12">
+                <div class="post-header" style="background-image: url(@(siteSettings.SiteBreadcrumbImageUrl ?? ""))">
+
+                    <!-- Title -->
+                    <h3 class="title">@post?.Title</h3>
+
+                    <!-- Meta -->
+                    <div class="meta fix">
+                        <a href="#" class="meta-item category fashion">@post?.Category?.Title</a>
+                        <a href="#" class="meta-item author">@post.PostBy</a>
+                        <span class="meta-item date"><i class="fa fa-clock-o"></i>@(post.PublishedAt?.ToString("MMM dd, yyyy"))</span>
+                        <a href="#" class="meta-item comments">
+                            <i class="fa fa-comments"></i>
+                            (@if (Model.Comments != null && Model.Comments.Any())
+                            {
+                                @Model.Comments?.Count
+                            })
+                        </a>
+                        <span class="meta-item view"><i class="fa fa-eye"></i>(@post.ViewCount)</span>
+                    </div>
+
+                </div>
+            </div><!-- Post Header Section End -->
+
+        </div>
+    </div>
+</div>
+
+
+<div class="post-section section">
+    <div class="container">
+
+        <!-- Feature Post Row Start -->
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mb-50">
+
+                <!-- Post Block Wrapper Start -->
+                <div class="post-block-wrapper mb-50 post-bdr">
+
+                    <!-- Post Block Body Start -->
+                    <div class="body">
+                        <div class="row">
+
+                            <div class="col-12">
+
+                                <!-- Single Post Start -->
+                                <div class="single-post">
+                                    <div class="post-wrap">
+                                        <img src="@post.PostImages?.FirstOrDefault()?.ImageUrl" alt="@post.Title" class="img-fluid w-100" style="max-height:400px; object-fit:cover;" />
+                                        <!-- Content -->
+                                        <div class="content" id="postContent">
+                                            @Html.Raw(Model.ModifiedContentHtml)
+
+                                        </div>
+
+                                        <div class="tags-social float-start">
+
+                                            <div class="tags float-start">
+
+                                                <i class="fa fa-tags"></i>
+                                                @foreach (var tag in Model.Post.Tags)
+                                                {
+                                                    <a href="#" class="btn btn-secondary btn-xs">@tag</a>
+                                                }
+                                            </div>
+
+
+                                            <div class="post-social float-end">
+                                                <i class="fa fa-share"></i>
+
+                                                <a href="https://www.facebook.com/sharer/sharer.php?u=@Model.PostUrl" target="_blank" class="facebook">
+                                                    <i class="fa fa-facebook"></i>
+                                                </a>
+
+                                                <a href="https://twitter.com/intent/tweet?url=@Model.PostUrl&text=@Model.Post?.Title" target="_blank" class="twitter">
+                                                    <i class="fa fa-twitter"></i>
+                                                </a>
+
+                                                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Model.PostUrl&title=@Model.Post?.Title" target="_blank" class="linkedin">
+                                                    <i class="fa fa-linkedin"></i>
+                                                </a>
+
+                                                <a href="https://pinterest.com/pin/create/button/?url=@Model.PostUrl" target="_blank" class="pinterest">
+                                                    <i class="fa fa-pinterest"></i>
+                                                </a>
+
+                                                <a href="https://wa.me/?text=@Uri.EscapeDataString($"{Model.Post?.Title} - {Model.PostUrl}")" target="_blank" class="whatsapp">
+                                                    <i class="fab fa-whatsapp"></i>
+                                                </a>
+
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div><!-- Single Post End -->
+
+                            </div>
+
+                        </div>
+                    </div><!-- Post Block Body End -->
+
+                </div><!-- Post Block Wrapper End -->
+                <!-- Previous & Next Post Start -->
+                <div class="post-nav mb-50 post-bdr">
+                    <div class="x1-pagination-01 d-flex justify-content-between my-4">
+                        @if (Model.PreviousPost != null)
+                        {
+                            <a href="@Url.Page("/PostPage", new { slug = Model.PreviousPost.Slug })" class="btn btn-danger text-start">
+                                ← Previous Post<br />
+                                <small class="fw-semibold d-block">@Model.PreviousPost.Title</small>
+                            </a>
+                        }
+
+                        @if (Model.NextPost != null)
+                        {
+                            <a href="@Url.Page("/PostPage", new { slug = Model.NextPost.Slug })" class="btn btn-success text-end">
+                                Next Post →<br />
+                                <small class="fw-semibold d-block">@Model.NextPost.Title</small>
+                            </a>
+                        }
+                    </div>
+
+
+                </div><!-- Previous & Next Post End -->
+                <!-- Post Author Start -->
+                @if (Model.Comments != null && Model.Comments.Any())
+                {
+                    <h2 class="fw-bold mb-4">
+                        Comments (<span id="commentCount">
+                            @((Model.Comments?.Count ?? 0))
+                        </span>)
+                    </h2>
+                    @foreach (var comment in Model.Comments.Take(5))
+                    {
+                        <div class="post-author fix mb-50">
+
+                            <div class="content fix">
+                                <h5><a href="#"><strong>@comment.AuthorName</strong> on  <small class="text-muted">@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")</small></a></h5>
+                                <p>@comment.Content</p>
+
+                            </div>
+
+                        </div><!-- Post Author End -->
+                    }
+                    @if (Model.Comments.Count > 5)
+                    {
+                        <div class="text-center mt-3">
+                            <button id="loadMoreBtn" class="btn btn-outline-primary" data-skip="5" data-postid="@Model.Post.Id">
+                                Load More Comments
+                            </button>
+                        </div>
+                    }
+                }
+                <!-- Post Block Wrapper Start -->
+                <div class="post-block-wrapper mb-50 post-bdr">
+
+                    <!-- Post Block Head Start -->
+                    <div class="head">
+
+                        <!-- Title -->
+                        <h4 class="title">You might also like!</h4>
+
+                    </div><!-- Post Block Head End -->
+                    <!-- Post Block Body Start -->
+                    <div class="body">
+                        <div class="p-two-column-post-carousel column-post-carousel post-block-carousel">
+                            @foreach (var list in Model.OtherPost.Take(3))
+                            {
+                                <div class="post post-overlay hero-post">
+                                    <div class="post-wrap">
+
+                                        <!-- Image -->
+                                        <div class="image">
+                                            <img src="@(list?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@list.Title">
+                                        </div>
+
+                                        <!-- Category -->
+                                        <a asp-page="/CategoryPage" asp-route-slug="@list.Category?.Slug" class="category education" tabindex="-1">@list.Category.Title</a>
+
+                                        <!-- Content -->
+                                        <div class="content">
+
+                                            <!-- Title -->
+                                            <h4 class="title"><a asp-page="/PostPage" asp-route-slug="@list.Slug" tabindex="-1">@list.Title</a></h4>
+
+                                            <!-- Meta -->
+                                            <div class="meta fix">
+                                                <span class="meta-item date"><i class="fa fa-clock-o"></i>@(list.PublishedAt?.ToString("dd MMMM yyyy") ?? "")</span>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
+
+
+
+                    </div><!-- Post Block Body End -->
+
+                </div><!-- Post Block Wrapper End -->
+                <!-- Post Block Wrapper Start -->
+                <div class="post-block-wrapper post-bdr">
+
+                    <!-- Post Block Head Start -->
+                    <div class="head">
+
+                        <!-- Title -->
+                        <h4 class="title">Leave a Comment</h4>
+
+                    </div><!-- Post Block Head End -->
+                    <!-- Post Block Body Start -->
+                    <div class="body">
+
+                        <div class="post-comment-form">
+                            <form method="post" class="row">
+                                <div>
+                                    @if (!User.Identity.IsAuthenticated)
+                                    {
+                                        <div class="col-md-6 col-12 mb-3">
+                                            <label asp-for="NewComment.AuthorName">Name <sup>*</sup></label>
+                                            <input asp-for="NewComment.AuthorName" class="form-control" placeholder="Your Name" required />
+                                        </div>
+
+                                        <div class="col-md-6 col-12 mb-3">
+                                            <label asp-for="NewComment.AuthorEmail">Email <sup>*</sup></label>
+                                            <input asp-for="NewComment.AuthorEmail" class="form-control" placeholder="Your Email" required />
+                                        </div>
+                                    }
+
+                                    <div class="col-12 mb-3">
+                                        <label asp-for="NewComment.Content">Message <sup>*</sup></label>
+                                        <textarea asp-for="NewComment.Content" class="form-control" rows="5" placeholder="Write your comment..." required></textarea>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary">Post Comment</button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+
+                    </div><!-- Post Block Body End -->
+
+                </div><!-- Post Block Wrapper End -->
+
+            </div>
+
+            <!-- Sidebar Start -->
+            <div class="col-lg-4 col-12 mb-50">
+                <div class="row">
+
+                    <partial name="_FullSideBar" />
+                </div>
+            </div><!-- Sidebar End -->
+
+        </div><!-- Feature Post Row End -->
+
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#loadMoreBtn').on('click', function () {
+                let btn = $(this);
+                let skip = parseInt(btn.data('skip'));
+                let postId = btn.data('postid');
+
+                $.get(`/PostPage?handler=LoadComments&postId=${postId}&skip=${skip}&take=5`, function (data) {
+                    if (data.length === 0) {
+                        btn.remove(); // No more comments
+                    } else {
+                        data.forEach(c => {
+                            $('#commentList').append(`
+                                                                                                      <div class="post-author fix mb-50">
+                <div class="content fix">
+                    <h5>
+                        <a href="#">
+                            <strong>${c.authorName}</strong> on
+                            <small class="text-muted">${c.createdAt}</small>
+                        </a>
+                    </h5>
+                    <p>${c.content}</p>
+                </div>
+            </div>
+                                                                                                        `);
+                        });
+
+                        // Increment skip
+                        btn.data('skip', skip + data.length);
+                    }
+                });
+            });
+        });
+    </script>
+
+
+    <script>
+    $(document).ready(function () {
+        var alreadyViewed = sessionStorage.getItem("viewedPost_@Model.Post.Id");
+        if (alreadyViewed) return;
+
+        var postId = @Model.Post.Id;
+
+        var observer = new IntersectionObserver(function (entries, obs) {
+            entries.forEach(function (entry) {
+                if (entry.isIntersecting) {
+                    $.get(window.location.pathname + "?handler=ViewCount&postId=" + postId, function (res) {
+                        if (res.success) {
+                            sessionStorage.setItem("viewedPost_" + postId, "true");
+                        }
+                    });
+                    obs.disconnect();
+                }
+            });
+        }, { threshold: 0.4 });
+
+        var target = document.getElementById("postContent");
+        if (target) observer.observe(target);
+    });
+    </script>
+
+
+    <script>
+        $(document).ready(function () {
+            $('.p-two-column-post-carousel').slick({
+                slidesToShow: 2,
+                slidesToScroll: 1,
+                arrows: true,
+                dots: false,
+                autoplay: true,
+                autoplaySpeed: 4000,
+                infinite: true,
+                responsive: [
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 1
+                        }
+                    }
+                ]
+            });
+        });
+    </script>
+
+
+}

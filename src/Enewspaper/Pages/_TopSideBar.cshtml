@@ -1,0 +1,88 @@
+﻿@using ModelData.Services;
+@inject ICategoryServices CategoryServices
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+
+
+@{
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts(showInHero: true);
+
+}
+  <!-- Single Sidebar -->
+<div class="single-sidebar col-lg-12 col-md-6 col-12">
+    <!-- Sidebar Banner -->
+    @{
+        ModelData.Models.Advert sideadvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.SidebarTop);
+    }
+    @if (sideadvert != null)
+    {
+        <a href="@sideadvert.Link" target="_blank" class="sidebar-banner">
+            <img src="@sideadvert.ImageUrl" alt="@sideadvert.Title" class="img-fluid">
+        </a>
+    }
+</div>
+
+<!-- Sidebar End -->
+
+
+<div class="single-sidebar col-12">
+    <!-- Sidebar Block Wrapper -->
+    <div class="sidebar-block-wrapper">
+        <!-- Sidebar Block Head Start -->
+        <div class="head life-style-head">
+            <!-- Title -->
+            <h4 class="title">
+                Recent News
+            </h4>
+        </div>
+        <!-- Sidebar Block Head End -->
+        <!-- Sidebar Block Body Start -->
+        <div class="body">
+            @{
+                // Get the 4 most recent posts
+                var recentPosts = (await PostServices.GetRecentPosts()) // Or GetPosts() depending on your service
+                                    .OrderByDescending(p => p.PublishedAt ?? p.Date)
+                                    .Take(8)
+                                    .ToList();
+            }
+
+            @foreach (var post in recentPosts)
+            {
+                var imageUrl = post.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "~/assets/default.jpg";
+
+
+                <div class="post post-small post-list life-style-post col" style="width: 100%; display: inline-block;">
+                    <div class="post-wrap">
+                        <!-- Image -->
+                        <a class="image" asp-page="/PostPage" asp-route-slug="@post.Slug" tabindex="-1">
+                            <img src="@imageUrl" alt="@post.Title">
+                        </a>
+                        <!-- Content -->
+                        <div class="content">
+                            <!-- Title -->
+                            <h5 class="title">
+                                <a asp-page="/PostPage" asp-route-slug="@post.Slug" tabindex="-1">
+                                    @post.Title
+                                </a>
+                            </h5>
+                            <!-- Meta -->
+                            <div class="meta fix">
+                                <span class="meta-item date">
+                                    <i class="fa fa-clock-o">
+                                    </i>@(post.PublishedAt?.ToString("dd MMM, yyyy"))
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            <!-- Sidebar Post Slider End -->
+        </div>
+        <!-- Sidebar Block Body End -->
+    </div>
+</div>
+
+
+
+ 

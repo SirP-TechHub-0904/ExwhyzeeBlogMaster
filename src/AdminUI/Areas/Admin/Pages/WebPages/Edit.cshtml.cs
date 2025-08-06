@@ -49,7 +49,7 @@ namespace AdminUI.Areas_Admin_Pages_WebPages
         public async Task<IActionResult> OnPostAsync()
         {
            
-            WebPage.Slug = await GenerateUniqueSlugAsync(WebPage.Title);
+            WebPage.Slug = await GenerateUniqueSlugAsync(WebPage.Title, WebPage.Id);
             _context.Attach(WebPage).State = EntityState.Modified;
 
             try

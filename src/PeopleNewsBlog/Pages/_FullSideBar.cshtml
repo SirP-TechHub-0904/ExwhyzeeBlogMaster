@@ -1,0 +1,196 @@
+﻿@using ModelData.Services;
+@inject ICategoryServices CategoryServices
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+
+
+@{
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts(showInHero: true);
+
+}
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var token = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+}
+
+
+<div class="widget">
+    <div class="ad--widget">
+        @{
+            ModelData.Models.Advert sideadvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.SidebarTop);
+        }
+        @if (sideadvert != null)
+        {
+            <a href="@sideadvert.Link" target="_blank">
+                <img src="@sideadvert.ImageUrl" alt="@sideadvert.Title" class="img-fluid" data-rjs="2" data-rjs-processed="true">
+            </a>
+        }
+
+    </div>
+</div>
+<!-- Sidebar End -->
+<div class="widget">
+    <div class="widget--title">
+        <h2 class="h4">
+            Recent News
+        </h2>
+        <i class="icon fa fa-newspaper-o">
+        </i>
+    </div>
+    <div class="list--widget list--widget-1">
+
+        <div class="post--items post--items-3" data-ajax-content="outer">
+            <ul class="nav" data-ajax-content="inner">
+                @{
+                    // Get the 4 most recent posts
+                    var recentPosts = (await PostServices.GetRecentPosts()) // Or GetPosts() depending on your service
+                                        .OrderByDescending(p => p.PublishedAt ?? p.Date)
+                                        .Take(8)
+                                        .ToList();
+                }
+
+                @foreach (var post in recentPosts)
+                {
+                    var imageUrl = post.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "~/assets/default.jpg";
+
+                    <li>
+                        <div class="post--item post--layout-3">
+                            <div class="post--img">
+                                <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="thumb">
+                                    <img src="@imageUrl" alt="@post.Title" data-rjs="2" data-rjs-processed="true">
+                                </a>
+                                <div class="post--info">
+                                    <ul class="nav meta">
+                                        <li>
+                                            <a href="#">
+                                                @post.PostBy
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="#">
+                                                @(post.PublishedAt?.ToString("dd MMM, yyyy"))
+
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="title">
+                                        <h3 class="h4">
+                                            <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="btn-link">
+                                                @post.Title
+                                            </a>
+                                        </h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+        </div>
+    </div>
+</div>
+
+<div class="widget">
+    <div class="ad--widget">
+        @{
+            ModelData.Models.Advert xsideadvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.SidebarBottom);
+        }
+        @if (xsideadvert != null)
+        {
+            <a href="@xsideadvert.Link" target="_blank">
+                <img src="@xsideadvert.ImageUrl" alt="@xsideadvert.Title" class="img-fluid" data-rjs="2" data-rjs-processed="true">
+            </a>
+        }
+
+    </div>
+</div>
+
+
+
+<div class="widget">
+    <div class="widget--title">
+        <h2 class="h4">
+            Tags
+        </h2>
+        <i class="icon fa fa-share-alt">
+        </i>
+    </div>
+    <div class="social--widget style--1">
+        <ul class="nav">
+            @{
+                // Get recent posts (adjust service method as needed)
+                var postTags = (await PostServices.GetRecentPosts())
+                    .OrderByDescending(p => p.PublishedAt ?? p.Date)
+                    .Take(10)
+                    .ToList();
+
+                // Flatten tags and remove duplicates
+                var tags = postTags
+                    .Where(p => p.Tags != null)
+                    .SelectMany(p => p.Tags)
+                    .Distinct()
+                    .OrderBy(t => t)
+                    .ToList();
+            }
+            @foreach (var tag in tags)
+            {
+                <li class="vimeo">
+                    <a href="#">
+
+                        <span class="title">
+                            @tag
+                        </span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
+
+
+
+<div class="widget">
+    <div class="widget--title">
+        <h2 class="h4">
+            Get Newsletter
+        </h2>
+        <i class="icon fa fa-envelope-open-o">
+        </i>
+    </div>
+    <div class="subscribe--widget">
+        <div class="content">
+            <p>
+                Subscribe to our newsletter to get latest news, popular news and exclusive updates.
+            </p>
+        </div>
+        <div class="input-group">
+            <input type="email" id="newsletterEmail" placeholder="E-mail address" class="form-control" autocomplete="off" required="" aria-required="true">
+            <input type="hidden" id="__RequestVerificationToken" value="@token" />
+            <div class="input-group-btn">
+                <button type="submit" name="subscribe" id="subscribeBtn" class="btn btn-lg btn-default active">
+                    <i class="fa fa-paper-plane-o">
+                    </i>
+                </button>
+            </div>
+        </div>
+        <small id="subscribeMessage" class="text-black"></small>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ModelData.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var currentUser = await UserManager.GetUserAsync(User);
+    var fullName = currentUser?.FullName ?? currentUser?.UserName ?? "User";
+    var firstName = fullName.Split(' ').First();
+
+    // ✅ Get all roles for the user
+    var roles = await UserManager.GetRolesAsync(currentUser);
+    var isInAnyRole = roles != null && roles.Any();
+
+    if (isInAnyRole)
+    {
+        <li>
+            <a asp-area="Admin" asp-page="/Dashboard/Index"><i class="fa fa-dashboard" aria-hidden="true"></i> Dashboard</a>
+        </li>
+    }
+    else
+    {
+        <li>
+            <a href="#">Hello @firstName!</a>
+        </li>
+        <li>
+
+            <a href="javascript:document.getElementById('logoutForm').submit()"> <i class="fa fa-sign-out"></i> Sign Out </a>
+        </li>
+    }
+
+}
+else
+{
+    <li><a asp-area="Identity" asp-page="/Account/Login"><i class="fa fa-user-circle-o"></i>Sign In</a></li>
+
+
+}

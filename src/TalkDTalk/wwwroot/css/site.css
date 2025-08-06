@@ -1,0 +1,112 @@
+@media (min-width: 768px) {
+    /* .mpost-01 .pmg1 {
+        height: 390px;
+    }*/
+    .thumb1x {
+        height: 270px;
+    }
+}
+
+.mpost-01 .pmg1 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumb1x img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.header--ad img {
+    height: 120px;
+}
+
+.mlist-r .thumb {
+    height: 90px;
+}
+
+    .mlist-r .thumb img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+.mlist-r .post--img .thumb {
+    height: 90px;
+}
+
+.mlist-rx .thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.mlist-rx .post--img .thumb {
+    height: 72px;
+}
+.mlist-r .post--img {
+    box-shadow: 1px 1px 1px 1px #c5c1c1;
+    border-radius: 3px;
+}
+.mlist-r .post--info {
+    margin-bottom: 5px; 
+    padding: 5px;
+}
+
+
+.category-box {
+    background: #fff;
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+}
+
+.category-box:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+}
+
+.category-box h5 {
+    font-size: 1.2rem;
+}
+
+.category-box ul {
+    padding-left: 1rem;
+}
+
+.category-box a {
+    text-decoration: none;
+}
+
+    .category-box a:hover {
+        color: #007bff;
+    }
+
+.new-xm-post li .post--img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.new-xm-post li .post--img {
+    height: 70px;
+}
+
+
+.whatsapp i {
+    font-size: 24px; /* Adjust as needed */
+    color: #25D366; /* WhatsApp green color */
+}
+.form-control {
+    
+    border-color: #373434;
+    
+}
+
+.search-card .card {
+    padding: 10px;
+    box-shadow: 1px 1px 1px 1px red;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}

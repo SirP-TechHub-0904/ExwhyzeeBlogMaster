@@ -1,0 +1,848 @@
+﻿@using Microsoft.AspNetCore.Hosting
+@using Microsoft.AspNetCore.Mvc.ViewEngines
+@inject IWebHostEnvironment Environment
+@inject ICompositeViewEngine Engine
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@inject ICategoryServices CategoryServices
+@inject IWebPageService WebPageService
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+
+@using Microsoft.AspNetCore.Identity
+@using ModelData.Models  <!-- Replace with actual namespace -->
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+    List<ModelData.Models.Category> itemCategories = await CategoryServices.GetCategoriesAsync();
+    List<ModelData.Models.WebPage> itemWebPages = await WebPageService.GetPublishedPages();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts();
+    List<ModelData.Models.Post> mostViewdPosts = await PostServices.GetTopViewedPostsAsync(count: 3);
+    List<ModelData.Models.Post> breakingNew = await PostServices.GetBrakingNews(count: 10);
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+
+    var plainDescription = System.Text.RegularExpressions.Regex.Replace(siteSettings.SiteDescription ?? "", "<.*?>", "");
+}
+
+
+
+
+
+
+<!DOCTYPE html>
+
+<html dir="ltr" lang="en">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        @($"{ViewBag.Title} | {siteSettings.SiteTitle} | {plainDescription}")
+    </title>
+
+
+    <link rel="icon" href="@siteSettings.FaviconUrl" type="image/png">
+    <partial name="_MetaTags" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Font Awesome 4.7.0 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="~/assets/bootstrap.min.css">
+
+    <link rel="stylesheet" href="~/assets/fontawesome-stars-o.min.css">
+
+    <link rel="stylesheet" href="~/assets/style.css">
+
+    <link rel="stylesheet" href="~/assets/responsive-style.css">
+
+    <link rel="stylesheet" href="~/assets/theme-color-1.css" id="changeColorScheme">
+
+    <link rel="stylesheet" href="~/assets/custom.css">
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js">
+    </script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js">
+    </script>
+    <![endif]-->
+
+    <style id="theia-sticky-sidebar-stylesheet-TSS">
+        .sticky-content-inner:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+    </style>
+
+    <script type="text/javascript" charset="UTF-8" src="~/assets/common.js"></script>
+
+    <script type="text/javascript" charset="UTF-8" src="~/assets/util.js"></script>
+    <link href="~/css/site.css" rel="stylesheet" />
+
+    <style>
+     @Html.Raw(siteSettings.CustomCSS)
+    </style>
+    @Html.Raw(siteSettings.CustomHeadScript)
+    @Html.Raw(siteSettings.GoogleAnalyticsId)
+    @Html.Raw(siteSettings.GoogleTagManagerId)
+    @Html.Raw(siteSettings.FacebookPixelId)
+
+</head>
+
+<body class="">
+    @Html.Raw(siteSettings.CustomJS)
+    @if (siteSettings.EnableLiveChat)
+    {
+        @siteSettings.LiveChatScript
+    }
+    <div id="preloader" style="display: none;">
+        <div class="preloader bg--color-1--b" data-preloader="1">
+            <div class="preloader--inner">
+            </div>
+        </div>
+    </div>
+    <div class="wrapper">
+        <header class="header--section header--style-1">
+            <div class="header--topbar bg--color-2">
+                <div class="container">
+                    <div class="float--left float--xs-none text-xs-center">
+                        <ul class="header--topbar-info nav">
+                            <li><i class="fa fa-map-marker"></i> <span id="location">Detecting...</span></li>
+                            <li><i class="fa fa-mixcloud"></i> <span id="weather">Loading...</span></li>
+                            <li><i class="fa fa-calendar"></i> <span id="date"></span></li>
+                        </ul>
+                    </div>
+                    <div class="float--right float--xs-none text-xs-center">
+                        <ul class="header--topbar-action nav">
+                            <partial name="_LoginPartial" />
+
+                        </ul>
+
+                        <ul class="header--topbar-social nav hidden-sm hidden-xxs">
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.FacebookUrl))
+                            {
+                                <li>
+                                    <a href="@siteSettings.FacebookUrl" title="Facebook" target="_blank">
+                                        <i class="fa fa-facebook" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.TwitterUrl))
+                            {
+                                <li>
+                                    <a href="@siteSettings.TwitterUrl" title="Twitter" target="_blank">
+                                        <i class="fa fa-twitter" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.LinkedInUrl))
+                            {
+                                <li>
+                                    <a href="@siteSettings.LinkedInUrl" title="LinkedIn" target="_blank">
+                                        <i class="fa fa-linkedin" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.InstagramUrl))
+                            {
+                                <li>
+                                    <a href="@siteSettings.InstagramUrl" title="Instagram" target="_blank">
+                                        <i class="fa fa-instagram" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.YouTubeUrl))
+                            {
+                                <li>
+                                    <a href="@siteSettings.YouTubeUrl" title="YouTube" target="_blank">
+                                        <i class="fa fa-youtube" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.TikTokUrl))
+                            {
+                                <li>
+                                    <a href="@siteSettings.TikTokUrl" title="TikTok" target="_blank">
+                                        <i class="fa fa-music" aria-hidden="true"></i>
+                                    </a>
+                                </li>
+                            }
+
+
+
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="header--mainbar">
+                <div class="container">
+                    <div class="header--logo float--left float--sm-none text-sm-center">
+                        <h1 class="h1">
+                            <a href="/" class="btn-link">
+                                <img src="@siteSettings.SiteLogoUrl" alt="@siteSettings.SiteTitle" data-rjs="2" data-rjs-processed="true">
+
+                            </a>
+                        </h1>
+                    </div>
+                    <div class="header--ad float--right float--sm-none hidden-xs">
+                        @{
+                            ModelData.Models.Advert sideadvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.MainTop);
+                        }
+                        @if (sideadvert != null)
+                        {
+                            <a href="@sideadvert.Link" target="_blank">
+                                <img src="@sideadvert.ImageUrl" alt="@sideadvert.Title" class="img-fluid" data-rjs="2" data-rjs-processed="true">
+                            </a>
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div id="sticky-wrapper" class="sticky-wrapper" style="height: 60.2px;">
+                <div class="header--navbar style--1 navbar bd--color-1 bg--color-1" data-trigger="sticky" style="width: 1790.4px;">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#headerNav" aria-expanded="false" aria-controls="headerNav">
+                                <span class="sr-only">
+                                    Toggle Navigation
+                                </span>
+                                <span class="icon-bar">
+                                </span>
+                                <span class="icon-bar">
+                                </span>
+                                <span class="icon-bar">
+                                </span>
+                            </button>
+                        </div>
+                        <div id="headerNav" class="navbar-collapse collapse float--left">
+                            <ul class="header--menu-links nav navbar-nav" data-trigger="hoverIntent">
+                                <li>
+                                    <a href="/">Home</a>
+                                </li>
+                                @foreach (var sitepage in itemWebPages.Where(x => x.ShowInMenu == true).Where(x => x.MenuSortOrder > 0))
+                                {
+                                    <li>
+                                        @if (sitepage.EnableDirectLink)
+                                        {
+                                            <a href="@sitepage.DirectLinkUrl" target="@(sitepage.DirectLinkOpenInNewTab ? "_blank" : "_self")">@sitepage.Title</a>
+
+                                        }
+                                        else
+                                        {
+                                            <a asp-page="/Webpage" asp-route-slug="@sitepage.Slug">@sitepage.Title</a>
+                                        }
+                                    </li>
+                                }
+                                @foreach (var sitecategory in itemCategories.Where(x => x.ShowInMenu == true))
+                                {
+                                    @if (sitecategory.Children.Count() > 0)
+                                    {
+                                        <li class="dropdown">
+                                            <a asp-page="/CategoryPage" asp-route-slug="@sitecategory.Slug" class="dropdown-toggle" data-toggle="dropdown">
+                                                @sitecategory.Title
+                                                <i class="fa flm fa-angle-down">
+                                                </i>
+                                            </a>
+
+                                            <!-- Submenu Start -->
+                                            <ul class="dropdown-menu">
+                                                @foreach (var list in sitecategory.Children.Where(x => x.IsPublished == true))
+                                                {
+                                                    <li>
+                                                        <a asp-page="/CategoryPage" asp-route-slug="@list.Slug">@list.Title</a>
+                                                    </li>
+                                                }
+                                            </ul><!-- Submenu End -->
+
+                                        </li>
+
+                                    }
+                                    else
+                                    {
+                                        <li> <a asp-page="/CategoryPage" asp-route-slug="@sitecategory.Slug">@sitecategory.Title</a></li>
+                                    }
+
+                                }
+
+                                @foreach (var sitepage in itemWebPages.Where(x => x.ShowInMenu == true).Where(x => x.MenuSortOrder < 0))
+                                {
+                                    <li>
+                                        @if (sitepage.EnableDirectLink)
+                                        {
+                                            <a href="@sitepage.DirectLinkUrl" target="@(sitepage.DirectLinkOpenInNewTab ? "_blank" : "_self")">@sitepage.Title</a>
+
+                                        }
+                                        else
+                                        {
+                                            <a asp-page="/Webpage" asp-route-slug="@sitepage.Slug">@sitepage.Title</a>
+                                        }
+                                    </li>
+                                }
+
+
+                            </ul>
+                        </div>
+                        <form method="get" asp-page="/Search" class="header--search-form float--right" data-form="validate" novalidate="novalidate">
+                            <input type="search" name="query" placeholder="Search..." class="header--search-control form-control" required="" aria-required="true">
+                            <button type="submit" class="header--search-btn btn">
+                                <i class="header--search-icon fa fa-search">
+                                </i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <div class="posts--filter-bar style--1 hidden-xs">
+            <div class="container">
+                <ul class="nav">
+                    <li>
+                        <a asp-page="/HomeTab" asp-route-tab="featured">
+                            <i class="fa fa-star-o"></i>
+                            <span>Featured News</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-page="/HomeTab" asp-route-tab="popular">
+                            <i class="fa fa-heart-o"></i>
+                            <span>Most Popular</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-page="/HomeTab" asp-route-tab="hot">
+                            <i class="fa fa-fire"></i>
+                            <span>Hot News</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-page="/HomeTab" asp-route-tab="trending">
+                            <i class="fa fa-flash"></i>
+                            <span>Trending News</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a asp-page="/HomeTab" asp-route-tab="watched">
+                            <i class="fa fa-eye"></i>
+                            <span>Most Watched</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="news--ticker">
+            <div class="container">
+                <div class="title">
+                    <h2>News Updates</h2>
+                    <span>
+                        @{
+                            if (breakingNew.Any())
+                            {
+                                var firstPost = breakingNew.FirstOrDefault();
+                                if (firstPost?.PublishedAt != null)
+                                {
+                                    var minutesAgo = (DateTime.UtcNow - firstPost.PublishedAt.Value.ToUniversalTime()).TotalMinutes;
+                                    <text>(Update @Math.Round(minutesAgo) minutes ago)</text>
+                                }
+                            }
+                        }
+
+                    </span>
+                </div>
+
+                <div class="news-updates--list" data-marquee="true">
+                    <div class="js-marquee-wrapper" style="width: 100000px; animation: 60s linear infinite marquee-scroll;">
+                        <div class="js-marquee" style="float: left;">
+                            <ul class="nav">
+                                @foreach (var item in breakingNew)
+                                {
+                                    <li>
+                                        <h3 class="h3">
+                                            <a asp-page="/PostPage" asp-route-slug="@item.Slug">@item.Title</a>
+                                        </h3>
+                                    </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div>
+            @RenderBody()
+        </div>
+        <footer class="footer--section">
+            <div class="footer--widgets pd--30-0 bg--color-2">
+                <div class="container">
+                    <div class="row AdjustRow" style="position: relative; height: 336.4px;">
+                        <div class="col-md-3 col-xs-6 col-xxs-12 ptop--30 pbottom--30" style="position: absolute; left: 0px; top: 0px;">
+                            <div class="widget">
+                                <div class="widget--title">
+                                    <h2 class="h4">
+                                        @siteSettings.SiteTitle
+                                    </h2>
+                                    <i class="icon fa fa-exclamation">
+                                    </i>
+                                </div>
+                                <div class="about--widget">
+                                    <div class="content">
+                                        <p>
+                                            @plainDescription
+                                        </p>
+                                    </div>
+
+                                    <ul class="nav">
+                                        @if (!string.IsNullOrWhiteSpace(siteSettings.Address))
+                                        {
+                                            <li><i class="fa fa-map"></i><span> @Html.Raw(siteSettings.Address)</span></li>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(siteSettings.ContactEmail))
+                                        {
+                                            <li><i class="fa fa-envelope-open"></i><span> @Html.Raw(siteSettings.ContactEmail)</span></li>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(siteSettings.ContactPhone))
+                                        {
+                                            <li><i class="fa fa-phone"></i><span> @Html.Raw(siteSettings.ContactPhone)</span></li>
+                                        }
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-xs-6 col-xxs-12 ptop--30 pbottom--30" style="position: absolute; left: 292px; top: 0px;">
+                            <div class="widget">
+                                <div class="widget--title">
+                                    <h2 class="h4">
+                                        Usefull Info Links
+                                    </h2>
+                                    <i class="icon fa fa-expand">
+                                    </i>
+                                </div>
+                                <div class="links--widget">
+                                    <ul class="nav">
+                                        @foreach (var xpage in itemWebPages.Where(x => x.ShowInFooter))
+                                        {
+                                            <li>
+                                                @if (xpage.EnableDirectLink)
+                                                {
+                                                    <a class="fa-angle-right" href="@xpage.DirectLinkUrl" target="@(xpage.DirectLinkOpenInNewTab ? "_blank" : "_self")">
+                                                        @xpage.Title
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a class="fa-angle-right" asp-page="/Webpage" asp-route-slug="@xpage.Slug">
+                                                        @xpage.Title
+                                                    </a>
+                                                }
+                                            </li>
+                                        }
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-xs-6 col-xxs-12 ptop--30 pbottom--30" style="position: absolute; left: 585px; top: 0px;">
+                            <div class="widget">
+                                <div class="widget--title">
+                                    <h2 class="h4">
+                                        Our Categories
+                                    </h2>
+                                    <i class="icon fa fa-file">
+                                    </i>
+                                </div>
+                                <div class="links--widget">
+                                    <ul class="nav">
+                                        @foreach (var cat in itemCategories.Where(x => x.ShowInFooter))
+                                        {
+                                            <li>
+                                                <a class="fa-angle-right" asp-page="/CategoryPage" asp-route-slug="@cat.Slug" class="category-link">
+                                                    @cat.Title
+                                                </a>
+                                            </li>
+                                        }
+
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-xs-6 col-xxs-12 ptop--30 pbottom--30" style="position: absolute; left: 877px; top: 0px;">
+                            <div class="widget">
+                                <div class="widget--title">
+                                    <h2 class="h4">
+                                        Career
+                                    </h2>
+                                    <i class="icon fa fa-user-o">
+                                    </i>
+                                </div>
+                                <div class="links--widget">
+                                    <ul class="nav">
+                                        <li>
+                                            <a href="https://themelooks.us/demo/usnews/html/home-1.html#" class="fa-angle-right">
+                                                Available Post
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://themelooks.us/demo/usnews/html/home-1.html#" class="fa-angle-right">
+                                                Career Details
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://themelooks.us/demo/usnews/html/home-1.html#" class="fa-angle-right">
+                                                How to Apply?
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://themelooks.us/demo/usnews/html/home-1.html#" class="fa-angle-right">
+                                                Freelence Job
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://themelooks.us/demo/usnews/html/home-1.html#" class="fa-angle-right">
+                                                Be a Member
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://themelooks.us/demo/usnews/html/home-1.html#" class="fa-angle-right">
+                                                Apply Now
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="https://themelooks.us/demo/usnews/html/home-1.html#" class="fa-angle-right">
+                                                Send Your Resume
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="container">
+                    @{
+                        var widgets = new List<string>();
+
+                        if (!string.IsNullOrWhiteSpace(siteSettings.FacebookWidget)) widgets.Add(siteSettings.FacebookWidget);
+                        if (!string.IsNullOrWhiteSpace(siteSettings.TwitterWidget)) widgets.Add(siteSettings.TwitterWidget);
+                        if (!string.IsNullOrWhiteSpace(siteSettings.InstagramWidget)) widgets.Add(siteSettings.InstagramWidget);
+                        if (!string.IsNullOrWhiteSpace(siteSettings.YouTubeWidget)) widgets.Add(siteSettings.YouTubeWidget);
+                        if (!string.IsNullOrWhiteSpace(siteSettings.LinkedInWidget)) widgets.Add(siteSettings.LinkedInWidget);
+                        if (!string.IsNullOrWhiteSpace(siteSettings.TikTokWidget)) widgets.Add(siteSettings.TikTokWidget);
+
+                        int count = widgets.Count;
+                        string columnClass = count switch
+                        {
+                            1 => "col-12 text-center",   // Full width, center
+                            2 => "col-md-6",            // Two equal columns
+                            3 => "col-md-4",            // Three equal columns
+                            4 => "col-md-3",            // Four equal columns
+                            5 => "col",                 // Auto for 5
+                            6 => "col-md-2",            // Six equal columns
+                            _ => "col"                  // Default fallback
+                        };
+                    }
+
+                    <div class="row g-4 justify-content-center">
+                        @foreach (var widget in widgets)
+                        {
+                            <div class="@columnClass">
+                                @Html.Raw(widget)
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="footer--copyright bg--color-3">
+                <div class="social--bg bg--color-1" style="left: 1288.2px;">
+                </div>
+                <div class="container">
+                    <p class="text float--left">
+                        © @DateTime.UtcNow.Year
+                        <a href="/">
+                            @siteSettings.SiteTitle.
+                        </a>. All Rights Reserved.
+                    </p>
+                    <ul class="nav social float--right">
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.FacebookUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.FacebookUrl" title="Facebook" target="_blank">
+                                    <i class="fa fa-facebook"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.TwitterUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.TwitterUrl" title="Twitter" target="_blank">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @* Google Plus is deprecated, remove or use as placeholder if needed *@
+                        @* You may use Instagram instead *@
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.InstagramUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.InstagramUrl" title="Instagram" target="_blank">
+                                    <i class="fa fa-instagram"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.LinkedInUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.LinkedInUrl" title="LinkedIn" target="_blank">
+                                    <i class="fa fa-linkedin"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.YouTubeUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.YouTubeUrl" title="YouTube" target="_blank">
+                                    <i class="fa fa-youtube-play"></i>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                    <ul class="nav links float--right">
+                        <li>
+                            <a href="/">
+                                Home
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <div id="stickySocial" class="sticky--right">
+        <ul class="nav">
+            @if (!string.IsNullOrWhiteSpace(siteSettings.FacebookUrl))
+            {
+                <li>
+                    <a href="@siteSettings.FacebookUrl" title="Facebook" target="_blank">
+                        <i class="fa fa-facebook"></i>
+                        <span>Follow Us On Facebook</span>
+                    </a>
+                </li>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(siteSettings.TwitterUrl))
+            {
+                <li>
+                    <a href="@siteSettings.TwitterUrl" title="Twitter" target="_blank">
+                        <i class="fa fa-twitter"></i>
+                        <span>Follow Us On Twitter</span>
+                    </a>
+                </li>
+            }
+
+
+
+            @if (!string.IsNullOrWhiteSpace(siteSettings.YouTubeUrl))
+            {
+                <li>
+                    <a href="@siteSettings.YouTubeUrl" title="YouTube" target="_blank">
+                        <i class="fa fa-youtube-play"></i>
+                        <span>Follow Us On YouTube</span>
+                    </a>
+                </li>
+            }
+
+            @if (!string.IsNullOrWhiteSpace(siteSettings.LinkedInUrl))
+            {
+                <li>
+                    <a href="@siteSettings.LinkedInUrl" title="LinkedIn" target="_blank">
+                        <i class="fa fa-linkedin"></i>
+                        <span>Follow Us On LinkedIn</span>
+                    </a>
+                </li>
+            }
+
+            @* Optional: Vimeo or TikTok *@
+            @if (!string.IsNullOrWhiteSpace(siteSettings.TikTokUrl))
+            {
+                <li>
+                    <a href="@siteSettings.TikTokUrl" title="TikTok" target="_blank">
+                        <i class="fa fa-music"></i>
+                        <span>Follow Us On TikTok</span>
+                    </a>
+                </li>
+            }
+        </ul>
+
+    </div>
+    <div id="backToTop">
+        <a href="#">
+            <i class="fa fa-angle-double-up">
+            </i>
+        </a>
+    </div>
+
+    <script src="~/assets/jquery-3.2.1.min.js"></script> 
+
+    <script src="~/assets/bootstrap.min.js"></script>
+
+    <script src="~/assets/jquery.sticky.min.js"></script>
+
+    <script src="~/assets/jquery.hoverIntent.min.js"></script>
+
+    <script src="~/assets/jquery.marquee.min.js"></script>
+
+    <script src="~/assets/jquery.validate.min.js"></script>
+
+    <script src="~/assets/isotope.min.js"></script>
+
+    <script src="~/assets/resizesensor.min.js"></script>
+
+    <script src="~/assets/theia-sticky-sidebar.min.js"></script>
+
+    <script src="~/assets/jquery.zoom.min.js"></script>
+
+    <script src="~/assets/jquery.barrating.min.js"></script>
+
+    <script src="~/assets/jquery.countdown.min.js"></script>
+
+    <script src="~/assets/retina.min.js"></script>
+
+    <script src="~/assets/js"></script>
+
+    <script src="~/assets/color-switcher.min.js"></script>
+
+    <script src="~/assets/main.js"></script>
+
+
+
+    <script>
+        const apiKey = "df98b3ead356f02efd4b5bbf538c9e82"; // Replace with your real API key
+        const locationElem = document.getElementById("location");
+        const weatherElem = document.getElementById("weather");
+        const dateElem = document.getElementById("date");
+
+        // Show formatted current date
+        const today = new Date();
+        dateElem.textContent = today.toLocaleDateString(undefined, {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+
+        // Fetch weather using coordinates
+        function fetchWeather(lat, lon) {
+            if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
+                console.error("❌ API key is missing or placeholder");
+                locationElem.textContent = "API key missing";
+                weatherElem.textContent = "N/A";
+                return;
+            }
+
+            const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=en&appid=${apiKey}`;
+
+            console.log(`📍 Fetching weather for lat=${lat}, lon=${lon}`);
+            console.log(`🌐 API URL: ${url}`);
+
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        console.error(`❌ HTTP ${response.status}: Unauthorized or invalid key`);
+                        throw new Error("Weather API failed");
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("✅ Weather API response:", data);
+
+                    const city = data.name || "Unknown City";
+                    const temp = data.main?.temp ?? "N/A";
+                    const condition = data.weather?.[0]?.description ?? "";
+
+                    locationElem.textContent = city;
+                    weatherElem.innerHTML = `${Math.round(temp)}<sup>°C</sup> <span class="text-muted">${condition}</span>`;
+                })
+                .catch(error => {
+                    console.error("❌ Fetch failed:", error);
+                    locationElem.textContent = "Unknown location";
+                    weatherElem.textContent = "N/A";
+                });
+        }
+
+        // Get user location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lon = pos.coords.longitude;
+                    fetchWeather(lat, lon);
+                },
+                (err) => {
+                    console.error("❌ Geolocation blocked:", err);
+                    locationElem.textContent = "Location blocked";
+                    weatherElem.textContent = "N/A";
+                }
+            );
+        } else {
+            console.error("❌ Geolocation not supported by browser");
+            locationElem.textContent = "Not supported";
+            weatherElem.textContent = "N/A";
+        }
+    </script>
+    <script>
+        $(document).on("click", "#subscribeBtn", function () {
+            var email = $("#newsletterEmail").val();
+            var token = $("#__RequestVerificationToken").val();
+            var messageEl = $("#subscribeMessage");
+
+            $.ajax({
+                type: "POST",
+                url: "/Index?handler=Subscribe",
+                data: {
+                    NewsletterEmail: email,
+                    __RequestVerificationToken: token
+                },
+                success: function (res) {
+                    messageEl.text(res.message);
+                    messageEl.css("color", res.success ? "green" : "yellow");
+                    if (res.success) {
+                        $("#newsletterEmail").val("");
+                    }
+                },
+                error: function () {
+                    messageEl.text("Something went wrong.").css("color", "red");
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @Html.Raw(siteSettings.CustomFooterScript)
+
+</body>
+ 
+
+</html>
+
+
+
+
+

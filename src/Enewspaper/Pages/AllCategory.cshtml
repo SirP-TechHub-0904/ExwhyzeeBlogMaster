@@ -1,0 +1,125 @@
+﻿@page
+@model Enewspaper.Pages.AllCategoryModel
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+}
+
+
+
+<div class="post-header-section section mt-30 mb-30">
+    <div class="container">
+        <div class="row row-1">
+
+            <!-- Page Banner Start -->
+            <div class="col-12">
+                <div class="post-header" style="background-image: url(@(siteSettings.SiteBreadcrumbImageUrl ?? ""))">
+
+                    <!-- Title -->
+                    <h3 class="title">Browse Categories</h3>
+
+                    
+
+                </div>
+            </div><!-- Post Header Section End -->
+
+        </div>
+    </div>
+</div>
+
+
+<div class="post-section section">
+    <div class="container">
+
+        <!-- Feature Post Row Start -->
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mb-50">
+
+                <!-- Post Block Wrapper Start -->
+                <div class="post-block-wrapper mb-50 post-bdr">
+
+                    <!-- Post Block Body Start -->
+                    <div class="body">
+                        <div class="row">
+
+                            <div class="col-12">
+
+                                <!-- Single Post Start -->
+                                <div class="single-post">
+                                    <div class="post-wrap">
+
+ 
+                                        <div class="body cat-body-c-page">
+                                            <div class="accordion" id="categoryAccordion">
+                                                @for (int i = 0; i < Model.MainCategories.Count; i++)
+                                                {
+                                                    var category = Model.MainCategories[i];
+                                                    var collapseId = $"collapseCategory{i}";
+                                                    var headingId = $"headingCategory{i}";
+                                                    <div class="accordion-item mb-3 rounded shadow-sm border-0 overflow-hidden">
+                                                        <h2 class="accordion-header" id="@headingId">
+                                                            <button class="accordion-button collapsed fw-bold text-primary" type="button" data-bs-toggle="collapse" data-bs-target="#@collapseId" aria-expanded="false" aria-controls="@collapseId">
+                                                                <i class="bi bi-folder-fill me-2 text-primary"></i> @category.Title
+                                                            </button>
+                                                        </h2>
+                                                        <div id="@collapseId" class="accordion-collapse collapse" aria-labelledby="@headingId" data-bs-parent="#categoryAccordion">
+                                                            <div class="accordion-body">
+                                                                @if (category.Children?.Any() == true)
+                                                                {
+                                                                    <ul class="list-unstyled ps-3 mb-0">
+                                                                        @foreach (var sub in category.Children.OrderBy(c => c.SortOrder))
+                                                                        {
+                                                                            <li class="mb-2">
+                                                                                <i class="bi bi-chevron-right small text-muted me-1"></i>
+                                                                                <a asp-page="/CategoryPage" asp-route-slug="@sub.Slug" class="text-secondary">@sub.Title</a>
+                                                                            </li>
+                                                                        }
+                                                                    </ul>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <div class="text-muted">No subcategories</div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+
+
+                                        </div>
+
+
+
+
+                                    </div>
+                                </div><!-- Single Post End -->
+
+                            </div>
+
+                        </div>
+                    </div><!-- Post Block Body End -->
+
+                </div><!-- Post Block Wrapper End -->
+
+            </div>
+
+            <!-- Sidebar Start -->
+            <div class="col-lg-4 col-12 mb-50">
+                <div class="row">
+
+                    <partial name="_TopSideBar" />
+                </div>
+            </div><!-- Sidebar End -->
+
+        </div><!-- Feature Post Row End -->
+
+    </div>
+</div>
+
+
+ 

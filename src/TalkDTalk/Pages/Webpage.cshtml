@@ -1,0 +1,142 @@
+﻿@page "/page/{slug}"
+@model TalkDTalk.Pages.WebpageModel
+
+@{
+}
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+}
+
+
+<div class="main--breadcrumb">
+    <div class="container">
+        <ul class="breadcrumb">
+            <li>
+                <a href="/" class="btn-link">
+                    <i class="fa fm fa-home">
+                    </i>Home
+                </a>
+            </li>
+
+            <li class="active">
+                <span>
+                    @Model.PageContent?.Title
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="main-content--section pbottom--30">
+
+    <div class="container">
+
+        <div class="row" style="transform: none;">
+            <div class="main--content col-md-8">
+                <div class="row g-4">
+                    <div class="Col-md-12">
+
+                        @if (!string.IsNullOrWhiteSpace(Model.PageContent?.ImageUrl))
+                        {
+                            <img src="@Model.PageContent.ImageUrl" class="img-fluid mb-4" alt="@Model.PageContent.Title" />
+                        }
+
+                        <div class="">
+                            @Html.Raw(Model.PageContent?.Content)
+                        </div>
+
+                        @if (Model.PageContent?.Form != null && Model.PageContent.Form.IsActive)
+                        {
+                            <div class="card mt-5 shadow custom-form-x">
+                                <div class="card-header text-white">
+                                    <h4 class="mb-0">@Model.PageContent.Form.Title</h4>
+                                </div>
+                                <div class="card-body">
+                                    @if (!string.IsNullOrWhiteSpace(Model.PageContent.Form.Description))
+                                    {
+                                        <p class="text-muted">@Model.PageContent.Form.Description</p>
+                                    }
+
+                                    <form method="post" asp-page-handler="SubmitForm">
+                                        @foreach (var field in Model.PageContent.Form.Fields)
+                                        {
+                                            <div class="mb-4">
+                                                <label class="form-label fw-semibold">@field.Label</label>
+
+                                                @if (field.FieldType == "textarea")
+                                                {
+                                                    <textarea name="field_@field.Id"
+                                                              placeholder="@field.Placeholder"
+                                                              class="form-control"
+                                                              rows="4"
+                                                              @(field.IsRequired ? "required" : "")></textarea>
+                                                }
+                                                else if (field.FieldType == "dropdown" || field.FieldType == "checkbox")
+                                                {
+                                                    var options = System.Text.Json.JsonSerializer.Deserialize<List<string>>(field.OptionsJson ?? "[]");
+                                                    if (options != null)
+                                                    {
+                                                        foreach (var option in options)
+                                                        {
+                                                            var inputId = $"field_{field.Id}_{option.GetHashCode()}";
+                                                            <div class="form-check">
+                                                                <input type="@(field.FieldType == "dropdown" ? "radio" : "checkbox")"
+                                                                       name="field_@field.Id"
+                                                                       value="@option"
+                                                                       class="form-check-input"
+                                                                       id="@inputId" />
+                                                                <label class="form-check-label" for="@inputId">@option</label>
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <input type="@field.FieldType"
+                                                           name="field_@field.Id"
+                                                           placeholder="@field.Placeholder"
+                                                           class="form-control"
+                                                           @(field.IsRequired ? "required" : "") />
+                                                }
+                                            </div>
+                                        }
+
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-dark">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        }
+
+
+
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="main--sidebar col-md-4 col-sm-5 ptop--30 pbottom--30" data-sticky-content="true" style="position: relative; overflow: visible; box-sizing: border-box; min-height: 1px;">
+                <div class="sticky-content-inner" style="padding-top: 0px; padding-bottom: 1px; position: static; transform: none;">
+
+                    <partial name="_TopSideBar" />
+
+                    <partial name="_TopSideBarBottom" />
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+

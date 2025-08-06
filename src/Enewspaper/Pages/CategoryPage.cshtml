@@ -1,0 +1,205 @@
+﻿@page "/category/{slug}"
+@model Enewspaper.Pages.CategoryPageModel
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+} 
+<div class="post-header-section section mt-30 mb-30">
+    <div class="container">
+        <div class="row row-1">
+
+            <!-- Page Banner Start -->
+            <div class="col-12">
+                <div class="post-header" style="background-image: url(@(siteSettings.SiteBreadcrumbImageUrl ?? ""))">
+
+                    <!-- Title -->
+                    <h3 class="title">@Model.Category?.Title</h3>
+
+                    <div class="meta fix">
+                        <a asp-page="/AllCategory" class="meta-item category fashion">All Categories</a>
+                        
+                    </div>
+
+                </div>
+            </div><!-- Post Header Section End -->
+
+        </div>
+    </div>
+</div>
+
+
+<div class="post-section section">
+    <div class="container">
+
+        <!-- Feature Post Row Start -->
+        <div class="row">
+
+            <div class="col-lg-8 col-12 mb-50">
+
+                <!-- Post Block Wrapper Start -->
+                <div class="post-block-wrapper mb-50 post-bdr">
+
+                    <!-- Post Block Body Start -->
+                    <div class="body">
+                        <div class="row">
+
+                            <div class="col-12">
+
+                                <!-- Single Post Start -->
+                                <div class="single-post">
+                                    <div class="post-wrap">
+
+
+                                        @if (!Model.Posts.Any())
+                                        {
+                                            <div class="col-12">
+                                                <div class="alert alert-info">No posts available in this category.</div>
+                                            </div>
+                                        }
+
+                                    <div class="body p-body-c-page">
+                                        <div class="row" id="post-container">
+                                            @foreach (var post in Model.Posts)
+                                            {
+                                                <div class="col-md-6 col-12 mb-50">
+                                                    <div class="post sports-post post-separator-border">
+                                                        <div class="post-wrap">
+                                                            <!-- Image -->
+                                                            <a class="image" asp-page="/PostPage" asp-route-slug="@post.Slug">
+                                                                <img src="@(post?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@post.Title">
+                                                            </a>
+                                                            <!-- Content -->
+                                                            <div class="content">
+                                                                <!-- Title -->
+                                                                <h5 class="title">
+                                                                    <a asp-page="/PostPage" asp-route-slug="@post.Slug">
+                                                                        @post.Title
+                                                                    </a>
+                                                                </h5>
+                                                                <!-- Meta -->
+                                                                <div class="meta fix">
+                                                                    <a class="meta-item author">
+                                                                        <i class="fa fa-user">
+                                                                        </i> @post.PostBy
+                                                                    </a>
+                                                                    <span class="meta-item date">
+                                                                        <i class="fa fa-clock-o">
+                                                                        </i>@(post.PublishedAt?.ToString("MMMM dd, yyyy"))
+                                                                    </span>
+                                                                </div>
+                                                                <p>
+                                                                    @post.ShortDescription
+                                                                </p>
+                                                                <!-- Read More -->
+                                                                <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="read-more">
+                                                                    read-more
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!-- Small Post End -->
+                                                </div>
+                                            }
+                                        </div>
+
+                                        @if (Model.TotalPages > 1 && Model.CurrentPage < Model.TotalPages)
+                                        {
+                                            <div class="text-center">
+                                                <button id="load-more-btn" class="btn btn-primary mt-4" data-page="@Model.CurrentPage" data-total="@Model.TotalPages" data-slug="@Model.Slug">
+                                                    Load More
+                                                </button>
+                                            </div>
+                                        }
+                                    </div>
+
+                                         
+
+
+                                    </div>
+                                </div><!-- Single Post End -->
+
+                            </div>
+
+                        </div>
+                    </div><!-- Post Block Body End -->
+
+                </div><!-- Post Block Wrapper End -->
+
+            </div>
+
+            <!-- Sidebar Start -->
+            <div class="col-lg-4 col-12 mb-50">
+                <div class="row">
+
+                    <partial name="_FullSideBar" />
+                </div>
+            </div><!-- Sidebar End -->
+
+        </div><!-- Feature Post Row End -->
+
+    </div>
+</div>
+
+
+@section Scripts {
+     <script>
+        $(document).on("click", "#load-more-btn", function () {
+            var button = $(this);
+            var page = parseInt(button.data("page")) + 1;
+            var total = parseInt(button.data("total"));
+            var slug = button.data("slug");
+
+            $.get(`/category/${slug}?handler=LoadMore&page=${page}`, function (response) {
+                if (response.success && response.posts.length > 0) {
+                    $.each(response.posts, function (i, post) {
+                        let html = `
+<div class="col-md-6 col-12 mb-50">
+    <div class="post sports-post post-separator-border">
+        <div class="post-wrap">
+            <!-- Image -->
+            <a class="image" href="/postpage?slug=${post.slug}">
+                <img src="${post.imageUrl}" alt="${post.title}">
+            </a>
+            <!-- Content -->
+            <div class="content">
+                <!-- Title -->
+                <h5 class="title">
+                    <a href="/postpage?slug=${post.slug}">
+                        ${post.title}
+                    </a>
+                </h5>
+                <!-- Meta -->
+                <div class="meta fix">
+                    <a class="meta-item author">
+                        <i class="fa fa-user"></i> ${post.postBy}
+                    </a>
+                    <span class="meta-item date">
+                        <i class="fa fa-clock-o"></i> ${post.publishedAt}
+                    </span>
+                </div>
+                <p>${post.shortDescription}</p>
+                <!-- Read More -->
+                <a href="/postpage?slug=${post.slug}" class="read-more">
+                    read-more
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+`;
+
+                        $("#post-container").append(html);
+                    });
+
+                    button.data("page", page);
+                    if (page >= total) {
+                        button.remove(); // No more pages
+                    }
+                }
+            });
+        });
+    </script>
+}

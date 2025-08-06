@@ -1,0 +1,361 @@
+.popular-post-slider .slick-slide {
+    padding: 0 10px;
+}
+
+.popular-categories {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .popular-categories li {
+        margin-bottom: 6px;
+    }
+
+    .popular-categories .category-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: #fff; /* adjust as needed */
+    }
+
+        .popular-categories .category-link .title {
+            min-width: 120px; /* force label width so numbers align */
+        }
+
+        .popular-categories .category-link .count {
+            color: #ccc;
+            font-weight: bold;
+        }
+
+.page-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .page-links li {
+        margin-bottom: 10px;
+    }
+
+    .page-links a {
+        color: #ccc; /* Lighter gray for footer links */
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px; /* spacing between icon and text */
+        transition: color 0.3s ease;
+    }
+
+        .page-links a:hover {
+            color: #fff; /* Brighten on hover */
+        }
+
+    .page-links i.fa {
+        color: #00bfff; /* Soft blue globe */
+        min-width: 16px;
+    }
+
+/* Responsive adjustments for hero section */
+
+/* Main hero container override */
+.hero-01-post .row-1 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    height: 500px;
+}
+
+.hero-01-post .col-lg-4.col-md-6.col-12 {
+    padding: 0;
+}
+
+    .hero-01-post .col-lg-4.col-md-6.col-12 .hero-post {
+        height: 500px;
+    }
+
+.hero-01-post .order-lg-2.col-lg-4.col-12 {
+    display: flex;
+    flex-direction: column;
+    height: 500px;
+    padding: 0;
+}
+
+.hero-01-post .order-lg-2 .post:first-child {
+    height: 250px;
+    margin-bottom: 0;
+}
+
+.hero-01-post .order-lg-2 .row-1 {
+    flex: 1;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+    .hero-01-post .order-lg-2 .row-1 .col-md-6 {
+        flex: 1;
+        padding: 0;
+    }
+
+.hero-01-post .hero-post .image img {
+    height: 118%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.post.hero-post .post-wrap {
+    padding: 0;
+    border: none;
+    margin: 0;
+    height: 100%;
+}
+
+.hero-01-post .post.post-overlay .post-wrap .image::before {
+    height: 118%;
+}
+
+@media (max-width: 991.98px) {
+    .hero-01-post .row-1 {
+        height: auto;
+    }
+
+    .hero-01-post .col-lg-4.col-md-6.col-12 .hero-post {
+        height: auto;
+    }
+
+    .hero-01-post .order-lg-2.col-lg-4.col-12 {
+        height: auto;
+    }
+
+    .hero-01-post .order-lg-2 .post:first-child {
+        height: auto;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .hero-01-post .row-1,
+    .hero-01-post .col-lg-4.col-md-6.col-12,
+    .hero-01-post .order-lg-2.col-lg-4.col-12,
+    .hero-01-post .order-lg-2 .row-1 .col-md-6 {
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 991.98px) {
+    .hero-01-post .order-lg-2 .row-1 .col-md-6 {
+        flex: unset !important;
+        width: 100% !important;
+    }
+
+    .hero-01-post .post.post-overlay .post-wrap .image::before {
+        height: 100%;
+    }
+}
+/* Responsive adjustments for popular categories and posts */
+.post-list-pull .post-wrap .image {
+    height: 100px; /* adjust to desired consistent height */
+    display: block;
+    overflow: hidden;
+}
+
+.post-list-pull .post-wrap .image img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    display: block;
+}
+.post-list-pull .post-wrap {
+    margin-bottom: 15px;
+}
+.pp-most-pp .post-small .post-wrap .image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    max-width: 150px;
+    max-height: 100px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+    .pp-most-pp .post-small .post-wrap .image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+.whatsapp i {
+    font-size: 24px; /* Adjust as needed */
+    color: #25D366; /* WhatsApp green color */
+}
+.x1-pagination-01 {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 20px;
+    background: #fff;
+}
+
+    .x1-pagination-01 .nav-prev,
+    .x1-pagination-01 .nav-next {
+        width: 48%;
+    }
+
+    .x1-pagination-01 small {
+        display: block;
+        color: #ffffff;
+        margin-bottom: 4px;
+        font-size: 14px;
+    }
+
+    .x1-pagination-01 a {
+        font-size: 16px;
+        color: #ffffff;
+        text-decoration: none;
+    }
+
+        .x1-pagination-01 a:hover {
+            text-decoration: none;
+            color: #007bff;
+        }
+
+@media (max-width: 768px) {
+    .x1-pagination-01 {
+        flex-direction: column;
+    }
+
+        .x1-pagination-01 .nav-prev,
+        .x1-pagination-01 .nav-next {
+            width: 100%;
+        }
+}
+.x1-pagination-01 small {
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+}
+.post-nav .x1-pagination-01 a {
+    display: block;
+    float: left;
+    width: 30%;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    font-family: "Poppins", sans-serif;
+    color: #444444;
+}
+.single-post .post-wrap .tags-social .tags a {
+    line-height: 24px;
+    margin: 0 !important;
+}
+@media (max-width: 768px) {
+    .x1-pagination-01 {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+        .x1-pagination-01 a.btn {
+            display: block;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 100%;
+        }
+
+            .x1-pagination-01 a.btn small {
+                display: block;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+            }
+}
+.x1-pagination-01 a.btn {
+    min-height: 80px;
+}
+.p-two-column-post-carousel .image {
+    height: 220px; /* or whatever consistent height you prefer */
+    overflow: hidden;
+}
+
+    .p-two-column-post-carousel .image img {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        display: block;
+    }
+.p-two-column-post-carousel .post-wrap {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.p-two-column-post-carousel .post {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.p-two-column-post-carousel .image {
+    height: 200px; /* Set your preferred uniform height */
+    overflow: hidden;
+}
+
+    .p-two-column-post-carousel .image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+.p-two-column-post-carousel .post-overlay.hero-post {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.post-bdr {
+    border: 1px solid #93939338;
+    float: left;
+    width: 100%;
+    border-radius: 10px;
+}
+
+
+
+
+
+
+
+
+.cat-body-c-page .accordion-button {
+    background-color: #f8f9fa;
+    border-radius: 0 !important;
+    transition: background-color 0.2s ease-in-out;
+}
+
+    .cat-body-c-page .accordion-button:hover {
+        background-color: #eef1f5;
+    }
+
+    .cat-body-c-page .accordion-button:not(.collapsed) {
+        color: #0d6efd;
+        background-color: #e9f0ff;
+    }
+
+.cat-body-c-page .accordion-body a:hover {
+    color: #0d6efd;
+    text-decoration: underline;
+}
+
+.cat-body-c-page .accordion-item {
+    border: none;
+    border-radius: 8px;
+}
