@@ -6,7 +6,7 @@ using ModelData.Services;
 
 
 //themelate used.
-//<!-- saved from url=(0066)https://themelooks.us/demo/usnews/html/home-1.html -->
+//<!-- saved from url=(0066)https://quanticalabs.com/Pressroom/Template/?page=home_4 -->
 
 namespace PeopleNewsBlog.Pages
 {
