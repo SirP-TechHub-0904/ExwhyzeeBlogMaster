@@ -1,31 +1,354 @@
-html {
-  font-size: 14px;
+.mx-main-footer .post img {
+    height: 100px !important;
+    width: 100px !important;
 }
 
-@media (min-width: 768px) {
-  html {
+.mx-main-footer .post img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.gallery-mx-01 .post img {
+    height: 245px !important;
+}
+
+.gallery-mx-01 .post img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+
+.mx-flow-slid-01 .slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    height: 450px !important;
+}
+
+.mx-feature-post .post img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    height: 150px !important;
+}
+
+.mx-title-post {
+    height: 3em;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    line-height: 1.5em;
+}
+
+.slider-blog-mx-pos .post img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    height: 170px !important;
+}
+
+.mx-lol .post {
+    width: 330px !important;
+}
+
+.search-mx {
+    padding: 10px;
+    box-shadow: 1px 1px 1px 1px #979191;
+    border-radius: 9px;
+    margin: 10px;
+}
+/* container */
+.cmt-01-xc {
+    --cmt-accent: #e53935; /* change this to theme color */
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+    /* each comment card */
+    .cmt-01-xc .comment {
+        list-style: none;
+        margin: 14px 0;
+        padding: 16px 18px;
+        background: #fff;
+        border: 1px solid #eee;
+        border-left: 4px solid var(--cmt-accent);
+        border-radius: 12px;
+        box-shadow: 0 4px 14px rgba(0,0,0,.06);
+        transition: box-shadow .2s, transform .2s;
+        display: block;
+    }
+
+        .cmt-01-xc .comment:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,.12);
+            transform: translateY(-2px);
+        }
+
+        /* header row (author + time) */
+        .cmt-01-xc .comment .posted_by {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 12px;
+            margin: 0 0 8px;
+        }
+
+        /* author */
+        .cmt-01-xc .comment h5 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+            .cmt-01-xc .comment h5 .author {
+                color: #1a1a1a;
+                text-decoration: none;
+            }
+
+                .cmt-01-xc .comment h5 .author:hover {
+                    text-decoration: underline;
+                }
+
+        /* time */
+        .cmt-01-xc .comment .timeago {
+            margin-left: auto;
+            color: #9aa3ae;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        /* body */
+        .cmt-01-xc .comment p {
+            margin: 0;
+            color: #333;
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+/* tiny screens */
+@media (max-width: 480px) {
+    .cmt-01-xc .comment {
+        padding: 14px 16px;
+    }
+
+        .cmt-01-xc .comment h5 {
+            font-size: 15px;
+        }
+
+        .cmt-01-xc .comment p {
+            font-size: 14px;
+        }
+}
+
+.ppp-post-comment li a {
     font-size: 16px;
-  }
+    color: #444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #f5f5f5;
+    transition: all 0.3s ease;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    .ppp-post-comment li a:hover {
+        color: #fff;
+    }
+
+    .ppp-post-comment li a[title*="Facebook"]:hover {
+        background: #3b5998;
+    }
+
+    .ppp-post-comment li a[title*="Twitter"]:hover {
+        background: #1da1f2;
+    }
+
+    .ppp-post-comment li a[title*="LinkedIn"]:hover {
+        background: #0077b5;
+    }
+
+    .ppp-post-comment li a[title*="Pinterest"]:hover {
+        background: #bd081c;
+    }
+
+    .ppp-post-comment li a[title*="WhatsApp"]:hover {
+        background: #25d366;
+    }
+
+/* Card */
+.widget {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.08);
+    padding: 18px 18px 20px;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+    /* Title row */
+    .widget .widget--title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding-bottom: 10px;
+        position: relative;
+    }
+
+        /* Red underline across the title row */
+        .widget .widget--title::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 2px;
+            background: #e53935;
+            opacity: .9;
+        }
+
+        /* Title text */
+        .widget .widget--title .h4 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1.2;
+        }
+
+        /* Envelope icon (stay on the right, no overlap) */
+        .widget .widget--title .icon {
+            order: 2; /* push to the right in the flex row */
+            position: static; /* cancel any theme absolute/float */
+            flex: 0 0 auto;
+            font-size: 18px;
+            color: #e53935;
+            margin-left: 8px;
+            line-height: 1;
+            opacity: .95;
+            pointer-events: none;
+        }
+
+/* Body text */
+.subscribe--widget .content p {
+    margin: 14px 0 16px;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.55;
 }
 
-body {
-  margin-bottom: 60px;
+/* INPUT GROUP — make input and button the same height and flush */
+.subscribe--widget .input-group {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f7f7f7;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Input */
+.subscribe--widget .form-control {
+    flex: 1;
+    border: 0 !important;
+    background: transparent;
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+    min-height: 42px;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    .subscribe--widget .form-control:focus {
+        box-shadow: inset 0 0 0 1px #e53935;
+    }
+
+/* Button holder */
+.subscribe--widget .input-group-btn {
+    display: flex;
 }
+
+    /* Button */
+    .subscribe--widget .input-group-btn .btn {
+        border: 0;
+        background: #e53935;
+        color: #fff;
+        min-width: 46px;
+        padding: 0 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        border-radius: 0; /* join flush with input */
+        transition: background .25s ease, transform .06s ease;
+    }
+
+        .subscribe--widget .input-group-btn .btn:hover {
+            background: #c62828;
+        }
+
+        .subscribe--widget .input-group-btn .btn:active {
+            transform: scale(.98);
+        }
+
+        .subscribe--widget .input-group-btn .btn i {
+            font-size: 14px;
+        }
+
+/* Status message */
+#subscribeMessage {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #444;
+}
+
+/* Small screens */
+@media (max-width:480px) {
+    .widget {
+        padding: 16px;
+    }
+
+        .widget .widget--title .h4 {
+            font-size: 17px;
+        }
+}
+.blog.medium {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px; /* space between posts */
+}
+
+    .blog.medium .post {
+       
+        margin: 0 !important; /* remove old margins */
+        box-sizing: border-box;
+    }
+.blog.medium {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: 30px;
+}
+
+    .blog.medium .post {
+        margin: 0 !important; /* remove previous nth-child margin rules */
+    }
+.main-top-advert {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 120px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+    .main-top-advert img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* keeps proportions, crops excess */
+        display: block;
+    }

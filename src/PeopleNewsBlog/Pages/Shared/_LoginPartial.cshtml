@@ -16,26 +16,40 @@
 
     if (isInAnyRole)
     {
-        
+
         <li>
-            <a asp-area="Admin" asp-page="/Dashboard/Index"><i class="fa fa-dashboard" aria-hidden="true"></i>  Dashboard</a>
+            <a asp-area="Admin" asp-page="/Dashboard/Index" target="_blank"><i class="fa fa-dashboard" aria-hidden="true"></i>  Dashboard</a>
         </li>
     }
     else
     {
-        <li>
-            <a href="#">Hello @firstName!</a>
-        </li>
-        <li>
+       
 
-            <a href="javascript:document.getElementById('logoutForm').submit()"> <i class="fa fa-sign-out"></i>  Sign Out </a>
+        <li class="submenu">
+            <a href="#">
+                Hello @firstName!
+            </a>
+
+            <!-- Submenu Start -->
+            <ul class="dropdown-menu">
+               
+                    <li>
+                        <a href="javascript:document.getElementById('logoutForm').submit()">  Sign Out </a>
+                    </li>
+                 
+            </ul> 
+
         </li>
+
     }
 
 }
 else
 {
-    <li><a asp-area="Identity" asp-page="/Account/Login"><i class="fa fa-user-circle-o"></i>  Sign In</a></li>
+    <li><a asp-area="Identity" asp-page="/Account/Login"> Sign In</a></li>
 
 
 }
+
+
+

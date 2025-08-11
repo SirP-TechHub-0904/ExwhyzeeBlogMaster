@@ -90,7 +90,11 @@ namespace PeopleNewsBlog.Pages
                     PublishedAt = p.PublishedAt?.ToString("MMMM dd, yyyy hh:mm tt"),
                     p.ShortDescription,
                     ImageUrl = p.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "/assets/default.jpg",
-                    Category = p.Category?.Title
+                    Category = new
+                    {
+                        Slug = p.Category?.Slug,
+                        Title = p.Category?.Title
+                    }
                 })
                 .ToList();
 

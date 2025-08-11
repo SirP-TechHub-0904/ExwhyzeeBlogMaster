@@ -16,7 +16,7 @@ namespace PeopleNewsBlog.Pages
         }
 
         public List<Post> Posts { get; set; } = new();
-        public int PageSize { get; set; } = 10;
+        public int PageSize { get; set; } = 24;
         public int CurrentPage { get; set; }
         public int TotalPages { get; set; }
 
@@ -55,7 +55,11 @@ namespace PeopleNewsBlog.Pages
                     PublishedAt = p.PublishedAt?.ToString("MMMM dd, yyyy hh:mm tt"),
                     p.ShortDescription,
                     ImageUrl = p.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "/assets/default.jpg",
-                    Category = p.Category?.Title
+                    Category = new
+                    {
+                        Slug = p.Category?.Slug,
+                        Title = p.Category?.Title
+                    }
                 }).ToList();
 
             return new JsonResult(new { success = true, posts = pagedPosts });

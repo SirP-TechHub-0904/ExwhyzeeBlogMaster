@@ -800,7 +800,7 @@ h6
 .menu_container .sf-menu li ul li.submenu>a,
 .menu_container .sf-menu li:hover ul li.submenu>a
 {
-	background-image: url("dark_bg/submenu_arrow.png");
+	background-image: url("submenu_arrow.png");
 	background-repeat: no-repeat;
 	background-position: center right;
 	padding-right: 0;
@@ -809,7 +809,7 @@ h6
 .menu_container .sf-menu li ul li.submenu>a:hover,
 .menu_container .sf-menu li ul li.submenu.sfHover>a
 {
-	background-image: url("dark_bg/submenu_arrow_hover.png");
+	background-image: url("submenu_arrow_hover.png");
 }
 .menu_container .sf-menu li ul li a:hover, .menu_container .sf-menu li ul li.selected a,
 .menu_container .sf-menu li.submenu ul li a:hover, .menu_container .sf-menu li.submenu:hover ul li.selected a,
@@ -1670,11 +1670,11 @@ ul.post_details.simple li.date
 	margin-top: 30px;
 	margin-left: 30px;
 }
-.blog.medium .post:first-child,
+/*.blog.medium .post:first-child,
 .blog.medium .post:nth-child(3n+1)
 {
 	margin-left: 0;
-}
+}*/
 .blog.rating .post
 {
 	width: 100%;
@@ -3215,11 +3215,11 @@ li.detail.category
 }
 .latest_news_scrolling_list_container .left a
 {
-	background-image: url("dark_bg/navigation_latest_arrow_left.png");
+	background-image: url("navigation_latest_arrow_left.png");
 }
 .latest_news_scrolling_list_container .right a
 {
-	background-image: url("dark_bg/navigation_latest_arrow_right.png");
+	background-image: url("navigation_latest_arrow_right.png");
 }
 .latest_news_scrolling_list_container .left:hover a,
 .latest_news_scrolling_list_container .right:hover a
@@ -3435,187 +3435,187 @@ li.detail.category
 .dark .behance,
 .colors .behance
 {
-	background-image: url("dark_bg/behance.png");
+	background-image: url("behance.png");
 }
 .dark .bing,
 .colors .bing
 {
-	background-image: url("dark_bg/bing.png");
+	background-image: url("bing.png");
 }
 .dark .blogger,
 .colors .blogger
 {
-	background-image: url("dark_bg/blogger.png");
+	background-image: url("blogger.png");
 }
 .dark .deezer,
 .colors .deezer
 {
-	background-image: url("dark_bg/deezer.png");
+	background-image: url("deezer.png");
 }
 .dark .designfloat,
 .colors .designfloat
 {
-	background-image: url("dark_bg/designfloat.png");
+	background-image: url("designfloat.png");
 }
 .dark .deviantart,
 .colors .deviantart
 {
-	background-image: url("dark_bg/deviantart.png");
+	background-image: url("deviantart.png");
 }
 .dark .digg,
 .colors .digg
 {
-	background-image: url("dark_bg/digg.png");
+	background-image: url("digg.png");
 }
 .dark .digg,
 .colors .digg
 {
-	background-image: url("dark_bg/digg.png");
+	background-image: url("digg.png");
 }
 .dark .dribbble,
 .colors .dribbble
 {
-	background-image: url("dark_bg/dribbble.png");
+	background-image: url("dribbble.png");
 }
 .dark .envato,
 .colors .envato
 {
-	background-image: url("dark_bg/envato.png");
+	background-image: url("envato.png");
 }
 .dark .facebook,
 .colors .facebook
 {
-	background-image: url("dark_bg/facebook.png");
+	background-image: url("facebook.png");
 }
 .dark .flickr,
 .colors .flickr
 {
-	background-image: url("dark_bg/flickr.png");
+	background-image: url("flickr.png");
 }
 .dark .form,
 .colors .form
 {
-	background-image: url("dark_bg/form.png");
+	background-image: url("form.png");
 }
 .dark .forrst,
 .colors .forrst
 {
-	background-image: url("dark_bg/forrst.png");
+	background-image: url("forrst.png");
 }
 .dark .foursquare,
 .colors .foursquare
 {
-	background-image: url("dark_bg/foursquare.png");
+	background-image: url("foursquare.png");
 }
 .dark .friendfeed,
 .colors .friendfeed
 {
-	background-image: url("dark_bg/friendfeed.png");
+	background-image: url("friendfeed.png");
 }
 .dark .googleplus,
 .colors .googleplus
 {
-	background-image: url("dark_bg/googleplus.png");
+	background-image: url("googleplus.png");
 }
 .dark .instagram,
 .colors .instagram
 {
-	background-image: url("dark_bg/instagram.png");
+	background-image: url("instagram.png");
 }
 .dark .linkedin,
 .colors .linkedin
 {
-	background-image: url("dark_bg/linkedin.png");
+	background-image: url("linkedin.png");
 }
 .dark .mail,
 .colors .mail
 {
-	background-image: url("dark_bg/mail.png");
+	background-image: url("mail.png");
 }
 .dark .mobile,
 .colors .mobile
 {
-	background-image: url("dark_bg/mobile.png");
+	background-image: url("mobile.png");
 }
 .dark .myspace,
 .colors .myspace
 {
-	background-image: url("dark_bg/myspace.png");
+	background-image: url("myspace.png");
 }
 .dark .picasa,
 .colors .picasa
 {
-	background-image: url("dark_bg/picasa.png");
+	background-image: url("picasa.png");
 }
 .dark .pinterest,
 .colors .pinterest
 {
-	background-image: url("dark_bg/pinterest.png");
+	background-image: url("pinterest.png");
 }
 .dark .reddit,
 .colors .reddit
 {
-	background-image: url("dark_bg/reddit.png");
+	background-image: url("reddit.png");
 }
 .dark .rss,
 .colors .rss
 {
-	background-image: url("dark_bg/rss.png");
+	background-image: url("rss.png");
 }
 .dark .skype,
 .colors .skype
 {
-	background-image: url("dark_bg/skype.png");
+	background-image: url("skype.png");
 }
 .dark .soundcloud,
 .colors .soundcloud
 {
-	background-image: url("dark_bg/soundcloud.png");
+	background-image: url("soundcloud.png");
 }
 .dark .spotify,
 .colors .spotify
 {
-	background-image: url("dark_bg/spotify.png");
+	background-image: url("spotify.png");
 }
 .dark .stumbleupon,
 .colors .stumbleupon
 {
-	background-image: url("dark_bg/stumbleupon.png");
+	background-image: url("stumbleupon.png");
 }
 .dark .technorati,
 .colors .technorati
 {
-	background-image: url("dark_bg/technorati.png");
+	background-image: url("technorati.png");
 }
 .dark .tumblr,
 .colors .tumblr
 {
-	background-image: url("dark_bg/tumblr.png");
+	background-image: url("tumblr.png");
 }
 .dark .twitter,
 .colors .twitter
 {
-	background-image: url("dark_bg/twitter.png");
+	background-image: url("twitter.png");
 }
 .dark .vimeo,
 .colors .vimeo
 {
-	background-image: url("dark_bg/vimeo.png");
+	background-image: url("vimeo.png");
 }
 .dark .wykop,
 .colors .wykop
 {
-	background-image: url("dark_bg/wykop.png");
+	background-image: url("wykop.png");
 }
 .dark .xing,
 .colors .xing
 {
-	background-image: url("dark_bg/xing.png");
+	background-image: url("xing.png");
 }
 .dark .youtube,
 .colors .youtube
 {
-	background-image: url("dark_bg/youtube.png");
+	background-image: url("youtube.png");
 }
 .colors .behance
 {
@@ -3820,7 +3820,7 @@ li.detail.category
 	width: 30px;
 	height: 46px;
 	padding: 0 22px;
-	background: url("dark_bg/header_search.png") 0 0 no-repeat;
+	background: url("header_search.png") 0 0 no-repeat;
 	border: none;
 	cursor: pointer;
 }
@@ -3958,7 +3958,7 @@ li.detail.category
 	display: block;
 	width: 23px;
 	height: 23px;
-	background: url("dark_bg/gallery_close.png") no-repeat 0 0;
+	background: url("gallery_close.png") no-repeat 0 0;
 	margin-top: 15px;
 }
 .gallery_close:hover

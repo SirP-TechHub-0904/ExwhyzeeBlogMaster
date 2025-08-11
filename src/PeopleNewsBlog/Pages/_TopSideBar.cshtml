@@ -1,4 +1,6 @@
 ﻿@using ModelData.Services;
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
 @inject ICategoryServices CategoryServices
 @inject IPostServices PostServices
 @inject IAdvertService AdvertServices
@@ -9,7 +11,7 @@
     List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts(showInHero: true);
 
 }
- 
+
 <div class="widget">
     <div class="ad--widget">
         @{
@@ -18,76 +20,100 @@
         @if (sideadvert != null)
         {
             <a href="@sideadvert.Link" target="_blank">
-                <img src="@sideadvert.ImageUrl" alt="@sideadvert.Title" class="img-fluid" data-rjs="2" data-rjs-processed="true">
+                <img src="@sideadvert.ImageUrl" alt="@sideadvert.Title" class="img-fluid" style=" max-width: 330px;">
             </a>
         }
-         
+
     </div>
 </div>
-<!-- Sidebar End -->
+
+
+
+
+<h4 class="box_header page_margin_top_section">
+    Latest Updates
+</h4>
+
+<ul class="mx-main-footer blog small clearfix">
+    @{
+        // Get the 4 most recent posts
+        var recentPosts = (await PostServices.GetRecentPosts()) // Or GetPosts() depending on your service
+                            .OrderByDescending(p => p.PublishedAt ?? p.Date)
+                            .Take(8)
+                            .ToList();
+    }
+
+    @foreach (var post in recentPosts)
+    {
+        var imageUrl = post.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "~/assets/default.jpg";
+
+        <li class="post">
+
+            <a asp-page="/PostPage" asp-route-slug="@post.Slug" title="@post.Title">
+
+                <img src="@imageUrl" alt="@post.Title">
+
+            </a>
+
+            <div class="post_content">
+
+                <h5>
+
+                    <a asp-page="/PostPage" asp-route-slug="@post.Slug" title="@post.Title">
+                        @post.Title
+                    </a>
+
+                </h5>
+
+                <ul class="post_details simple">
+
+                    <li class="category">
+                        <a asp-page="/CategoryPage" asp-route-slug="@post.Category?.Slug" title="@post.Category?.Title">
+                            @post.Category?.Title
+                        </a>
+                    </li>
+
+                    <li class="date">
+                        @(post.PublishedAt?.ToString("dd MMM, yyyy"))
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </li>
+    }
+
+</ul>
+
+@{
+    var token = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+}
+
 <div class="widget">
     <div class="widget--title">
         <h2 class="h4">
-            Recent News
+            Get Newsletter
         </h2>
-        <i class="icon fa fa-newspaper-o">
-        </i>
+        
     </div>
-    <div class="list--widget list--widget-1">
-
-        <div class="post--items post--items-3" data-ajax-content="outer">
-            <ul class="nav" data-ajax-content="inner">
-                @{
-                    // Get the 4 most recent posts
-                    var recentPosts = (await PostServices.GetRecentPosts()) // Or GetPosts() depending on your service
-                                        .OrderByDescending(p => p.PublishedAt ?? p.Date)
-                                        .Take(8)
-                                        .ToList();
-                }
-
-                @foreach (var post in recentPosts)
-                {
-                    var imageUrl = post.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "~/assets/default.jpg";
-
-                    <li>
-                        <div class="post--item post--layout-3">
-                            <div class="post--img">
-                                <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="thumb">
-                                    <img src="@imageUrl" alt="@post.Title" data-rjs="2" data-rjs-processed="true">
-                                </a>
-                                <div class="post--info">
-                                    <ul class="nav meta">
-                                        <li>
-                                            <a href="#">
-                                                @post.PostBy
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                @(post.PublishedAt?.ToString("dd MMM, yyyy"))
-
-                                            </a>
-                                        </li>
-                                    </ul>
-                                    <div class="title">
-                                        <h3 class="h4">
-                                            <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="btn-link">
-                                                @post.Title
-                                            </a>
-                                        </h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                }
-            </ul>
-
+    <div class="subscribe--widget">
+        <div class="content">
+            <p>
+                Subscribe to our newsletter to get latest news, popular news and exclusive updates.
+            </p>
         </div>
+        <div class="input-group">
+            <input type="email" id="newsletterEmail" placeholder="E-mail address" class="form-control" autocomplete="off" required="" aria-required="true">
+            <input type="hidden" id="__RequestVerificationToken" value="@token" />
+            <div class="input-group-btn">
+                <button type="submit" name="subscribe" id="subscribeBtn" class="btn btn-lg btn-default active">
+                    <i class="fa fa-paper-plane-o">
+                    </i>
+                </button>
+            </div>
+        </div>
+        <small id="subscribeMessage" class="text-black"></small>
     </div>
 </div>
-
-
-
-
-

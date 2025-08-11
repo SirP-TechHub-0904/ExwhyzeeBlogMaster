@@ -10,110 +10,116 @@
 }
 
  
-<div class="main--breadcrumb">
-    <div class="container">
-        <ul class="breadcrumb">
+
+
+<div class="page_header clearfix page_margin_top">
+    <div class="page_header_left">
+        <h1 class="page_title"> All News</h1>
+    </div>
+    <div class="page_header_right">
+        <ul class="bread_crumb">
             <li>
-                <a href="/" class="btn-link">
-                    <i class="fa fm fa-home">
-                    </i>Home
+                <a title="Home" href="?page=home">
+                    Home
                 </a>
             </li>
+            <li class="separator icon_small_arrow right_gray">
+                &nbsp;
+            </li>
             <li>
-                <a asp-page="/AllCategory" class="btn-link">
+                <a asp-page="/AllCategory">
                     All Categories
                 </a>
             </li>
-            <li class="active">
-                <span>
-                    All News
-                </span>
+            <li class="separator icon_small_arrow right_gray">
+                &nbsp;
+            </li>
+            <li>
+                All News
             </li>
         </ul>
     </div>
 </div>
+<div class="divider_block clearfix">
+    <hr class="divider first">
+    <hr class="divider subheader_arrow">
+    <hr class="divider last">
+</div>
 
-<div class="main-content--section pbottom--30">
+<div class="row page_margin_top">
 
-    <div class="container">
+    <div class="column column_2_3">
 
-        <div class="row" style="transform: none;">
-            <div class="main--content col-md-8">
-                <div class="col-md-12 ptop--30 pbottom--30">
+        <div class="row">
+            @if (!Model.Posts.Any())
+            {
+                <div class="col-12">
+                    <div class="alert alert-info">No posts available in this category.</div>
+                </div>
+            }
+            <ul class="mx-feature-post blog medium" id="post-container">
+                @{
 
 
+                    // Get the 4 most recent posts
+                    var otherPosts = Model.Posts;
 
-                    @if (!Model.Posts.Any())
+
+                    @if (otherPosts.Any())
                     {
-                        <div class="col-12">
-                            <div class="alert alert-info">No posts available in this category.</div>
-                        </div>
-                    }
-                    @{
-                        // Get the 4 most recent posts
-                        var otherPosts = Model.Posts;
+                        @foreach (var list in otherPosts)
+                        {
+                            <li class="post">
 
-                    }
+                                <a asp-page="/PostPage" asp-route-slug="@list.Slug" title="@list.Title" style="">
 
-                    <div class="row">
-                        <div class="post-col" style="width: 100%;">
-                            <div class="post--items post--items-3" data-ajax-content="outer">
-                                <ul class="nav new-xm-post" data-ajax-content="inner" id="post-container">
-                                    @foreach (var post in otherPosts)
-                                    {
-                                        <li style="float: left; width: 50%; padding: 10px 15px 30px;">
-                                            <div class="post--item post--layout-3">
-                                                <div class="post--img">
-                                                    <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="thumb">
-                                                        <img src="@(post?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@post.Title" data-rjs="2" />
-                                                    </a>
-                                                    <div class="post--info">
-                                                        <ul class="nav meta">
-                                                            <li>
-                                                                <a asp-page="/PostPage" asp-route-slug="@post.Slug">
-                                                                    @(post.PublishedAt?.ToString("MMMM dd, yyyy"))
-                                                                </a>
-                                                            </li>
-                                                        </ul>
-                                                        <div class="title">
-                                                            <h3 class="h4">
-                                                                <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="btn-link">
-                                                                    @post.Title
-                                                                </a>
-                                                            </h3>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    }
+                                    <img src="@(list?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@list.Title" style="display: block;">
+
+                                </a>
+
+                                <h5 class="mx-title-post">
+                                    <a asp-page="/PostPage" asp-route-slug="@list.Slug" title="@list.Title">
+                                        @list.Title
+                                    </a>
+                                </h5>
+
+                                <ul class="post_details simple">
+
+                                    <li class="category">
+
+                                        <a asp-page="/CategoryPage" asp-route-slug="@list.Category?.Slug" title="@list.Category?.Title">
+                                            @list.Category?.Title
+                                        </a>
+                                    </li>
+
+                                    <li class="date">
+                                        @(list.PublishedAt?.ToString("hh:mm tt, MMM dd") ?? "")
+                                    </li>
+
                                 </ul>
-                            </div>
-                        </div>
-                    </div>
 
-
-                    @if (Model.TotalPages > 1 && Model.CurrentPage < Model.TotalPages)
-                    {
-                        <div class="text-center">
-                            <button id="load-more-btn" class="btn btn-primary mt-4" data-page="@Model.CurrentPage" data-total="@Model.TotalPages">
-                                Load More
-                            </button>
-                        </div>
+                            </li>
+                        }
                     }
-                </div>
-            </div>
-            <div class="main--sidebar col-md-4 col-sm-5 ptop--30 pbottom--30" data-sticky-content="true" style="position: relative; overflow: visible; box-sizing: border-box; min-height: 1px;">
-                <div class="sticky-content-inner" style="padding-top: 0px; padding-bottom: 1px; position: static; transform: none;">
+                }
+            </ul>
 
-                    <partial name="_TopSideBar" />
-
-                    <partial name="_TopSideBarBottom" />
-
-
-                </div>
-            </div>
         </div>
+        @if (Model.TotalPages > 1 && Model.CurrentPage < Model.TotalPages)
+        {
+            <div class="text-center" style="margin-top:30px;">
+                <button id="load-more-btn" class="more active" data-page="@Model.CurrentPage" data-total="@Model.TotalPages">
+                    Load More
+                </button>
+            </div>
+        }
+    </div>
+
+    <div class="column column_1_3">
+
+
+        <partial name="_TopSideBar" />
+
     </div>
 
 </div>
@@ -122,12 +128,9 @@
     <script>
         $(document).on("click", "#load-more-btn", function () {
             var button = $(this);
-            var currentPage = parseInt(button.data("page")) || 1;
-            var page = currentPage + 1;
-            var total = parseInt(button.data("total")) || 1;
-            var tab = button.data("tab") || "featured";
-
-            console.log("➡ Load More: tab =", tab, ", page =", page);
+            var page = parseInt(button.data("page")) + 1;
+            var total = parseInt(button.data("total"));
+            var slug = button.data("slug");
 
             $.get(`/allnews?handler=LoadMore&page=${page}`, function (response) {
                 if (response.success && response.posts.length > 0) {
@@ -135,36 +138,43 @@
 
                     $.each(response.posts, function (i, post) {
                         postsHtml += `
-<li style="float: left; width: 50%; padding: 0 15px 30px;">
-        <div class="post--item post--layout-3">
-            <div class="post--img">
-                <a href="/postpage?slug=${post.slug}" class="thumb">
-                    <img src="${post.imageUrl}" alt="${post.title}" data-rjs="2" />
-                </a>
-                <div class="post--info">
-                    <ul class="nav meta">
-                        <li><a href="/postpage?slug=${post.slug}">${post.publishedAt}</a></li>
-                    </ul>
-                    <div class="title">
-                        <h3 class="h4">
-                            <a href="/postpage?slug=${post.slug}" class="btn-link">${post.title}</a>
-                        </h3>
-                    </div>
-                </div>
-            </div>
-        </div>
+<li class="post">
+        <a href="/postpage?slug=${post.slug}" title="${post.title}">
+            <img src="${post.imageUrl ?? ''}" alt="${post.title}" style="display: block;">
+        </a>
+
+        <h5 class="mx-title-post">
+            <a href="/postpage?slug=${post.slug}" title="${post.title}">
+                ${post.title}
+            </a>
+        </h5>
+
+        <ul class="post_details simple">
+            <li class="category">
+               <a href="/categorypage?slug=${post.category.slug}" title="${post.category.title}">
+        ${post.category.title}
+</a>
+            </li>
+            <li class="date">
+                ${post.publishedAt}
+            </li>
+        </ul>
 </li>`;
+
                     });
 
+                    // Append to the only <ul> under #post-container
                     $('#post-container').append(postsHtml);
 
-                    button.data("page", page); // Update page
+
+                    button.data("page", page);
                     if (page >= total) {
-                        button.remove(); // remove if no more pages
+                        button.remove(); // no more pages
                     }
                 }
             });
         });
     </script>
 }
- 
+
+  

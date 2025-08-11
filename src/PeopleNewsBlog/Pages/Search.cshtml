@@ -10,88 +10,93 @@
     ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
 
 }
+
  
-<div class="main--breadcrumb">
-    <div class="container">
-        <ul class="breadcrumb">
+
+<div class="page_header clearfix page_margin_top">
+    <div class="page_header_left">
+        <h1 class="page_title">Search - @Model.Query</h1>
+    </div>
+    <div class="page_header_right">
+        <ul class="bread_crumb">
             <li>
-                <a href="/" class="btn-link">
-                    <i class="fa fm fa-home">
-                    </i>Home
+                <a title="Home" href="?page=home">
+                    Home
                 </a>
             </li>
+            <li class="separator icon_small_arrow right_gray">
+                &nbsp;
+            </li>
             <li>
-                <a asp-page="/Search" class="btn-link">
+                <a asp-page="/Search">
                     Search
                 </a>
             </li>
-            <li class="active">
-                <span>
-                    @Model.Query
-                </span>
+            <li class="separator icon_small_arrow right_gray">
+                &nbsp;
+            </li>
+            <li>
+                @Model.Query
             </li>
         </ul>
     </div>
 </div>
+<div class="divider_block clearfix">
+    <hr class="divider first">
+    <hr class="divider subheader_arrow">
+    <hr class="divider last">
+</div>
+
+<div class="row page_margin_top">
+
+    <div class="column column_2_3">
+
+        <form method="get" class="mb-5">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search..." asp-for="Query" style="width:80%;" />
+                <button class="more active" type="submit">Search</button>
+            </div>
+        </form>
+        <h2 class="mb-4">Search Results for "<strong>@Model.Query</strong>"</h2>
 
 
-<div class="main-content--section pbottom--30">
+        @if (Model.Results.Any())
+        {
+            <div class="row">
 
-    <div class="container">
-
-        <div class="row" style="transform: none;">
-            <div class="main--content col-md-8">
-                <div class="col-md-12 ptop--30 pbottom--30">
-
-                    <form method="get" class="mb-5">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Search..." asp-for="Query" />
-                            <button class="btn btn-dark" type="submit">Search</button>
-                        </div>
-                    </form>
-                    <h2 class="mb-4">Search Results for "<strong>@Model.Query</strong>"</h2>
-
-
-                    @if (Model.Results.Any())
+                <div id="searchResults" class="row">
+                    @foreach (var result in Model.Results.Take(20))
                     {
-                        <div class="row">
-
-                            <div id="searchResults" class="row">
-                                @foreach (var result in Model.Results.Take(20))
-                                {
-                                    <partial name="_SearchCard" model="result" />
-                                }
-                            </div>
-
-                            <div class="text-center mt-3">
-                                <button id="loadMoreBtn" class="btn btn-dark" data-page="2" data-query="@Model.Query">Load More</button>
-                            </div>
-
-                        </div>
-                    }
-                    else
-                    {
-                        <p>No results found.</p>
+                        <partial name="_SearchCard" model="result" />
                     }
                 </div>
-            </div>
-            <div class="main--sidebar col-md-4 col-sm-5 ptop--30 pbottom--30" data-sticky-content="true" style="position: relative; overflow: visible; box-sizing: border-box; min-height: 1px;">
-                <div class="sticky-content-inner" style="padding-top: 0px; padding-bottom: 1px; position: static; transform: none;">
 
-                    <partial name="_TopSideBar" />
-
-                    <partial name="_TopSideBarBottom" />
-
-
+                <div class="text-center mt-3">
+                    <button id="loadMoreBtn" class="more active" data-page="2" data-query="@Model.Query">Load More</button>
                 </div>
+
             </div>
-        </div>
+        }
+        else
+        {
+            <p>No results found.</p>
+        }
+
+    </div>
+
+    <div class="column column_1_3">
+
+
+        <partial name="_TopSideBar" />
+
     </div>
 
 </div>
 
-
  
+
+
+
 
 
 @section Scripts {
@@ -112,15 +117,15 @@
                     const card = document.createElement('div');
                     card.classList.add('col-md-12', 'mb-4', 'search-card');
                     card.innerHTML = `
-                            <div class="card h-100 shadow-sm">
-                                <div class="card-body">
-                                    <h5 class="card-title"><a href="${item.url}" class="text-decoration-none text-primary">${item.title}</a></h5>
-                                    <small class="text-muted">${item.sourceType}</small>
-                                    ${item.publishedAt ? `<div><small class="text-muted">Published: ${new Date(item.publishedAt).toLocaleDateString()}</small></div>` : ''}
-                                    <p class="card-text mt-2">${item.snippet}</p>
-                                    <a href="${item.url}" class="btn btn-sm btn-outline-dark mt-2">Read More</a>
-                                </div>
-                            </div>`;
+                                <div class="card h-100 shadow-sm search-mx">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><a href="${item.url}" class="text-decoration-none text-primary">${item.title}</a></h5>
+                                        <small class="text-muted">${item.sourceType}</small>
+                                        ${item.publishedAt ? `<div><small class="text-muted">Published: ${new Date(item.publishedAt).toLocaleDateString()}</small></div>` : ''}
+                                        <p class="card-text mt-2">${item.snippet}</p>
+                                        <a href="${item.url}" class="btn btn-sm btn-outline-dark mt-2">Read More</a>
+                                    </div>
+                                </div>`;
                     document.getElementById('searchResults').appendChild(card);
                 });
 

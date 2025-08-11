@@ -27,8 +27,8 @@ namespace ModelData.Services
 
         Task<List<Comment>> GetApprovedCommentsByPostIdAsync(int postId);
         Task AddCommentAsync(Comment comment);
+        Task<List<PostImage>> GetGalleryAsync(int take);
 
-         
     }
 
 
@@ -41,7 +41,20 @@ namespace ModelData.Services
         {
             _context = context;
         }
-
+        public async Task<List<PostImage>> GetGalleryAsync(int take)
+        {
+            // Read-only query; only images whose parent Post is published.
+            return await _context.PostImages
+                .AsNoTracking()
+                .Include(pi => pi.Post).ThenInclude(p => p!.Category)
+                .Include(pi => pi.Post).ThenInclude(p => p!.Comments)
+                .Where(pi => pi.Post != null && pi.Post.IsPublished)
+                .Where(pi => pi.IsDefault)
+                .OrderByDescending(pi => pi.Post!.PublishedAt ?? pi.Post!.Date) // newest post first
+                .ThenBy(pi => pi.Id)                                     // optional: respect image sort if you have it
+                .Take(take)
+                .ToListAsync();
+        }
         public async Task<List<Post>> GetBrakingNews(int count = 10)
         {
             return await _context.Posts                
@@ -66,6 +79,7 @@ namespace ModelData.Services
         {
             var data = await _context.Posts
                 .Include(x=>x.PostImages)
+                .Include(x=>x.Category)
                     .Where(p => p.CategoryId == categoryId)
                     .OrderByDescending(p => p.PublishedAt)
                     .ToListAsync();

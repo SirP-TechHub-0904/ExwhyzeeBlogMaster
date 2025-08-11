@@ -1286,14 +1286,14 @@
 	{
 		width: 135px;
 	}
-	.column_2_3 .blog.medium .post:nth-child(3n+1)
+	/*.column_2_3 .blog.medium .post:nth-child(3n+1)
 	{
 		margin-left: 30px;
 	}
 	.column_2_3 .blog.medium .post:nth-child(odd)
 	{
 		margin-left: 0;
-	}
+	}*/
 	/* --- single post --- */
 	h1.post_title
 	{

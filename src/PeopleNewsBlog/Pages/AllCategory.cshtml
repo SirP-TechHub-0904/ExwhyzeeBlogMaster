@@ -8,80 +8,81 @@
 
 }
 
-
- 
-<div class="main--breadcrumb">
-    <div class="container">
-        <ul class="breadcrumb">
+<div class="page_header clearfix page_margin_top">
+    <div class="page_header_left">
+        <h1 class="page_title">About Us</h1>
+    </div>
+    <div class="page_header_right">
+        <ul class="bread_crumb">
             <li>
-                <a href="/" class="btn-link">
-                    <i class="fa fm fa-home">
-                    </i>Home
+                <a title="Home" href="?page=home">
+                    Home
                 </a>
             </li>
-             
-            <li class="active">
-                <span>
-                    Browse Categories
-                </span>
+            <li class="separator icon_small_arrow right_gray">
+                &nbsp;
+            </li>
+            <li>
+                Pages
+            </li>
+            <li class="separator icon_small_arrow right_gray">
+                &nbsp;
+            </li>
+            <li>
+                About
             </li>
         </ul>
     </div>
 </div>
+<div class="divider_block clearfix">
+    <hr class="divider first">
+    <hr class="divider subheader_arrow">
+    <hr class="divider last">
+</div>
 
-<div class="main-content--section pbottom--30">
+<div class="row page_margin_top">
 
-    <div class="container">
+    <div class="column column_2_3">
 
-        <div class="row" style="transform: none;">
-            <div class="main--content col-md-8">
-                <div class="row g-4">
-                    @foreach (var category in Model.MainCategories)
-                    {
-                        <div class="col-md-4 col-sm-6">
-                            <div class="category-box p-4 h-100 shadow-sm rounded">
-                                <h5 class="fw-bold text-primary mb-3">@category.Title</h5>
+        <div class="row g-4">
+            @foreach (var category in Model.MainCategories)
+            {
+                <div class="col-md-4 col-sm-6">
+                    <div class="category-box p-4 h-100 shadow-sm rounded">
+                        <h5 class="fw-bold text-primary mb-3">@category.Title</h5>
 
-                                @if (category.Children?.Any() == true)
+                        @if (category.Children?.Any() == true)
+                        {
+                            <ul class="list-unstyled mb-0">
+                                @foreach (var sub in category.Children.OrderBy(c => c.SortOrder))
                                 {
-                                    <ul class="list-unstyled mb-0">
-                                        @foreach (var sub in category.Children.OrderBy(c => c.SortOrder))
-                                        {
-                                            <li class="mb-1">
-                                                <i class="bi bi-chevron-right small text-muted me-1"></i>
-                                                <a asp-page="/CategoryPage" asp-route-slug="@sub.Slug" class="text-secondary small">
-                                                    @sub.Title
-                                                </a>
-                                            </li>
-                                        }
-                                    </ul>
+                                    <li class="mb-1">
+                                        <i class="bi bi-chevron-right small text-muted me-1"></i>
+                                        <a asp-page="/CategoryPage" asp-route-slug="@sub.Slug" class="text-secondary small">
+                                            @sub.Title
+                                        </a>
+                                    </li>
                                 }
-                                else
-                                {
-                                    <p class="text-muted small">No subcategories</p>
-                                }
-                            </div>
-                        </div>
-                    }
+                            </ul>
+                        }
+                        else
+                        {
+                            <p class="text-muted small">No subcategories</p>
+                        }
+                    </div>
                 </div>
-
-            </div>
-            <div class="main--sidebar col-md-4 col-sm-5 ptop--30 pbottom--30" data-sticky-content="true" style="position: relative; overflow: visible; box-sizing: border-box; min-height: 1px;">
-                <div class="sticky-content-inner" style="padding-top: 0px; padding-bottom: 1px; position: static; transform: none;">
-
-                    <partial name="_TopSideBar" />
-
-                    <partial name="_TopSideBarBottom" />
-
-
-                </div>
-            </div>
+            }
         </div>
+    </div>
+
+    <div class="column column_1_3">
+
+
+        <partial name="_TopSideBar" />
+
     </div>
 
 </div>
 
 
  
-
-

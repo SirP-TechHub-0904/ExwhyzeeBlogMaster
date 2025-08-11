@@ -14,434 +14,208 @@
     var footerAd = Model.FooterAdvert;
 }
 
-<div class="main--breadcrumb">
-    <div class="container">
-        <ul class="breadcrumb">
+
+<div class="page_header clearfix page_margin_top">
+    <div class="page_header_left">
+        <h1 class="page_title"></h1>
+    </div>
+    <div class="page_header_right">
+        <ul class="bread_crumb">
             <li>
-                <a href="/" class="btn-link">
-                    <i class="fa fm fa-home">
-                    </i>Home
+                <a title="Home" href="/">
+                    Home
                 </a>
             </li>
+            <li class="separator icon_small_arrow right_gray">
+                &nbsp;
+            </li>
             <li>
-                <a asp-page="/CategoryPage" asp-route-slug="@post?.Category?.Slug" class="btn-link">
+                <a asp-page="/CategoryPage" asp-route-slug="@post?.Category?.Slug">
                     @post?.Category?.Title
                 </a>
             </li>
-            <li class="active">
-                <span>
-                    @post?.Title
-                </span>
+            <li class="separator icon_small_arrow right_gray">
+                &nbsp;
+            </li>
+            <li>
+                @post?.Title
             </li>
         </ul>
     </div>
 </div>
+<div class="divider_block clearfix">
+    <hr class="divider first">
+    <hr class="divider subheader_arrow">
+    <hr class="divider last">
+</div>
 
-<div class="main-content--section pbottom--30">
-    <div class="container">
-        <div class="row" style="transform: none;">
-            <div class="main--content col-md-8" data-sticky-content="true" style="position: relative; overflow: visible; box-sizing: border-box; min-height: 1px;">
-                <div class="sticky-content-inner" style="padding-top: 0px; padding-bottom: 1px; position: static; transform: none;">
-                    <div class="post--item post--single post--title-largest pd--30-0">
-                        <div class="post--img">
-                            <a href="#" class="thumb">
-                                <img src="@post.PostImages?.FirstOrDefault()?.ImageUrl" alt="@post.Title" data-rjs="2">
-                            </a>
+<div class="row page_margin_top">
 
-                        </div>
-                        <div class="post--cats">
-                            <ul class="nav">
-                                @if (Model.Post.Tags.Count() > 0)
-                                {
-                                    <li>
-                                        <span>
-                                            <i class="fa fa-tags">
-                                            </i>
-                                        </span>
-                                    </li>
-                                }
-                                @foreach (var tag in Model.Post.Tags)
-                                {
-                                    <li>
-                                        <a href="#">@tag</a>
-                                    </li>
-                                }
+    <div class="column column_2_3">
+        <div class="row">
+            <div class="post single">
+                <h1 class="post_title">
+                    @post.Title
+                </h1>
+                <ul class="post_details clearfix">
+                    <li class="detail category">In <a asp-page="/CategoryPage" asp-route-slug="@Model.Post?.Category?.Slug" title="@Model.Post?.Category.Title">@Model.Post?.Category.Title</a></li>
+                    <li class="detail date">@(Model.Post?.PublishedAt?.ToString("hh:mm tt, MMM dd") ?? "")</li>
+                    <li class="detail author">By <a href="#" title="@Model.Post?.PostBy">@Model.Post?.PostBy</a></li>
+                    <li class="detail views">@Model.Post?.ViewCount Views</li>
+                    <li class="detail comments">
+                        <a href="#comments_list" class="scroll_to_comments">
+                            @if (Model.Comments != null && Model.Comments.Any())
+                            {
+                                @Model.Comments?.Count
+                            } Comments
+                        </a>
+                    </li>
+                </ul>
+                <div class="post--img">
+                    <a href="#" class="thumb">
+                        <img src="@post.PostImages?.FirstOrDefault()?.ImageUrl" alt="@post.Title" data-rjs="2">
+                    </a>
+                </div>
 
-                            </ul>
-                        </div>
-                        <div class="post--info">
-                            <ul class="nav meta">
-                                <li>
-                                    <a href="#">
-                                        @post.PostBy
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        @(post.PublishedAt?.ToString("MMM dd, yyyy"))
-                                    </a>
-                                </li>
-                                <li>
-                                    <span>
-                                        <i class="fa fm fa-eye">
-                                        </i>@post.ViewCount
-                                    </span>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <i class="fa fm fa-comments-o">
-                                        </i>@if (Model.Comments != null && Model.Comments.Any())
-                                        {
-                                            @Model.Comments?.Count
-                                        }
-                                    </a>
-                                </li>
-                            </ul>
-
-                        </div>
-                        <div class="post--content" id="postContent">
-                            @Html.Raw(Model.ModifiedContentHtml)
-
-                        </div>
+                <div class="post_content page_margin_top_section clearfix">
+                    <div class="" id="postContent">
+                        @Html.Raw(Model.ModifiedContentHtml)
 
                     </div>
+                </div>
 
-                    <div class="post--tags">
-                        <ul class="nav">
+                <div class="row page_margin_top">
+                    <div class="share_box clearfix">
+                        <label>Share:</label>
+                        <ul class="social_icons clearfix ppp-post-comment" style="list-style:none; padding:0; display:flex; gap:10px;">
                             <li>
-                                <span>
-                                    <i class="fa fa-tags">
-                                    </i>
-                                </span>
+                                <a href="https://www.facebook.com/sharer/sharer.php?u=@Model.PostUrl" target="_blank" title="Share on Facebook">
+                                    <i class="fab fa-facebook-f"></i>
+                                </a>
                             </li>
-                            @foreach (var tag in Model.Post.Tags)
-                            {
-                                <li>
-                                    <a href="#">@tag</a>
-                                </li>
-                            }
-
-
+                            <li>
+                                <a href="https://twitter.com/intent/tweet?url=@Model.PostUrl&text=@Model.Post?.Title" target="_blank" title="Share on Twitter">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Model.PostUrl&title=@Model.Post?.Title" target="_blank" title="Share on LinkedIn">
+                                    <i class="fab fa-linkedin-in"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://pinterest.com/pin/create/button/?url=@Model.PostUrl" target="_blank" title="Share on Pinterest">
+                                    <i class="fab fa-pinterest-p"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://wa.me/?text=@Uri.EscapeDataString($"{Model.Post?.Title} - {Model.PostUrl}")" target="_blank" title="Share on WhatsApp">
+                                    <i class="fab fa-whatsapp"></i>
+                                </a>
+                            </li>
                         </ul>
-                    </div>
-                    <div class="post--social pbottom--30">
-                        <span class="title">
-                            <i class="fa fa-share-alt">
-                            </i>
-                        </span>
-                        <div class="social--widget style--4">
-                            <ul class="nav">
-                                <li>
-                                    <a href="https://www.facebook.com/sharer/sharer.php?u=@Model.PostUrl" target="_blank" class="">
-                                        <i class="fa fa-facebook"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://twitter.com/intent/tweet?url=@Model.PostUrl&text=@Model.Post?.Title" target="_blank" class="">
-                                        <i class="fa fa-twitter"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://www.linkedin.com/shareArticle?mini=true&url=@Model.PostUrl&title=@Model.Post?.Title" target="_blank" class="">
-                                        <i class="fa fa-linkedin"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://pinterest.com/pin/create/button/?url=@Model.PostUrl" target="_blank" class="">
-                                        <i class="fa fa-pinterest"></i>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://wa.me/?text=@Uri.EscapeDataString($"{Model.Post?.Title} - {Model.PostUrl}")" target="_blank" class="">
-                                        <i class="fab fa-whatsapp"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
 
-                    <div class="post--nav">
-                        <ul class="nav row">
-                            @if (Model.PreviousPost != null)
+                    </div>
+                </div>
+                <div class="row page_margin_top">
+                    <ul class="taxonomies tags left clearfix">
+                        @foreach (var tag in Model.Post.Tags)
+                        {
+                            <li>
+                                <a href="#">@tag</a>
+                            </li>
+                        }
+
+                    </ul>
+
+                </div>
+                <div class="row page_margin_top_section">
+                    <h4 class="box_header">Leave a Comment</h4>
+                    <p class="padding_top_30">Your email address will not be published. Required fields are marked with *</p>
+                    <form class="comment_form margin_top_15" method="post">
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <fieldset class="column column_1_3">
+                                <input class="text_input hint" asp-for="NewComment.AuthorName" type="text" value="Your Name *" placeholder="Your Name *">
+                            </fieldset>
+                            <fieldset class="column column_1_3">
+                                <input class="text_input hint" asp-for="NewComment.AuthorEmail" type="text" value="Your Email *" placeholder="Your Email *">
+                            </fieldset>
+                        }
+                        <fieldset>
+                            <textarea asp-for="NewComment.Content" placeholder="Comment *" class="hint">Comment *</textarea>
+                        </fieldset>
+                        <fieldset>
+                            <input type="submit" value="POST COMMENT" class="more active">
+                        </fieldset>
+                    </form>
+                </div>
+
+
+
+
+                @if (Model.Comments != null && Model.Comments.Any())
+                {
+                    <div class="row page_margin_top_section">
+                        <h4 class="box_header">@((Model.Comments?.Count ?? 0)) Comments</h4>
+                        <ul class="cmt-01-xc" id="commentList">
+                            @foreach (var comment in Model.Comments.Take(5))
                             {
-                                string display = "";
+                                <li class="comment clearfix">
 
-                                if (Model.PreviousPost != null && Model.PreviousPost.PublishedAt != null)
-                                {
-                                    var date = Model.PreviousPost.PublishedAt.Value;
-                                    var now = DateTime.Now;
-                                    var timePart = date.ToString("hh:mm tt");
-                                    var daysDiff = (date.Date - now.Date).Days;
-
-                                    if (date.Date == now.Date)
-                                    {
-                                        display = $"Today {timePart}";
-                                    }
-                                    else if (daysDiff == -1)
-                                    {
-                                        display = $"Yesterday {timePart}";
-                                    }
-                                    else if (daysDiff == 1)
-                                    {
-                                        display = $"Tomorrow {timePart}";
-                                    }
-                                    else if (date.Date > now.Date.AddDays(-7) && date.Date < now.Date)
-                                    {
-                                        display = $"Last week {date:dddd} {timePart}";
-                                    }
-                                    else if (date.Month == now.AddMonths(-1).Month && date.Year == now.Year)
-                                    {
-                                        display = $"Last month {date:dd MMM yyyy} {timePart}";
-                                    }
-                                    else if (date.Year == now.Year - 1)
-                                    {
-                                        display = $"Last year {date:dd MMM yyyy} {timePart}";
-                                    }
-                                    else
-                                    {
-                                        display = date.ToString("dd MMM yyyy hh:mm tt");
-                                    }
-                                }
-                                else
-                                {
-                                    display = "—";
-                                }
-
-
-
-
-                                <li class="col-xs-6 ptop--30 pbottom--30">
-                                    <div class="post--item">
-                                        <div class="post--img">
-                                            <a href="@Url.Page("/PostPage", new { slug = Model.PreviousPost.Slug })" class="thumb">
-                                                <img src="@(Model.PreviousPost?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@Model.PreviousPost.Title" data-rjs="2">
-                                            </a>
-                                            <div class="post--info">
-                                                <ul class="nav meta">
-                                                    <li>
-                                                        <a href="#">
-                                                            @Model.PreviousPost.Category.Title
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="@Url.Page("/PostPage", new { slug = Model.PreviousPost.Slug })">
-                                                            @display
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                                <div class="title">
-                                                    <h3 class="h4">
-                                                        <a href="@Url.Page("/PostPage", new { slug = Model.PreviousPost.Slug })" class="btn-link">
-                                                            @Model.PreviousPost.Title
-                                                        </a>
-                                                    </h3>
-                                                </div>
-                                            </div>
+                                    <div class="comment_details">
+                                        <div class="posted_by clearfix">
+                                            <h5><a class="author" href="#" title="@comment.AuthorName">@comment.AuthorName</a></h5>
+                                            <abbr title="@comment.CreatedAt.ToString("dd MMMM yyyy") " class="timeago">@comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")</abbr>
                                         </div>
+                                        <p>
+                                            @comment.Content
+                                        </p>
+
                                     </div>
                                 </li>
-
                             }
-                            @if (Model.NextPost != null)
-                            {
 
-                                string display = "";
-
-                                if (Model.PreviousPost != null && Model.PreviousPost.PublishedAt != null)
-                                {
-                                    var date = Model.PreviousPost.PublishedAt.Value;
-                                    var now = DateTime.Now;
-                                    var timePart = date.ToString("hh:mm tt");
-                                    var daysDiff = (date.Date - now.Date).Days;
-
-                                    if (date.Date == now.Date)
-                                    {
-                                        display = $"Today {timePart}";
-                                    }
-                                    else if (daysDiff == -1)
-                                    {
-                                        display = $"Yesterday {timePart}";
-                                    }
-                                    else if (daysDiff == 1)
-                                    {
-                                        display = $"Tomorrow {timePart}";
-                                    }
-                                    else if (date.Date > now.Date.AddDays(-7) && date.Date < now.Date)
-                                    {
-                                        display = $"Last week {date:dddd} {timePart}";
-                                    }
-                                    else if (date.Month == now.AddMonths(-1).Month && date.Year == now.Year)
-                                    {
-                                        display = $"Last month {date:dd MMM yyyy} {timePart}";
-                                    }
-                                    else if (date.Year == now.Year - 1)
-                                    {
-                                        display = $"Last year {date:dd MMM yyyy} {timePart}";
-                                    }
-                                    else
-                                    {
-                                        display = date.ToString("dd MMM yyyy hh:mm tt");
-                                    }
-                                }
-                                else
-                                {
-                                    display = "—";
-                                }
-
-                                <li class="col-xs-6 ptop--30 pbottom--30">
-                                    <div class="post--item">
-                                        <div class="post--img">
-                                            <a href="@Url.Page("/PostPage", new { slug = Model.NextPost.Slug })" class="thumb">
-                                                <img src="@(Model.NextPost?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@Model.NextPost.Title" data-rjs="2">
-                                            </a>
-                                            <div class="post--info">
-                                                <ul class="nav meta">
-                                                    <li>
-                                                        <a href="@Url.Page("/PostPage", new { slug = Model.NextPost.Slug })">
-                                                            @Model.NextPost.Category.Title
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="@Url.Page("/PostPage", new { slug = Model.NextPost.Slug })">
-                                                            @display
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                                <div class="title">
-                                                    <h3 class="h4">
-                                                        <a href="@Url.Page("/PostPage", new { slug = Model.NextPost.Slug })" class="btn-link">
-                                                            @Model.NextPost.Title
-                                                        </a>
-                                                    </h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-
-                            }
                         </ul>
-                    </div>
-
-
-
-
-
-                    @if (Model.Comments != null && Model.Comments.Any())
-                    {
-                        <div class="comment--list pd--30-0">
-                            <div class="post--items-title">
-                                <h2 class="h4">
-                                    @((Model.Comments?.Count ?? 0)) Comments
-                                </h2>
-                                <i class="icon fa fa-comments-o">
-                                </i>
+                        @if (Model.Comments.Count > 5)
+                        {
+                            <div class="text-center mt-3">
+                                <button id="loadMoreBtn" class="more active" data-skip="5" data-postid="@Model.Post.Id">
+                                    Load More Comments
+                                </button>
                             </div>
-                            <ul class="comment--items nav" id="commentList">
-                                @foreach (var comment in Model.Comments.Take(5))
-                                {
-                                    <li>
-                                        <div class="comment--item clearfix">
-
-                                            <div class="comment--info">
-                                                <div class="comment--header clearfix">
-                                                    <p class="name">
-                                                        @comment.AuthorName
-                                                    </p>
-                                                    <p class="date">
-                                                        @comment.CreatedAt.ToString("MMMM dd, yyyy 'at' hh:mm tt")
-                                                    </p>
-                                                    <a href="#" class="reply">
-                                                        <i class="fa fa-mail-reply">
-                                                        </i>
-                                                    </a>
-                                                </div>
-                                                <div class="comment--content">
-                                                    <p>
-                                                        @comment.Content
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                }
-
-                            </ul>
-                            @if (Model.Comments.Count > 5)
-                            {
-                                <div class="text-center mt-3">
-                                    <button id="loadMoreBtn" class="btn btn-outline-primary" data-skip="5" data-postid="@Model.Post.Id">
-                                        Load More Comments
-                                    </button>
-                                </div>
-                            }
-                        </div>
-
-                    }
-                    <div class="comment--form pd--30-0">
-                        <div class="post--items-title">
-                            <h2 class="h4">
-                                Leave A Comment
-                            </h2>
-                            <i class="icon fa fa-pencil-square-o">
-                            </i>
-                        </div>
-                        <div class="comment-respond">
-                            <form method="post">
-                                <p>
-                                    Don’t worry! Your email address will not be published. Required fields are marked (*).
-                                </p>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <label>
-                                            <span>Comment *</span>
-                                            <textarea asp-for="NewComment.Content" class="form-control" required aria-required="true"></textarea>
-                                        </label>
-                                    </div>
-
-                                    <div class="col-sm-6">
-                                        @if (!User.Identity.IsAuthenticated)
-                                        {
-                                            <label>
-                                                <span>Name *</span>
-                                                <input asp-for="NewComment.AuthorName" type="text" class="form-control" required aria-required="true" />
-                                            </label>
-
-                                            <label>
-                                                <span>Email Address *</span>
-                                                <input asp-for="NewComment.AuthorEmail" type="email" class="form-control" required aria-required="true" />
-                                            </label>
-                                        }
-
-                                    </div>
-
-                                    <div class="col-md-12">
-                                        <button type="submit" class="btn btn-primary">
-                                            Post a Comment
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-
-                        </div>
+                        }
                     </div>
 
-                </div>
-            </div>
-            <div class="main--sidebar col-md-4 ptop--30 pbottom--30" data-sticky-content="true" style="position: relative; overflow: visible; box-sizing: border-box; min-height: 1px;">
-                <div class="sticky-content-inner" style="padding-top: 0px; padding-bottom: 1px; position: static; transform: none; left: 882.5px; top: 0px;">
 
-                    <partial name="_TopSideBar" />
+                     
 
-                    <partial name="_TopSideBarBottom" />
+                }
 
 
 
-                </div>
+
+
+
+
+
+
+
+
+
             </div>
         </div>
     </div>
+
+    <div class="column column_1_3">
+
+
+        <partial name="_TopSideBar" />
+
+    </div>
+
 </div>
+
 
 
 
@@ -472,23 +246,23 @@
                         console.log(`[LoadComments] Appending ${data.length} comments...`);
                         data.forEach(c => {
                             $('#commentList').append(`
-                                        <li>
-                                            <div class="comment--item clearfix">
-                                                <div class="comment--info">
-                                                    <div class="comment--header clearfix">
-                                                        <p class="name">${c.authorName}</p>
-                                                        <p class="date">${c.createdAt}</p>
-                                                        <a href="#" class="reply">
-                                                            <i class="fa fa-mail-reply"></i>
-                                                        </a>
-                                                    </div>
-                                                    <div class="comment--content">
-                                                        <p>${c.content}</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    `);
+    <li class="comment clearfix">
+        <div class="comment_details">
+            <div class="posted_by clearfix">
+                <h5>
+                    <a class="author" href="#" title="${c.authorName}">
+                        ${c.authorName}
+                    </a>
+                </h5>
+                <abbr class="timeago" title="${c.createdAt}">
+                    ${c.createdAt}
+                </abbr>
+            </div>
+            <p>${c.content}</p>
+        </div>
+    </li>
+`);
+
                         });
 
                         btn.data('skip', skip + data.length);

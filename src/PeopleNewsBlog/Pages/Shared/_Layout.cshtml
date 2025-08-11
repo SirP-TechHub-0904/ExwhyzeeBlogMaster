@@ -23,6 +23,7 @@
     List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts();
     List<ModelData.Models.Post> mostViewdPosts = await PostServices.GetTopViewedPostsAsync(count: 3);
     List<ModelData.Models.Post> breakingNew = await PostServices.GetBrakingNews(count: 10);
+    List<ModelData.Models.PostImage> galleryasync = await PostServices.GetGalleryAsync(10);
     List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
 
     var plainDescription = System.Text.RegularExpressions.Regex.Replace(siteSettings.SiteDescription ?? "", "<.*?>", "");
@@ -31,2051 +32,779 @@
 
 
 <!DOCTYPE html>
- <html>
- <head>
-     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-     <title>
-         @($"{ViewBag.Title} | {siteSettings.SiteTitle} | {plainDescription}")
-     </title>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>
+        @($"{ViewBag.Title} | {siteSettings.SiteTitle} | {plainDescription}")
+    </title>
 
 
-     <link rel="icon" href="@siteSettings.FaviconUrl" type="image/png">
-     <partial name="_MetaTags" />
+    <link rel="icon" href="@siteSettings.FaviconUrl" type="image/png">
+    <partial name="_MetaTags" />
 
-     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.2">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.2">
 
-     <!--style-->
-     <link href="~/assets/css" rel="stylesheet" type="text/css">
-     <link href="~/assets/css(1)" rel="stylesheet" type="text/css">
-     <link rel="stylesheet" type="text/css" href="~/assets/reset.css">
-     <link rel="stylesheet" type="text/css" href="~/assets/superfish.css">
-     <link rel="stylesheet" type="text/css" href="~/assets/prettyPhoto.css">
-     <link rel="stylesheet" type="text/css" href="~/assets/jquery.qtip.css">
-     <link rel="stylesheet" type="text/css" href="~/assets/style.css">
-     <link rel="stylesheet" type="text/css" href="~/assets/menu_styles.css">
-     <link rel="stylesheet" type="text/css" href="~/assets/animations.css">
-     <link rel="stylesheet" type="text/css" href="~/assets/responsive.css">
-     <link rel="stylesheet" type="text/css" href="~/assets/odometer-theme-default.css">
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!--style-->
+    <link href="~/assets/css" rel="stylesheet" type="text/css">
+    <link href="~/assets/css(1)" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" type="text/css" href="~/assets/reset.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/superfish.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/prettyPhoto.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/jquery.qtip.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/style.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/menu_styles.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/animations.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/responsive.css">
+    <link rel="stylesheet" type="text/css" href="~/assets/odometer-theme-default.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-     <!-- Font Awesome 4.7.0 CDN -->
-     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
- </head>
- 
- <body class="">
-     <div class="site_container">
+    <!-- Font Awesome 4.7.0 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/css/site.css" rel="stylesheet" />
 
-         <div class="header_top_bar_container clearfix">
-             <div class="header_top_bar">
-                 <form class="search">
-                     <input type="text" name="s" placeholder="Search..." value="Search..." class="search_input hint">
-                     <input type="submit" class="search_submit" value="">
-                     <input type="hidden" name="page" value="search">
-                 </form>
+    <style>
+  @Html.Raw(siteSettings.CustomCSS)
+    </style>
+    @Html.Raw(siteSettings.CustomHeadScript)
+    @Html.Raw(siteSettings.GoogleAnalyticsId)
+    @Html.Raw(siteSettings.GoogleTagManagerId)
+    @Html.Raw(siteSettings.FacebookPixelId)
 
-                 <ul class="social_icons clearfix dark">
-                     <li>
-                         <a target="_blank" href="https://facebook.com/QuanticaLabs" class="social_icon facebook" title="facebook">
-                             &nbsp;
-                         </a>
-                     </li>
-                     <li>
-                         <a target="_blank" href="https://twitter.com/QuanticaLabs" class="social_icon twitter" title="twitter">
-                             &nbsp;
-                         </a>
-                     </li>
-                     <li>
-                         <a href="mailto:contact@pressroom.com" class="social_icon mail" title="mail">
-                             &nbsp;
-                         </a>
-                     </li>
-                     <li>
-                         <a href="https://1.envato.market/quanticalabs-portfolio" class="social_icon envato" title="envato">
-                             &nbsp;
-                         </a>
-                     </li>
-                     <!--<li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon behance">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon bing">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon blogger">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon deezer">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon designfloat">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon deviantart">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon digg">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon dribbble">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon flickr">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon form">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon forrst">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon foursquare">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon friendfeed">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon googleplus">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon instagram">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon linkedin">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon mobile">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon myspace">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon picasa">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon pinterest">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon reddit">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon rss">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon skype">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon soundcloud">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon spotify">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon stumbleupon">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon technorati">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon tumblr">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon vimeo">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon wykop">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon xing">
-                            &nbsp;
-                        </a>
-                    </li>
-                    <li>
-                        <a title="" href="https://1.envato.market/quanticalabs" class="social_icon youtube">
-                            &nbsp;
-                        </a>
-                    </li>-->
-                 </ul>
-                 <div class="latest_news_scrolling_list_container">
-                     <ul>
-                         <li class="category">LATEST</li>
-                         <li class="left" style=""><a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#"></a></li>
-                         <li class="right" style=""><a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#"></a></li>
-                         <li class="posts">
-                             <div class="caroufredsel_wrapper_vertical_carousel" style="text-align: left; float: none; position: relative; inset: auto; z-index: auto; width: 297.536px; height: 46px; margin: 0px; overflow: hidden;">
-                                 <ul class="latest_news_scrolling_list" style="text-align: left; float: none; position: absolute; inset: 0px auto auto -251.999px; margin: 0px; width: 2072.13px; height: 46px; z-index: auto;">
+</head>
+
+<body class="">
+    @Html.Raw(siteSettings.CustomJS)
+    @if (siteSettings.EnableLiveChat)
+    {
+        @siteSettings.LiveChatScript
+    }
+    <div class="site_container">
+
+        <div class="header_top_bar_container clearfix">
+            <div class="header_top_bar">
+                <form method="get" asp-page="/Search" class="search">
+                    <input type="text" name="query" placeholder="Search..." value="Search..." class="search_input hint">
+                    <input type="submit" class="search_submit" value="">
+                </form>
+
+                <ul class="social_icons clearfix dark">
+                    @* Facebook *@
+                    @if (!string.IsNullOrWhiteSpace(siteSettings.FacebookUrl))
+                    {
+                        <li>
+                            <a target="_blank" href="@siteSettings.FacebookUrl" class="social_icon facebook" title="Facebook">
+                                &nbsp;
+                            </a>
+                        </li>
+                    }
+
+                    @* Twitter (X) *@
+                    @if (!string.IsNullOrWhiteSpace(siteSettings.TwitterUrl))
+                    {
+                        <li>
+                            <a target="_blank" href="@siteSettings.TwitterUrl" class="social_icon twitter" title="Twitter">
+                                &nbsp;
+                            </a>
+                        </li>
+                    }
+
+                    @* LinkedIn *@
+                    @if (!string.IsNullOrWhiteSpace(siteSettings.LinkedInUrl))
+                    {
+                        <li>
+                            <a target="_blank" href="@siteSettings.LinkedInUrl" class="social_icon linkedin" title="LinkedIn">
+                                &nbsp;
+                            </a>
+                        </li>
+                    }
+
+                    @* Instagram *@
+                    @if (!string.IsNullOrWhiteSpace(siteSettings.InstagramUrl))
+                    {
+                        <li>
+                            <a target="_blank" href="@siteSettings.InstagramUrl" class="social_icon instagram" title="Instagram">
+                                &nbsp;
+                            </a>
+                        </li>
+                    }
+
+                    @* YouTube *@
+                    @if (!string.IsNullOrWhiteSpace(siteSettings.YouTubeUrl))
+                    {
+                        <li>
+                            <a target="_blank" href="@siteSettings.YouTubeUrl" class="social_icon youtube" title="YouTube">
+                                &nbsp;
+                            </a>
+                        </li>
+                    }
+
+                    @* TikTok (ensure you have a .social_icon.tiktok style/icon in your CSS) *@
+                    @if (!string.IsNullOrWhiteSpace(siteSettings.TikTokUrl))
+                    {
+                        <li>
+                            <a target="_blank" href="@siteSettings.TikTokUrl" class="social_icon tiktok" title="TikTok">
+                                &nbsp;
+                            </a>
+                        </li>
+                    }
+                </ul>
 
 
+                <div class="latest_news_scrolling_list_container">
+                    <ul>
+                        <li class="category">LATEST</li>
 
-                                     <li>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="">The Public Health Crisis Hiding in Our Food</a>
-                                     </li>
-                                     <li>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="">Nuclear Fusion Closer to Becoming a Reality</a>
-                                     </li>
-                                     <li>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="">Climate Change Debate While Britain Floods</a>
-                                     </li>
-                                 </ul>
-                             </div>
-                         </li>
-                         <li class="date">
-                             <abbr title="04 Apr 2014" class="timeago" style="display: none;">11 years ago</abbr>
-                             <abbr title="04 May 2014" class="timeago current" style="display: inline; opacity: 0.1156;">11 years ago</abbr>
-                             <abbr title="04 June 2014" class="timeago" style="display: none;">11 years ago</abbr>
-                         </li>
-                     </ul>
-                 </div>
-             </div>
-         </div>
-         <!--<div class="header_container small">
-        <div class="header_container style_2">
-        <div class="header_container style_2 small">
-        <div class="header_container style_3">
-        <div class="header_container style_3 small">-->
-         <div class="header_container">
-             <div class="header clearfix">
-                 <div class="logo">
-                     <h1><a href="https://quanticalabs.com/Pressroom/Template/?page=home" title="Pressroom">Pressroom</a></h1>
-                     <h4>News and Magazine Template</h4>
-                 </div>
-                 <div class="placeholder">728 x 90</div>
-             </div>
-         </div>
-         <!-- <div class="menu_container style_2 clearfix">
-        <div class="menu_container style_3 clearfix">
-        <div class="menu_container style_... clearfix">
-        <div class="menu_container style_10 clearfix">
-        <div class="menu_container sticky clearfix">-->
-         <div class="menu_container clearfix">
-             <nav>
-                 <ul class="sf-menu">
-                     <li class="submenu selected">
-                         <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="Home">
-                             Home
-                         </a>
-                         <ul>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=home" title="Home Style 1">
-                                     Home Style 1
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=home_2" title="Home Style 2">
-                                     Home Style 2
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=home_3" title="Home Style 3">
-                                     Home Style 3
-                                 </a>
-                             </li>
-                             <li class="selected">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4" title="Home Style 3">
-                                     Home Style 4
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=home_5" title="Home Style 5">
-                                     Home Style 5
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=home_6" title="Home Style 6">
-                                     Home Style 6
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=home_7" title="Home Style 7">
-                                     Home Style 7
-                                 </a>
-                             </li>
-                         </ul>
-                     </li>
-                     <li class="submenu">
-                         <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="Pages">
-                             Pages
-                         </a>
-                         <ul>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=about" title="About Style 1">
-                                     About Style 1
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=about_2" title="About Style 2">
-                                     About Style 2
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=default" title="Default">
-                                     Default
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=404" title="404 Not Found">
-                                     404 Not Found
-                                 </a>
-                             </li>
-                         </ul>
-                     </li>
-                     <li class="submenu mega_menu_parent">
-                         <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="Mega Menu">
-                             Mega Menu
-                         </a>
-                         <ul style="left: -174.8px;">
-                             <li class="submenu">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=blog" title="Latest Posts">
-                                     Latest Posts
-                                 </a>
-                                 <ul class="mega_menu blog">
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="New Painkiller Rekindles Addiction Concerns" style="">
-                                             <img src="~/assets/image_08.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="High Altitudes May Aid Weight Control" style="">
-                                             <img src="~/assets/image_11.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="High Altitudes May Aid Weight Control">High Altitudes May Aid Weight Control</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Build on Brotherhood, Club Lives Up to Name" style="">
-                                             <img src="~/assets/image_06.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Build on Brotherhood, Club Lives Up to Name">Build on Brotherhood, Club Lives Up to Name</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                 </ul>
-                             </li>
-                             <li class="submenu">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=blog" title="Recent Galleries">
-                                     Recent Galleries
-                                 </a>
-                                 <ul class="mega_menu blog">
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Build on Brotherhood, Club Lives Up to Name" style="">
-                                             <span class="icon gallery" style="display: block;"></span>
-                                             <img src="~/assets/image_03.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Build on Brotherhood, Club Lives Up to Name">Build on Brotherhood, Club Lives Up to Name</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="High Altitudes May Aid Weight Control" style="">
-                                             <span class="icon gallery" style="display: block;"></span>
-                                             <img src="~/assets/image_05.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="High Altitudes May Aid Weight Control">High Altitudes May Aid Weight Control</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="New Painkiller Rekindles Addiction Concerns" style="">
-                                             <span class="icon gallery" style="display: block;"></span>
-                                             <img src="~/assets/image_04.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                 </ul>
-                             </li>
-                             <li class="submenu">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=blog" title="Recent Reviews">
-                                     Recent Reviews
-                                 </a>
-                                 <ul class="mega_menu blog">
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_review" title="New Painkiller Rekindles Addiction Concerns" style="">
-                                             <span class="icon" style="display: block;"><span>8.7</span></span>
-                                             <img src="~/assets/image_07.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_review" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_review_2" title="High Altitudes May Aid Weight Control" style="">
-                                             <span class="icon" style="display: block;"><span>9.5</span></span>
-                                             <img src="~/assets/image_09.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_review_2" title="High Altitudes May Aid Weight Control">High Altitudes May Aid Weight Control</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_review" title="Build on Brotherhood, Club Lives Up to Name" style="">
-                                             <span class="icon" style="display: block;"><span>7.8</span></span>
-                                             <img src="~/assets/image_14.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_review" title="Build on Brotherhood, Club Lives Up to Name">Build on Brotherhood, Club Lives Up to Name</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post first">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_review" title="Nuclear Fusion Closer to Becoming a Reality" style="">
-                                             <span class="icon" style="display: block;"><span>8.0</span></span>
-                                             <img src="~/assets/image_13.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_review" title="Nuclear Fusion Closer to Becoming a Reality">Nuclear Fusion Closer to Becoming a Reality</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post first">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_review_2" title="The Public Health Crisis Hiding in Our Food" style="">
-                                             <span class="icon" style="display: block;"><span>9.1</span></span>
-                                             <img src="~/assets/image_02.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_review_2" title="The Public Health Crisis Hiding in Our Food">The Public Health Crisis Hiding in Our Food</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post first">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_review_2" title="Study Linking Illnes and Salt Leaves Researchers Doubtful" style="">
-                                             <span class="icon" style="display: block;"><span>6.7</span></span>
-                                             <img src="~/assets/image_01.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_review_2" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">Study Linking Illnes and Salt Leaves Researchers Doubtful</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a title="HEALTH" href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                 </ul>
-                             </li>
-                             <li class="submenu">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=blog" title="Most Read">
-                                     Most Read
-                                 </a>
-                                 <div class="mega_menu row">
-                                     <div class="column column_1_2">
-                                         <ul class="blog small">
-                                             <li class="post">
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">
-                                                     <img src="~/assets/image_06(1).jpg" alt="img">
-                                                 </a>
-                                                 <div class="post_content">
-                                                     <h5>
-                                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">Study Linking Illnes and Salt Leaves Researchers Doubtful</a>
-                                                     </h5>
-                                                     <ul class="post_details simple">
-                                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                                         <li class="date">
-                                                             10:11 PM, Feb 02
-                                                         </li>
-                                                     </ul>
-                                                 </div>
-                                             </li>
-                                             <li class="post">
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Syrian Civilians Trapped For Months Continue To Be Evacuated">
-                                                     <img src="~/assets/image_12.jpg" alt="img">
-                                                 </a>
-                                                 <div class="post_content">
-                                                     <h5>
-                                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Syrian Civilians Trapped For Months Continue To Be Evacuated">Syrian Civilians Trapped For Months Continue To Be Evacuated</a>
-                                                     </h5>
-                                                     <ul class="post_details simple">
-                                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="WORLD">WORLD</a></li>
-                                                         <li class="date">
-                                                             10:11 PM, Feb 02
-                                                         </li>
-                                                     </ul>
-                                                 </div>
-                                             </li>
-                                             <li class="post">
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">
-                                                     <img src="~/assets/image_02(1).jpg" alt="img">
-                                                 </a>
-                                                 <div class="post_content">
-                                                     <h5>
-                                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a>
-                                                     </h5>
-                                                     <ul class="post_details simple">
-                                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                                         <li class="date">
-                                                             10:11 PM, Feb 02
-                                                         </li>
-                                                     </ul>
-                                                 </div>
-                                             </li>
-                                         </ul>
-                                     </div>
-                                     <div class="column column_1_2">
-                                         <ul class="blog small">
-                                             <li class="post">
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">
-                                                     <img src="~/assets/image_04(1).jpg" alt="img">
-                                                 </a>
-                                                 <div class="post_content">
-                                                     <h5>
-                                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">Study Linking Illnes and Salt Leaves Researchers Doubtful</a>
-                                                     </h5>
-                                                     <ul class="post_details simple">
-                                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                                         <li class="date">
-                                                             10:11 PM, Feb 02
-                                                         </li>
-                                                     </ul>
-                                                 </div>
-                                             </li>
-                                             <li class="post">
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Syrian Civilians Trapped For Months Continue To Be Evacuated">
-                                                     <img src="~/assets/image_10.jpg" alt="img">
-                                                 </a>
-                                                 <div class="post_content">
-                                                     <h5>
-                                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Syrian Civilians Trapped For Months Continue To Be Evacuated">Syrian Civilians Trapped For Months Continue To Be Evacuated</a>
-                                                     </h5>
-                                                     <ul class="post_details simple">
-                                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="WORLD">WORLD</a></li>
-                                                         <li class="date">
-                                                             10:11 PM, Feb 02
-                                                         </li>
-                                                     </ul>
-                                                 </div>
-                                             </li>
-                                             <li class="post">
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">
-                                                     <img src="~/assets/image_07(1).jpg" alt="img">
-                                                 </a>
-                                                 <div class="post_content">
-                                                     <h5>
-                                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a>
-                                                     </h5>
-                                                     <ul class="post_details simple">
-                                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                                         <li class="date">
-                                                             10:11 PM, Feb 02
-                                                         </li>
-                                                     </ul>
-                                                 </div>
-                                             </li>
-                                         </ul>
-                                     </div>
-                                 </div>
-                             </li>
-                         </ul>
-                     </li>
-                     <li class="submenu">
-                         <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="Post Formats">
-                             Post Formats
-                         </a>
-                         <ul>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Post Default">
-                                     Post Default
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Post Gallery">
-                                     Post Gallery
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_small_image" title="Post Small Image">
-                                     Post Small Image
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_video" title="Post Video YouTube">
-                                     Post Video Youtube
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_video_2" title="Post Video Vimeo">
-                                     Post Video Vimeo
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_soundcloud" title="Post Soundcloud">
-                                     Post Soundcloud
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_review" title="Post Review Style 1">
-                                     Post Review Style 1
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_review_2" title="Post Review Style 2">
-                                     Post Review Style 2
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_quote" title="Post Quote Style 1">
-                                     Post Quote Style 1
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_quote_2" title="Post Quote Style 2">
-                                     Post Quote Style 2
-                                 </a>
-                             </li>
-                         </ul>
-                     </li>
-                     <li class="submenu">
-                         <a href="https://quanticalabs.com/Pressroom/Template/?page=blog" title="Blog">
-                             Blog
-                         </a>
-                         <ul>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_small_slider" title="Blog Small Slider">
-                                     Blog Small Slider
-                                 </a>
-                             </li>
-                             <li class="submenu">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="Blog 1 column">
-                                     Blog 1 Column
-                                 </a>
-                                 <ul>
-                                     <li>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=blog" title="Blog With Right Sidebar">
-                                             Blog With Right Sidebar
-                                         </a>
-                                     </li>
-                                     <li>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_left_sidebar" title="Blog With Left Sidebar">
-                                             Blog With Left Sidebar
-                                         </a>
-                                     </li>
-                                 </ul>
-                             </li>
-                             <li class="submenu">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="Blog 2 columns">
-                                     Blog 2 Columns
-                                 </a>
-                                 <ul>
-                                     <li>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_2_columns" title="Right Sidebar">
-                                             Right Sidebar
-                                         </a>
-                                     </li>
-                                     <li>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_2_columns_left_sidebar" title="Left Sidebar">
-                                             Left Sidebar
-                                         </a>
-                                     </li>
-                                 </ul>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_3_columns" title="Blog 3 Columns">
-                                     Blog 3 Columns
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=search&amp;s=Maecenas+Mauris" title="Search Page Template">
-                                     Search Page Template
-                                 </a>
-                             </li>
-                         </ul>
-                     </li>
-                     <li class="submenu">
-                         <a href="https://quanticalabs.com/Pressroom/Template/?page=authors" title="Authors">
-                             Authors
-                         </a>
-                         <ul>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=authors" title="Authors List">
-                                     Authors List
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=author" title="Author Single">
-                                     Author Single
-                                 </a>
-                             </li>
-                         </ul>
-                     </li>
-                     <li class="submenu">
-                         <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="Categories">
-                             Categories
-                         </a>
-                         <ul>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="Health">
-                                     Health
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="Science">
-                                     Science
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="Sports">
-                                     Sports
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="World">
-                                     World
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="Lifestyle">
-                                     Lifestyle
-                                 </a>
-                             </li>
-                         </ul>
-                     </li>
-                     <li class="submenu">
-                         <a href="https://quanticalabs.com/Pressroom/Template/?page=contact" title="Contact">
-                             Contact
-                         </a>
-                         <ul class="expand_left_contact">
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=contact" title="Contact Style 1">
-                                     Contact Style 1
-                                 </a>
-                             </li>
-                             <li>
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=contact_2" title="Contact Style 2">
-                                     Contact Style 2
-                                 </a>
-                             </li>
-                         </ul>
-                     </li>
-                 </ul>
-             </nav>
-             <div class="mobile_menu_container">
-                 <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" class="mobile-menu-switch">
-                     <span class="line"></span>
-                     <span class="line"></span>
-                     <span class="line"></span>
-                 </a>
-                 <div class="mobile-menu-divider"></div>
-                 <nav>
-                     <ul class="mobile-menu">
-                         <li class="submenu selected">
-                             <a href="https://quanticalabs.com/Pressroom/Template/?page=home" title="Home">
-                                 Home
-                             </a>
-                             <ul>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=home" title="Home Style 1">
-                                         Home Style 1
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=home_2" title="Home Style 2">
-                                         Home Style 2
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=home_3" title="Home Style 3">
-                                         Home Style 3
-                                     </a>
-                                 </li>
-                                 <li class="selected">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4" title="Home Style 3">
-                                         Home Style 4
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=home_5" title="Home Style 5">
-                                         Home Style 5
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=home_6" title="Home Style 6">
-                                         Home Style 6
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=home_7" title="Home Style 7">
-                                         Home Style 7
-                                     </a>
-                                 </li>
-                             </ul>
-                         </li>
-                         <li class="submenu">
-                             <a href="https://quanticalabs.com/Pressroom/Template/?page=about" title="Pages">
-                                 Pages
-                             </a>
-                             <ul>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=about" title="About Style 1">
-                                         About Style 1
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=about_2" title="About Style 2">
-                                         About Style 2
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=default" title="Default">
-                                         Default
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=404" title="404 Not Found">
-                                         404 Not Found
-                                     </a>
-                                 </li>
-                             </ul>
-                         </li>
-                         <li class="submenu">
-                             <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Post Formats">
-                                 Post Formats
-                             </a>
-                             <ul>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Post Default">
-                                         Post Default
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Post Gallery">
-                                         Post Gallery
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_small_image" title="Post Small Image">
-                                         Post Small Image
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_video" title="Post Video YouTube">
-                                         Post Video Youtube
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_video_2" title="Post Video Vimeo">
-                                         Post Video Vimeo
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_soundcloud" title="Post Soundcloud">
-                                         Post Soundcloud
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_review" title="Post Review Style 1">
-                                         Post Review Style 1
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_review_2" title="Post Review Style 2">
-                                         Post Review Style 2
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_quote" title="Post Quote Style 1">
-                                         Post Quote Style 1
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_quote_2" title="Post Quote Style 2">
-                                         Post Quote Style 2
-                                     </a>
-                                 </li>
-                             </ul>
-                         </li>
-                         <li class="submenu">
-                             <a href="https://quanticalabs.com/Pressroom/Template/?page=blog" title="Blog">
-                                 Blog
-                             </a>
-                             <ul>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_small_slider" title="Blog Small Slider">
-                                         Blog Small Slider
-                                     </a>
-                                 </li>
-                                 <li class="submenu">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=blog" title="Blog 1 column">
-                                         Blog 1 Column
-                                     </a>
-                                     <ul>
-                                         <li>
-                                             <a href="https://quanticalabs.com/Pressroom/Template/?page=blog" title="Blog With Right Sidebar">
-                                                 Blog With Right Sidebar
-                                             </a>
-                                         </li>
-                                         <li>
-                                             <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_left_sidebar" title="Blog With Left Sidebar">
-                                                 Blog With Left Sidebar
-                                             </a>
-                                         </li>
-                                     </ul>
-                                 </li>
-                                 <li class="submenu">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_2_columns" title="Blog 2 columns">
-                                         Blog 2 Columns
-                                     </a>
-                                     <ul>
-                                         <li>
-                                             <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_2_columns" title="Right Sidebar">
-                                                 Right Sidebar
-                                             </a>
-                                         </li>
-                                         <li>
-                                             <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_2_columns_left_sidebar" title="Left Sidebar">
-                                                 Left Sidebar
-                                             </a>
-                                         </li>
-                                     </ul>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=blog_3_columns" title="Blog 3 Columns">
-                                         Blog 3 Columns
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=search&amp;s=Maecenas+Mauris" title="Search Page Template">
-                                         Search Page Template
-                                     </a>
-                                 </li>
-                             </ul>
-                         </li>
-                         <li class="submenu">
-                             <a href="https://quanticalabs.com/Pressroom/Template/?page=authors" title="Authors">
-                                 Authors
-                             </a>
-                             <ul>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=authors" title="Authors List">
-                                         Authors List
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=author" title="Author Single">
-                                         Author Single
-                                     </a>
-                                 </li>
-                             </ul>
-                         </li>
-                         <li class="submenu">
-                             <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="Categories">
-                                 Categories
-                             </a>
-                             <ul>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="Health">
-                                         Health
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="Science">
-                                         Science
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="Sports">
-                                         Sports
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="World">
-                                         World
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="Lifestyle">
-                                         Lifestyle
-                                     </a>
-                                 </li>
-                             </ul>
-                         </li>
-                         <li class="submenu">
-                             <a href="https://quanticalabs.com/Pressroom/Template/?page=contact" title="Contact">
-                                 Contact
-                             </a>
-                             <ul class="expand_left_contact">
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=contact" title="Contact Style 1">
-                                         Contact Style 1
-                                     </a>
-                                 </li>
-                                 <li>
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=contact_2" title="Contact Style 2">
-                                         Contact Style 2
-                                     </a>
-                                 </li>
-                             </ul>
-                         </li>
-                     </ul>
-                 </nav>
-             </div>
-         </div><div class="page">
-             <div class="page_layout clearfix">
-                 <div class="row page_margin_top">
-                     <div class="column column_2_3">
-                         <div class="caroufredsel_wrapper caroufredsel_wrapper_small_slider">
-                             <div class="caroufredsel_wrapper" style="text-align: start; float: none; position: relative; inset: auto; z-index: auto; width: 690px; height: 450px; margin: 0px; overflow: hidden;">
-                                 <ul class="small_slider id-small_slider pr_preloader_ss_0 pr_initialized" style="display: block; text-align: left; float: none; position: absolute; inset: 0px auto auto 0px; margin: 0px; width: 6210px; height: 450px; z-index: auto;" id="slider_undefined">
+                        <li class="left"><a href="#" id="latest-prev"></a></li>
+                        <li class="right"><a href="#" id="latest-next"></a></li>
+
+                        <li class="posts">
+                            <div class="caroufredsel_wrapper_vertical_carousel">
+                                <ul class="latest_news_scrolling_list" id="latest-news">
+                                    @foreach (var item in breakingNew)
+                                    {
+                                        <li>
+                                            <a asp-page="/PostPage" asp-route-slug="@item.Slug" title="@item.Title">
+                                                @item.Title
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        </li>
+
+                        <li class="date">
+                            @{
+                                // Show date for the first (current) item if available
+                                var first = breakingNew?.FirstOrDefault();
+                                var published = first?.PublishedAt; // adjust if your field is different (e.g., CreatedAt)
+                                if (published.HasValue)
+                                {
+                                    // timeago-friendly ISO string in title; visible fallback text
+                                    <abbr class="timeago current" title="@published.Value.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ")">
+                                        @published.Value.ToString("\"hh:mm tt, MMM dd\"")
+                                    </abbr>
+                                }
+                            }
+                        </li>
+                    </ul>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="header_container">
+            <div class="header clearfix">
+                <div class="logo">
+                    <a href="/" class="btn-link">
+                        <img src="@siteSettings.SiteLogoUrl" alt="@siteSettings.SiteTitle" />
+
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        @{
+            ModelData.Models.Advert sideadvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.MainTop);
+        }
+        @if (sideadvert != null)
+        {
+            <div class="main-top-advert">
+                <a href="@sideadvert.Link" target="_blank">
+                    <img src="@sideadvert.ImageUrl" alt="@sideadvert.Title" class="img-fluid">
+                </a>
+            </div>
+        }
+
+
+        <div class="menu_container clearfix">
+            @{
+                var currentPath = Context.Request.Path.Value?.ToLower();
+            }
+
+            <nav>
+
+                <ul class="sf-menu">
+
+                    <li class="@(currentPath == "/" ? "selected" : "")">
+                        <a href="/" title="Home">Home</a>
+                    </li>
+                    @foreach (var sitepage in itemWebPages.Where(x => x.ShowInMenu == true).Where(x => x.MenuSortOrder > 0))
+                    {
+                        var pageUrl = sitepage.EnableDirectLink
+                ? sitepage.DirectLinkUrl?.ToLower()
+                : Url.Page("/Webpage", new { slug = sitepage.Slug }).ToLower();
+
+                <li class="@(currentPath == pageUrl ? "selected" : "")">
+                    @if (sitepage.EnableDirectLink)
+                    {
+                        <a href="@sitepage.DirectLinkUrl" target="@(sitepage.DirectLinkOpenInNewTab ? "_blank" : "_self")" title="@sitepage.Title">@sitepage.Title</a>
+
+                    }
+                    else
+                    {
+                        <a asp-page="/Webpage" asp-route-slug="@sitepage.Slug" title="@sitepage.Title">@sitepage.Title</a>
+                    }
+                </li>
+            }
+
+
+                    @foreach (var sitecategory in itemCategories.Where(x => x.ShowInMenu == true))
+                    {
+                        var catUrl = Url.Page("/CategoryPage", new { slug = sitecategory.Slug }).ToLower();
+                        var isCatActive = currentPath == catUrl ||
+                                          sitecategory.Children.Any(c => currentPath == Url.Page("/CategoryPage", new { slug = c.Slug }).ToLower());
+
+
+                        @if (sitecategory.Children.Count() > 0)
+                        {
+                            <li class="submenu @(isCatActive ? "selected" : "")">
+                                <a asp-page="/CategoryPage" asp-route-slug="@sitecategory.Slug" title="@sitecategory.Title">
+                                    @sitecategory.Title
+
+                                </a>
+
+                                <!-- Submenu Start -->
+                                <ul class="dropdown-menu">
+                                    @foreach (var list in sitecategory.Children.Where(x => x.IsPublished == true))
+                                    {
+                                        <li>
+                                            <a asp-page="/CategoryPage" asp-route-slug="@list.Slug" title="@list.Title">@list.Title</a>
+                                        </li>
+                                    }
+                                </ul><!-- Submenu End -->
+
+                            </li>
+
+                        }
+                        else
+                        {
+                            <li class="@(isCatActive ? "selected" : "")"> <a asp-page="/CategoryPage" asp-route-slug="@sitecategory.Slug" title="@sitecategory.Title">@sitecategory.Title</a></li>
+                        }
+
+                    }
+
+                    @foreach (var sitepage in itemWebPages.Where(x => x.ShowInMenu == true).Where(x => x.MenuSortOrder < 0))
+                    {
+                        var pageUrl = sitepage.EnableDirectLink
+? sitepage.DirectLinkUrl?.ToLower()
+: Url.Page("/Webpage", new { slug = sitepage.Slug }).ToLower();
+
+        <li class="@(currentPath == pageUrl ? "selected" : "")">
+            @if (sitepage.EnableDirectLink)
+            {
+                <a href="@sitepage.DirectLinkUrl" target="@(sitepage.DirectLinkOpenInNewTab ? "_blank" : "_self")" title="@sitepage.Title">@sitepage.Title</a>
+
+            }
+            else
+            {
+                <a asp-page="/Webpage" asp-route-slug="@sitepage.Slug" title="@sitepage.Title">@sitepage.Title</a>
+            }
+        </li>
 
 
 
+    }
+                    <partial name="_LoginPartial" />
+                </ul>
+            </nav>
+            <div class="mobile_menu_container">
+                <a href="#" class="mobile-menu-switch">
+                    <span class="line"></span>
+                    <span class="line"></span>
+                    <span class="line"></span>
+                </a>
+                <div class="mobile-menu-divider"></div>
+                <nav>
+                    <ul class="mobile-menu">
+                        <li class="">
+                            <a href="/" title="Home">Home</a>
+                        </li>
+                        @foreach (var sitepage in itemWebPages.Where(x => x.ShowInMenu == true).Where(x => x.MenuSortOrder > 0))
+                        {
+                            var pageUrl = sitepage.EnableDirectLink
+? sitepage.DirectLinkUrl?.ToLower()
+: Url.Page("/Webpage", new { slug = sitepage.Slug }).ToLower();
 
-                                     <li class="slide" id="slide_undefined_0">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Nuclear Fusion Closer to Becoming a Reality">
-                                             <img src="~/assets/image_09(1).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="slider_content_box">
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                                 <li class="date">
-                                                     10:11 PM, Feb 02
-                                                 </li>
-                                             </ul>
-                                             <h2><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Nuclear Fusion Closer to Becoming a Reality">Nuclear Fusion Closer to Becoming a Reality</a></h2>
-                                             <p class="clearfix">Maecenas mauris elementum, est morbi interdum cursus at elite imperdiet libero. Proin odios dapibus integer an nulla augue pharetra cursus.</p>
-                                             <ul class="slider_navigation" id="slider_navigation_undefined"><li class="slider_control"><a class="left_undefined" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="prev"></a></li><li class="slider_control"><a class="right_undefined" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="next"></a></li></ul>
-                                         </div>
-                                     </li>
-                                     <li class="slide" id="slide_undefined_1">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Climate Change Debate While Britain Floods">
-                                             <img src="~/assets/image_10(1).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="slider_content_box">
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="WORLD">WORLD</a></li>
-                                                 <li class="date">
-                                                     18:25 PM, Feb 21
-                                                 </li>
-                                             </ul>
-                                             <h2><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Climate Change Debate While Britain Floods">Climate Change Debate While Britain Floods</a></h2>
-                                             <p class="clearfix">Maecenas mauris elementum, est morbi interdum cursus at elite imperdiet libero. Proin odios dapibus integer an nulla augue pharetra cursus.</p>
-                                             <ul class="slider_navigation" id="slider_navigation_undefined"><li class="slider_control"><a class="left_undefined" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="prev"></a></li><li class="slider_control"><a class="right_undefined" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="next"></a></li></ul>
-                                         </div>
-                                     </li>
-                                     <li class="slide" id="slide_undefined_2">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="The Public Health Crisis Hiding in Our Food">
-                                             <img src="~/assets/image_08(1).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="slider_content_box">
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                                 <li class="date">
-                                                     10:11 PM, Feb 02
-                                                 </li>
-                                             </ul>
-                                             <h2><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="The Public Health Crisis Hiding in Our Food">The Public Health Crisis Hiding in Our Food</a></h2>
-                                             <p class="clearfix">Maecenas mauris elementum, est morbi interdum cursus at elite imperdiet libero. Proin odios dapibus integer an nulla augue pharetra cursus.</p>
-                                             <ul class="slider_navigation" id="slider_navigation_undefined"><li class="slider_control"><a class="left_undefined" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="prev"></a></li><li class="slider_control"><a class="right_undefined" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="next"></a></li></ul>
-                                         </div>
-                                     </li>
-                                     <li class="slide" id="slide_undefined_3">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">
-                                             <img src="~/assets/image_02(2).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="slider_content_box">
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="WORLD">WORLD</a></li>
-                                                 <li class="date">
-                                                     18:25 PM, Feb 21
-                                                 </li>
-                                             </ul>
-                                             <h2><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a></h2>
-                                             <p class="clearfix">Maecenas mauris elementum, est morbi interdum cursus at elite imperdiet libero. Proin odios dapibus integer an nulla augue pharetra cursus.</p>
-                                             <ul class="slider_navigation" id="slider_navigation_undefined"><li class="slider_control"><a class="left_undefined" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="prev"></a></li><li class="slider_control"><a class="right_undefined" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="next"></a></li></ul>
-                                         </div>
-                                     </li>
-                                 </ul>
-                             </div>
-                         </div>
-                         <div id="small_slider" class="slider_posts_list_container small">
-                             <a class="slider_control left slider_control_undefined slideRightBack" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="prev"></a><div class="caroufredsel_wrapper" style="text-align: start; float: none; position: relative; inset: auto; z-index: auto; width: 690px; height: 120.8px; margin: 0px; overflow: hidden;">
-                                 <ul class="slider_posts_list clearfix" id="slider_posts_list_undefined" style="text-align: left; float: none; position: absolute; inset: 0px auto auto 0px; margin: 0px; width: 2530px; height: 120.8px; z-index: auto;">
-                                     <li id="slider_posts_list_post_undefined_2" style="width: 230px;" class="">
-                                         <span class="date">
-                                             10:11 PM, Feb 02
-                                         </span><h5>The Public Health Crisis Hiding in Our Food</h5>
-                                     </li>
-                                     <li id="slider_posts_list_post_undefined_3" style="width: 230px;" class="">
-                                         <span class="date">
-                                             18:25 PM, Feb 21
-                                         </span><h5>Built on Brotherhood, Club Lives Up to Name</h5>
-                                     </li>
-                                     <li id="slider_posts_list_post_undefined_0" style="width: 230px;" class="current">
-                                         <span class="date">
-                                             10:11 PM, Feb 02
-                                         </span><h5>Nuclear Fusion Closer to Becoming a Reality</h5><div class="slider_posts_list_progress_block" id="slider_posts_list_progress_block_undefined" style="width: 37.66%; overflow: hidden;"></div><div class="slider_posts_list_bar" id="slider_posts_list_bar_undefined" style="width: 37.66%; overflow: hidden;"></div>
-                                     </li>
-                                     <li id="slider_posts_list_post_undefined_1" style="width: 230px;" class="">
-                                         <span class="date">
-                                             18:25 PM, Feb 21
-                                         </span><h5>Climate Change Debate While Britain Floods</h5>
-                                     </li>
-                                 </ul>
-                             </div><a class="slider_control right slider_control_undefined slideLeftBack" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="next"></a>
-                         </div>
-                         <div class="row">
-                             <ul class="blog column column_1_2">
-                                 <li class="post">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_small_image" title="Built on Brotherhood, Club Lives Up to Name" style="">
-                                         <img src="~/assets/image_08.jpg" alt="img" style="display: block;">
-                                     </a>
-                                     <h2 class="with_number">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_small_image" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a>
-                                         <a class="comments_number" href="https://quanticalabs.com/Pressroom/Template/?page=post_small_image#comments_list" title="2 comments">2<span class="arrow_comments"></span></a>
-                                     </h2>
-                                 </li>
-                             </ul>
-                             <ul class="blog column column_1_2">
-                                 <li class="post">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name" style="">
-                                         <img src="~/assets/image_09.jpg" alt="img" style="display: block;">
-                                     </a>
-                                     <h2 class="with_number">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a>
-                                         <a class="comments_number" href="https://quanticalabs.com/Pressroom/Template/?page=post#comments_list" title="2 comments">2<span class="arrow_comments"></span></a>
-                                     </h2>
-                                 </li>
-                             </ul>
-                         </div>
-                         <div class="row">
-                             <ul class="blog medium">
-                                 <li class="post">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="High Altitudes May Aid Weight Control" style="">
-                                         <img src="~/assets/image_02.jpg" alt="img" style="display: block;">
-                                     </a>
-                                     <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="High Altitudes May Aid Weight Control">High Altitudes May Aid Weight Control</a></h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </li>
-                                 <li class="post">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Climate Change Debate While Britain Floods" style="">
-                                         <span class="icon gallery" style="display: block;"></span>
-                                         <img src="~/assets/image_01.jpg" alt="img" style="display: block;">
-                                     </a>
-                                     <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Climate Change Debate While Britain Floods">Climate Change Debate While Britain Floods</a></h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="WORLD">WORLD</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </li>
-                                 <li class="post">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Climate Change Debate While Britain Floods" style="">
-                                         <span class="icon gallery" style="display: block;"></span>
-                                         <img src="~/assets/image_03.jpg" alt="img" style="display: block;">
-                                     </a>
-                                     <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Climate Change Debate While Britain Floods">New Painkiller Rekindles Addiction Concerns</a></h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="WORLD">WORLD</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </li>
-                             </ul>
-                         </div>
-                         <div class="row page_margin_top_section">
-                             <div class="column column_1_2">
-                                 <h4 class="box_header">Lifestyle</h4>
-                                 <ul class="blog small_margin clearfix">
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_soundcloud" title="The Public Health Crisis Hiding in Our Food" style="">
-                                             <img src="~/assets/image_12(1).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="post_content">
-                                             <h5>
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_soundcloud" title="The Public Health Crisis Hiding in Our Food">The Public Health Crisis Hiding in Our Food</a>
-                                             </h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="LIFESTYLE">LIFESTYLE</a></li>
-                                                 <li class="date">
-                                                     10:11 PM, Feb 02
-                                                 </li>
-                                             </ul>
-                                         </div>
-                                     </li>
-                                 </ul>
-                                 <ul class="list">
-                                     <li class="bullet style_1"><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Climate Change Debate While Britain Floods">Climate Change Debate While Britain Floods</a></li>
-                                     <li class="bullet style_1"><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a></li>
-                                     <li class="bullet style_1"><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Supreme Court Skeptical Of Ohio Law">Supreme Court Skeptical Of Ohio Law</a></li>
-                                     <li class="bullet style_1"><a href="https://quanticalabs.com/Pressroom/Template/?page=post_soundcloud" title="Struggling Nuremberg Sack Coach Verbeek">Struggling Nuremberg Sack Coach Verbeek</a></li>
-                                     <li class="bullet style_1"><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Nuclear Fusion Closer to Becoming a Reality">Nuclear Fusion Closer to Becoming a Reality</a></li>
-                                 </ul>
-                             </div>
-                             <div class="column column_1_2">
-                                 <h4 class="box_header">Health</h4>
-                                 <ul class="blog small_margin clearfix">
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="The Public Health Crisis Hiding in Our Food" style="">
-                                             <img src="~/assets/image_06(2).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="post_content">
-                                             <h5>
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="The Public Health Crisis Hiding in Our Food">The Public Health Crisis Hiding in Our Food</a>
-                                             </h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="LIFESTYLE">LIFESTYLE</a></li>
-                                                 <li class="date">
-                                                     10:11 PM, Feb 02
-                                                 </li>
-                                             </ul>
-                                         </div>
-                                     </li>
-                                 </ul>
-                                 <ul class="list">
-                                     <li class="bullet style_1"><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Climate Change Debate While Britain Floods">Climate Change Debate While Britain Floods</a></li>
-                                     <li class="bullet style_1"><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a></li>
-                                     <li class="bullet style_1"><a href="https://quanticalabs.com/Pressroom/Template/?page=post_quote" title="Supreme Court Skeptical Of Ohio Law">Supreme Court Skeptical Of Ohio Law</a></li>
-                                     <li class="bullet style_1"><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Struggling Nuremberg Sack Coach Verbeek">Struggling Nuremberg Sack Coach Verbeek</a></li>
-                                     <li class="bullet style_1"><a href="https://quanticalabs.com/Pressroom/Template/?page=post_quote_2" title="Nuclear Fusion Closer to Becoming a Reality">Nuclear Fusion Closer to Becoming a Reality</a></li>
-                                 </ul>
-                             </div>
-                         </div>
-                     </div>
-                     <div class="column column_1_3">
-                         <div class="tabs no_scroll clearfix ui-tabs ui-corner-all ui-widget ui-widget-content">
-                             <ul class="tabs_navigation clearfix ui-tabs-nav ui-corner-all ui-helper-reset ui-helper-clearfix ui-widget-header" role="tablist">
-                                 <li role="tab" tabindex="0" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab ui-tabs-active ui-state-active" aria-controls="sidebar-most-read" aria-labelledby="ui-id-1" aria-selected="true" aria-expanded="true" style="width: 50%;">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#sidebar-most-read" title="Most Read" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-1">
-                                         Most Read
-                                     </a>
-                                     <span></span>
-                                 </li>
-                                 <li role="tab" tabindex="-1" class="ui-tabs-tab ui-corner-top ui-state-default ui-tab" aria-controls="sidebar-most-commented" aria-labelledby="ui-id-2" aria-selected="false" aria-expanded="false" style="width: 50%;">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=home_4#sidebar-most-commented" title="Commented" role="presentation" tabindex="-1" class="ui-tabs-anchor" id="ui-id-2">
-                                         Commented
-                                     </a>
-                                     <span></span>
-                                 </li>
-                             </ul>
-                             <div id="sidebar-most-read" aria-labelledby="ui-id-1" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="false">
-                                 <ul class="blog rating page_margin_top clearfix">
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_small_image" title="Nuclear Fusion Closer to Becoming a Reality" style="">
-                                             <img src="~/assets/image_12(1).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="post_content">
-                                             <span class="number animated_element progress odometer odometer-theme-default" data-value="6 257"><div class="odometer-inside"><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">6</span></span></span></span></span><span class="odometer-formatting-mark"> </span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">2</span></span></span></span></span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">5</span></span></span></span></span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">7</span></span></span></span></span></div></span>
-                                             <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_small_image" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a></h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                             </ul>
-                                         </div>
-                                         <div class="value_bar_container" style="width: 100%; height: 147.962px;"><div class="value_bar animated_element duration-2000 animation-width width" style="animation-duration: 2000ms; animation-delay: 0ms; transition-delay: 0ms;"></div></div>
-                                     </li>
-                                     <li class="post">
-                                         <div class="post_content">
-                                             <span class="number animated_element progress odometer odometer-theme-default" data-value="5 062"><div class="odometer-inside"><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">5</span></span></span></span></span><span class="odometer-formatting-mark"> </span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">0</span></span></span></span></span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">6</span></span></span></span></span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">2</span></span></span></span></span></div></span>
-                                             <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a></h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="WORLD">WORLD</a></li>
-                                             </ul>
-                                         </div>
-                                         <div class="value_bar_container" style="width: 80.9014%; height: 147.963px;"><div class="value_bar animated_element duration-2000 animation-width width" style="animation-duration: 2000ms; animation-delay: 0ms; transition-delay: 0ms;"></div></div>
-                                     </li>
-                                     <li class="post">
-                                         <div class="post_content">
-                                             <span class="number animated_element progress odometer odometer-theme-default" data-value="4 778"><div class="odometer-inside"><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">4</span></span></span></span></span><span class="odometer-formatting-mark"> </span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">7</span></span></span></span></span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">7</span></span></span></span></span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">8</span></span></span></span></span></div></span>
-                                             <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Seeking the Right Chemistry, Drug Makers Hunt for Mergers">Seeking the Right Chemistry, Drug Makers Hunt for Mergers</a></h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                             </ul>
-                                         </div>
-                                         <div class="value_bar_container" style="width: 76.3625%; height: 147.963px;"><div class="value_bar animated_element duration-2000 animation-width width" style="animation-duration: 2000ms; animation-delay: 0ms; transition-delay: 0ms;"></div></div>
-                                     </li>
-                                     <li class="post">
-                                         <div class="post_content">
-                                             <span class="number animated_element progress odometer odometer-theme-default" data-value="754"><div class="odometer-inside"><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">7</span></span></span></span></span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">5</span></span></span></span></span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">4</span></span></span></span></span></div></span>
-                                             <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">Study Linking Illnes and Salt Leaves Researchers Doubtful</a></h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="SCIENCE">SCIENCE</a></li>
-                                             </ul>
-                                         </div>
-                                         <div class="value_bar_container" style="width: 12.0505%; height: 147.963px;"><div class="value_bar animated_element duration-2000 animation-width width" style="animation-duration: 2000ms; animation-delay: 0ms; transition-delay: 0ms;"></div></div>
-                                     </li>
-                                     <li class="post">
-                                         <div class="post_content">
-                                             <span class="number animated_element progress odometer odometer-theme-default" data-value="52"><div class="odometer-inside"><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">5</span></span></span></span></span><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">2</span></span></span></span></span></div></span>
-                                             <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Syrian Civilians Trapped for Months Continue to be Evacuated">Syrian Civilians Trapped for Months Continue to be Evacuated</a></h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="SCIENCE">SCIENCE</a></li>
-                                             </ul>
-                                         </div>
-                                         <div class="value_bar_container" style="width: 5%; height: 147.963px;"><div class="value_bar animated_element duration-2000 animation-width width" style="animation-duration: 2000ms; animation-delay: 0ms; transition-delay: 0ms;"></div></div>
-                                     </li>
-                                 </ul>
-                             </div>
-                             <div id="sidebar-most-commented" aria-labelledby="ui-id-2" role="tabpanel" class="ui-tabs-panel ui-corner-bottom ui-widget-content" aria-hidden="true" style="display: none;">
-                                 <ul class="blog rating page_margin_top clearfix">
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Nuclear Fusion Closer to Becoming a Reality" style="">
-                                             <img src="~/assets/image_02(3).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="post_content">
-                                             <span class="number animated_element odometer odometer-theme-default fadeIn" data-value="70" style="animation-duration: 600ms; animation-delay: 0ms; transition-delay: 0ms;"><div class="odometer-inside"><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">0</span></span></span></span></span></div></span>
-                                             <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a></h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                             </ul>
-                                         </div>
-                                         <div class="value_bar_container" style="width: 100%; height: 20px;"><div class="value_bar animated_element duration-2000 animation-width width" style="animation-duration: 2000ms; animation-delay: 0ms; transition-delay: 0ms;"></div></div>
-                                     </li>
-                                     <li class="post">
-                                         <div class="post_content">
-                                             <span class="number animated_element odometer odometer-theme-default fadeIn" data-value="62" style="animation-duration: 600ms; animation-delay: 0ms; transition-delay: 0ms;"><div class="odometer-inside"><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">0</span></span></span></span></span></div></span>
-                                             <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a></h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="WORLD">WORLD</a></li>
-                                             </ul>
-                                         </div>
-                                         <div class="value_bar_container" style="width: 88.5714%; height: 20px;"><div class="value_bar animated_element duration-2000 animation-width width" style="animation-duration: 2000ms; animation-delay: 0ms; transition-delay: 0ms;"></div></div>
-                                     </li>
-                                     <li class="post">
-                                         <div class="post_content">
-                                             <span class="number animated_element odometer odometer-theme-default fadeIn" data-value="30" style="animation-duration: 600ms; animation-delay: 0ms; transition-delay: 0ms;"><div class="odometer-inside"><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">0</span></span></span></span></span></div></span>
-                                             <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Seeking the Right Chemistry, Drug Makers Hunt for Mergers">Seeking the Right Chemistry, Drug Makers Hunt for Mergers</a></h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                             </ul>
-                                         </div>
-                                         <div class="value_bar_container" style="width: 42.8571%; height: 20px;"><div class="value_bar animated_element duration-2000 animation-width width" style="animation-duration: 2000ms; animation-delay: 0ms; transition-delay: 0ms;"></div></div>
-                                     </li>
-                                     <li class="post">
-                                         <div class="post_content">
-                                             <span class="number animated_element odometer odometer-theme-default fadeIn" data-value="25" style="animation-duration: 600ms; animation-delay: 0ms; transition-delay: 0ms;"><div class="odometer-inside"><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">0</span></span></span></span></span></div></span>
-                                             <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">Study Linking Illnes and Salt Leaves Researchers Doubtful</a></h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="SCIENCE">SCIENCE</a></li>
-                                             </ul>
-                                         </div>
-                                         <div class="value_bar_container" style="width: 35.7143%; height: 20px;"><div class="value_bar animated_element duration-2000 animation-width width" style="animation-duration: 2000ms; animation-delay: 0ms; transition-delay: 0ms;"></div></div>
-                                     </li>
-                                     <li class="post">
-                                         <div class="post_content">
-                                             <span class="number animated_element odometer odometer-theme-default fadeIn" data-value="4" style="animation-duration: 600ms; animation-delay: 0ms; transition-delay: 0ms;"><div class="odometer-inside"><span class="odometer-digit"><span class="odometer-digit-spacer">8</span><span class="odometer-digit-inner"><span class="odometer-ribbon"><span class="odometer-ribbon-inner"><span class="odometer-value">0</span></span></span></span></span></div></span>
-                                             <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Syrian Civilians Trapped for Months Continue to be Evacuated">Syrian Civilians Trapped for Months Continue to be Evacuated</a></h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="SCIENCE">SCIENCE</a></li>
-                                             </ul>
-                                         </div>
-                                         <div class="value_bar_container" style="width: 5.71429%; height: 20px;"><div class="value_bar animated_element duration-2000 animation-width width" style="animation-duration: 2000ms; animation-delay: 0ms; transition-delay: 0ms;"></div></div>
-                                     </li>
-                                 </ul>
-                             </div>
-                         </div>
-                         <h4 class="box_header page_margin_top_section">Lifestyle</h4>
-                         <ul class="blog small clearfix">
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">
-                                     <img src="~/assets/image_09(2).jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">Study Linking Illnes and Salt Leaves Researchers Doubtful</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="LIFESTYLE">LIFESTYLE</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_quote_2" title="Syrian Civilians Trapped For Months Continue To Be Evacuated">
-                                     <img src="~/assets/image_12.jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_quote_2" title="Syrian Civilians Trapped For Months Continue To Be Evacuated">Syrian Civilians Trapped For Months Continue To Be Evacuated</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="LIFESTYLE">LIFESTYLE</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">
-                                     <img src="~/assets/image_02(1).jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="LIFESTYLE">LIFESTYLE</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Nuclear Fusion Closer to Becoming a Reality">
-                                     <span class="icon small gallery"></span>
-                                     <img src="~/assets/image_01(1).jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Nuclear Fusion Closer to Becoming a Reality">Nuclear Fusion Closer to Becoming a Reality</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="LIFESTYLE">LIFESTYLE</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                         </ul>
-                         <a class="more page_margin_top" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#">MORE FROM LIFESTYLE</a>
-                     </div>
-                 </div>
-                 <div class="row page_margin_top_section">
-                     <div class="column column_1_1">
-                         <h4 class="box_header">Posts Carousel</h4>
-                         <div class="horizontal_carousel_container page_margin_top">
-                             <a class="slider_control left slider_control_0" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="prev" style=""></a><div class="caroufredsel_wrapper caroufredsel_wrapper_hortizontal_carousel" style="text-align: start; float: none; position: relative; inset: auto; z-index: auto; width: 810px; height: 262.8px; margin: 0px; overflow: hidden;">
-                                 <ul class="blog horizontal_carousel autoplay-1 visible-4 scroll-1 navigation-1 easing-easeInOutQuint duration-750 pr_preloader_0" style="display: block; text-align: left; float: none; position: absolute; inset: 0px auto auto 0px; margin: 0px; width: 3510px; height: 262.8px; z-index: auto;">
+            <li class="@(currentPath == pageUrl ? "selected" : "")">
+                @if (sitepage.EnableDirectLink)
+                {
+                    <a href="@sitepage.DirectLinkUrl" target="@(sitepage.DirectLinkOpenInNewTab ? "_blank" : "_self")" title="@sitepage.Title">@sitepage.Title</a>
+
+                }
+                else
+                {
+                    <a asp-page="/Webpage" asp-route-slug="@sitepage.Slug" title="@sitepage.Title">@sitepage.Title</a>
+                }
+            </li>
+        }
+
+
+                        @foreach (var sitecategory in itemCategories.Where(x => x.ShowInMenu == true))
+                        {
+                            var catUrl = Url.Page("/CategoryPage", new { slug = sitecategory.Slug }).ToLower();
+                            var isCatActive = currentPath == catUrl ||
+                                              sitecategory.Children.Any(c => currentPath == Url.Page("/CategoryPage", new { slug = c.Slug }).ToLower());
+
+                            @if (sitecategory.Children.Count() > 0)
+                            {
+                                <li class="submenu @(isCatActive ? "selected" : "")">
+                                    <a asp-page="/CategoryPage" asp-route-slug="@sitecategory.Slug" title="@sitecategory.Title">
+                                        @sitecategory.Title
+
+                                    </a>
+
+                                    <!-- Submenu Start -->
+                                    <ul class="dropdown-menu">
+                                        @foreach (var list in sitecategory.Children.Where(x => x.IsPublished == true))
+                                        {
+                                            <li>
+                                                <a asp-page="/CategoryPage" asp-route-slug="@list.Slug" title="@list.Title">@list.Title</a>
+                                            </li>
+                                        }
+                                    </ul><!-- Submenu End -->
+
+                                </li>
+
+                            }
+                            else
+                            {
+                                <li class="@(isCatActive ? "selected" : "")"> <a asp-page="/CategoryPage" asp-route-slug="@sitecategory.Slug" title="@sitecategory.Title">@sitecategory.Title</a></li>
+                            }
+
+                        }
+
+                        @foreach (var sitepage in itemWebPages.Where(x => x.ShowInMenu == true).Where(x => x.MenuSortOrder < 0))
+                        {
+                            var pageUrl = sitepage.EnableDirectLink
+? sitepage.DirectLinkUrl?.ToLower()
+: Url.Page("/Webpage", new { slug = sitepage.Slug }).ToLower();
+
+            <li class="@(currentPath == pageUrl ? "selected" : "")">
+                @if (sitepage.EnableDirectLink)
+                {
+                    <a href="@sitepage.DirectLinkUrl" target="@(sitepage.DirectLinkOpenInNewTab ? "_blank" : "_self")" title="@sitepage.Title">@sitepage.Title</a>
+
+                }
+                else
+                {
+                    <a asp-page="/Webpage" asp-route-slug="@sitepage.Slug" title="@sitepage.Title">@sitepage.Title</a>
+                }
+            </li>
+
+
+        }
+                        <partial name="_LoginPartial" />
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+        <div class="page">
+
+            <div class="page_layout clearfix">
+                @RenderBody()
+            </div>
+
+        </div>
+        <div class="footer_container">
+
+            <div class="footer clearfix">
+
+                <div class="row">
+
+                    <div class="column column_1_3">
+
+                        <h4 class="box_header">
+                            @siteSettings.SiteTitle
+                        </h4>
+
+                        <p class="padding_top_bottom_25">
+                            @plainDescription
+                        </p>
+
+                        <div class="row">
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.Address))
+                            {
+                                <div class="column column_1_2">
+
+                                    <h5>
+                                        Address
+                                    </h5>
+
+                                    <p>
+                                        @Html.Raw(siteSettings.Address)
+
+                                    </p>
+
+                                </div>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.ContactEmail))
+                            {
+
+                                <div class="column column_1_2">
+
+                                    <h5>
+                                        Email Address
+                                    </h5>
+
+                                    <p>
+                                        @Html.Raw(siteSettings.ContactEmail)
+                                    </p>
+
+                                </div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.ContactPhone))
+                            {
+
+                                <div class="column column_1_2">
+
+                                    <h5>
+                                        Phone &amp; Fax
+                                    </h5>
+
+                                    <p>
+                                        @Html.Raw(siteSettings.ContactPhone)
+                                    </p>
+
+                                </div>
+                            }
+                        </div>
+
+                        <h4 class="box_header page_margin_top">
+                            Get In Touch With Us
+                        </h4>
+
+                        <ul class="social_icons dark page_margin_top clearfix">
+                            @* Facebook *@
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.FacebookUrl))
+                            {
+                                <li>
+                                    <a target="_blank" href="@siteSettings.FacebookUrl" class="social_icon facebook" title="Facebook">
+                                        &nbsp;
+                                    </a>
+                                </li>
+                            }
+
+                            @* Twitter (X) *@
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.TwitterUrl))
+                            {
+                                <li>
+                                    <a target="_blank" href="@siteSettings.TwitterUrl" class="social_icon twitter" title="Twitter">
+                                        &nbsp;
+                                    </a>
+                                </li>
+                            }
+
+                            @* LinkedIn *@
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.LinkedInUrl))
+                            {
+                                <li>
+                                    <a target="_blank" href="@siteSettings.LinkedInUrl" class="social_icon linkedin" title="LinkedIn">
+                                        &nbsp;
+                                    </a>
+                                </li>
+                            }
+
+                            @* Instagram *@
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.InstagramUrl))
+                            {
+                                <li>
+                                    <a target="_blank" href="@siteSettings.InstagramUrl" class="social_icon instagram" title="Instagram">
+                                        &nbsp;
+                                    </a>
+                                </li>
+                            }
+
+                            @* YouTube *@
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.YouTubeUrl))
+                            {
+                                <li>
+                                    <a target="_blank" href="@siteSettings.YouTubeUrl" class="social_icon youtube" title="YouTube">
+                                        &nbsp;
+                                    </a>
+                                </li>
+                            }
+
+                            @* TikTok (ensure you have a .social_icon.tiktok style/icon in your CSS) *@
+                            @if (!string.IsNullOrWhiteSpace(siteSettings.TikTokUrl))
+                            {
+                                <li>
+                                    <a target="_blank" href="@siteSettings.TikTokUrl" class="social_icon tiktok" title="TikTok">
+                                        &nbsp;
+                                    </a>
+                                </li>
+                            }
+
+
+                        </ul>
+
+                    </div>
+
+                    <div class="column column_1_3">
+
+                        <h4 class="box_header">
+                            Most Viewed Posts
+                        </h4>
+
+                        <div class="vertical_carousel_container clearfix">
+
+                            <a class="slider_control up slider_control_0" href="#" title="prev" style="">
+                            </a>
+                            <div class="caroufredsel_wrapper caroufredsel_wrapper_vertical_carousel" style="text-align: start; float: none; position: relative; inset: auto; z-index: auto; width: 330px; height: 390px; margin: 0px; overflow: hidden;">
+
+                                <ul class="mx-main-footer blog small vertical_carousel autoplay-1 scroll-1 navigation-1 easing-easeInOutQuint duration-750 pr_preloader_vl_0" style="text-align: left; float: none; position: absolute; inset: 0px auto auto 0px; margin: 0px; height: 1430px; width: 330px; z-index: auto;">
 
 
 
+                                    @foreach (var item in mostViewdPosts)
+                                    {
+
+                                        <li class="post">
+
+                                            <a asp-page="/PostPage" asp-route-slug="@item.Slug" title="@item.Title">
+
+                                                <img src="@(item?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@item.Title" style="display: block;">
+
+                                            </a>
+
+                                            <div class="post_content">
+
+                                                <h5>
+
+                                                    <a asp-page="/PostPage" asp-route-slug="@item.Slug" title="@item.Title">
+                                                        @item.Title
+                                                    </a>
+
+                                                </h5>
+
+                                                <ul class="post_details simple">
+
+                                                    <li class="category">
+                                                        <a asp-page="/CategoryPage" asp-route-slug="@item.Category?.Slug" title="@item.Category?.Title">
+                                                            @item.Category?.Title
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="date">
+                                                        @(item.PublishedAt.HasValue
+    ? item.PublishedAt.Value.ToString("hh:mm tt, MMM dd")
+    : "")
+
+                                                    </li>
+
+                                                </ul>
+
+                                            </div>
+
+                                        </li>
+
+                                    }
+                                </ul>
+
+                            </div>
+                            <a class="slider_control down slider_control_0" href="#" title="next" style="">
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    <div class="column column_1_3">
+
+                        <h4 class="box_header">
+                            Latest Galleries
+                        </h4>
+
+                        <div class="horizontal_carousel_container big page_margin_top">
+
+                            <a class="slider_control left slider_control_1" href="#" title="prev" style="">
+                            </a>
+                            <div class="caroufredsel_wrapper caroufredsel_wrapper_hortizontal_carousel" style="text-align: start; float: none; position: relative; inset: auto; z-index: auto; width: 360px; height: 328.8px; margin: 0px; overflow: hidden;">
+
+                                <ul class="gallery-mx-01 blog horizontal_carousel visible-1 autoplay-0 scroll-1 navigation-1 easing-easeInOutQuint duration-750 pr_preloader_1" style="display: block; text-align: left; float: none; position: absolute; inset: 0px auto auto 0px; margin: 0px; width: 2520px; height: 328.8px;">
+                                    @foreach (var img in galleryasync)
+                                    {
+                                        <li class="post">
+
+                                            <a asp-page="/PostPage" asp-route-slug="@img.Post?.Slug" title="@img.Post?.Title">
+
+                                                <span class="icon gallery" style="display: block;">
+                                                </span>
+
+                                                <img src="@img.ImageUrl" alt="@img.Post?.Title" style="display: block;">
+
+                                            </a>
+
+                                            <h5 class="with_number">
+
+                                                <a asp-page="/PostPage" asp-route-slug="@img.Post?.Slug" title="@img.Post?.Title">
+                                                    @img.Post?.Title
+                                                </a>
+
+                                                <a class="comments_number" href="/PostPage/@img.Post?.Slug#comments_list" title="@img.Post?.Comments?.Count() comments">
+                                                    @img.Post?.Comments?.Count()
+                                                    <span class="arrow_comments">
+                                                    </span>
+                                                </a>
+
+                                            </h5>
+
+                                            <ul class="post_details simple">
+
+                                                <li class="category">
+                                                    <a asp-page="/CategoryPage" asp-route-slug="@img.Post.Category?.Slug" title="@img.Post?.Category?.Title">
+                                                        @img.Post?.Category.?Title
+                                                    </a>
+                                                </li>
+
+                                                <li class="date">
+                                                    @(img.Post?.PublishedAt?.ToString("hh:mm tt, MMM dd") ?? "")
+
+                                                </li>
+
+                                            </ul>
+
+                                        </li>
+                                    }
+
+                                </ul>
+
+                            </div>
+                            <a class="slider_control right slider_control_1" href="#" title="next" style="">
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="row page_margin_top_section">
+
+                    <div class="column column_3_4">
+
+                        <ul class="footer_menu">
+                            @foreach (var cat in itemCategories.Where(x => x.ShowInFooter))
+                            {
+                                <li>
+                                    <a asp-page="/CategoryPage" asp-route-slug="@cat.Slug" title="@cat.Title">
+                                        @cat.Title
+                                    </a>
+                                </li>
+                            }
 
 
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="High Altitudes May Aid Weight Control">
-                                             <img src="~/assets/image_01.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="High Altitudes May Aid Weight Control">High Altitudes May Aid Weight Control</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Built on Brotherhood, Club Lives Up to Name">
-                                             <span class="icon gallery" style="display: block;"><!--<span class="info">999</span>--></span>
-                                             <img src="~/assets/image_03.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post first">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">
-                                             <img src="~/assets/image_09.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post first">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Nuclear Fusion Closer to Becoming a Reality">
-                                             <img src="~/assets/image_04.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Nuclear Fusion Closer to Becoming a Reality">Nuclear Fusion Closer to Becoming a Reality</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="New Painkiller Rekindles Addiction Concerns">
-                                             <img src="~/assets/image_08.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5><a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a></h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                 </ul>
-                             </div><a class="slider_control right slider_control_0" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="next" style=""></a>
-                         </div>
-                     </div>
-                 </div>
-                 <div class="row page_margin_top_section">
-                     <div class="column column_1_3">
-                         <h4 class="box_header">Sports</h4>
-                         <ul class="blog">
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Struggling Nuremberg Sack Coach Verbeek" style="">
-                                     <img src="~/assets/image_06.jpg" alt="img" style="display: block;">
-                                 </a>
-                                 <h2 class="with_number">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Struggling Nuremberg Sack Coach Verbeek">Struggling Nuremberg Sack Coach Verbeek</a>
-                                     <a class="comments_number" href="https://quanticalabs.com/Pressroom/Template/?page=post#comments_list" title="2 comments">2<span class="arrow_comments"></span></a>
-                                 </h2>
-                                 <ul class="post_details">
-                                     <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                     <li class="date">
-                                         10:11 PM, Feb 02
-                                     </li>
-                                 </ul>
-                                 <p>Politicans have looked weak in the face of such natural disaster, with many facing criticism from local residents for doing little more than turning up as flood tourists at the side of disasters.</p>
-                                 <a class="read_more" href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Read more"><span class="arrow"></span><span>READ MORE</span></a>
-                             </li>
-                         </ul>
-                         <ul class="blog small clearfix">
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_small_image" title="Bayern Says Ties With Rivals Dortmund Have Frozen">
-                                     <img src="~/assets/image_14(1).jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_small_image" title="Bayern Says Ties With Rivals Dortmund Have Frozen">Bayern Says Ties With Rivals Dortmund Have Frozen</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_soundcloud" title="Built on Brotherhood, Club Lives Up to Name">
-                                     <img src="~/assets/image_12.jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_soundcloud" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                         </ul>
-                         <a class="more page_margin_top" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#">READ MORE</a>
-                     </div>
-                     <div class="column column_1_3">
-                         <h4 class="box_header">Lifestyle</h4>
-                         <ul class="blog">
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="High Altitudes May Aid Weight Control" style="">
-                                     <img src="~/assets/image_07.jpg" alt="img" style="display: block;">
-                                 </a>
-                                 <h2 class="with_number">
-                                     <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="High Altitudes May Aid Weight Control">High Altitudes May Aid Weight Control</a>
-                                     <a class="comments_number" href="https://quanticalabs.com/Pressroom/Template/?page=post#comments_list" title="2 comments">2<span class="arrow_comments"></span></a>
-                                 </h2>
-                                 <ul class="post_details">
-                                     <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="LIFESTYLE">LIFESTYLE</a></li>
-                                     <li class="date">
-                                         10:11 PM, Feb 02
-                                     </li>
-                                 </ul>
-                                 <p>Politicans have looked weak in the face of such natural disaster, with many facing criticism from local residents for doing little more than turning up as flood tourists at the side of disasters.</p>
-                                 <a class="read_more" href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Read more"><span class="arrow"></span><span>READ MORE</span></a>
-                             </li>
-                         </ul>
-                         <ul class="blog small clearfix">
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Bayern Says Ties With Rivals Dortmund Have Frozen">
-                                     <img src="~/assets/image_01(1).jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Bayern Says Ties With Rivals Dortmund Have Frozen">Bayern Says Ties With Rivals Dortmund Have Frozen</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="LIFESTYLE">LIFESTYLE</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_video" title="Built on Brotherhood, Club Lives Up to Name">
-                                     <span class="icon small video"></span>
-                                     <img src="~/assets/image_03(1).jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_video" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="LIFESTYLE">LIFESTYLE</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                         </ul>
-                         <a class="more page_margin_top" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#">READ MORE</a>
-                     </div>
-                     <div class="column column_1_3">
-                         <h4 class="box_header">Science</h4>
-                         <ul class="blog small clearfix">
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">
-                                     <img src="~/assets/image_09(2).jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">Study Linking Illnes and Salt Leaves Researchers Doubtful</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="SCIENCE">SCIENCE</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Syrian Civilians Trapped For Months Continue To Be Evacuated">
-                                     <img src="~/assets/image_12.jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Syrian Civilians Trapped For Months Continue To Be Evacuated">Syrian Civilians Trapped For Months Continue To Be Evacuated</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="SCIENCE">SCIENCE</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">
-                                     <img src="~/assets/image_02(1).jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="SCIENCE">SCIENCE</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                             <li class="post">
-                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Nuclear Fusion Closer to Becoming a Reality">
-                                     <span class="icon small gallery"></span>
-                                     <img src="~/assets/image_01(1).jpg" alt="img">
-                                 </a>
-                                 <div class="post_content">
-                                     <h5>
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Nuclear Fusion Closer to Becoming a Reality">Nuclear Fusion Closer to Becoming a Reality</a>
-                                     </h5>
-                                     <ul class="post_details simple">
-                                         <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="SCIENCE">SCIENCE</a></li>
-                                         <li class="date">
-                                             10:11 PM, Feb 02
-                                         </li>
-                                     </ul>
-                                 </div>
-                             </li>
-                         </ul>
-                         <a class="more page_margin_top" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#">MORE FROM SCIENCE</a>
-                     </div>
-                 </div>
-             </div>
-         </div>			<div class="footer_container">
-             <div class="footer clearfix">
-                 <div class="row">
-                     <div class="column column_1_3">
-                         <h4 class="box_header">About PressRoom</h4>
-                         <p class="padding_top_bottom_25">Maecenas mauris elementum, est morbi interdum cursus at elite imperdiet libero. Proin odios dapibus integer an nulla augue pharetra cursus.</p>
-                         <div class="row">
-                             <div class="column column_1_2">
-                                 <h5>PressRoom Ltd.</h5>
-                                 <p>
-                                     33 Farlane Street<br>
-                                     25-100 Keilor East,<br>
-                                     Australia
-                                 </p>
-                             </div>
-                             <div class="column column_1_2">
-                                 <h5>Phone &amp; Fax</h5>
-                                 <p>
-                                     Phone: 1-800-64-38<br>
-                                     Fax: 1-800-64-39
-                                 </p>
-                             </div>
-                         </div>
-                         <h4 class="box_header page_margin_top">Get In Touch With Us</h4>
-                         <ul class="social_icons dark page_margin_top clearfix">
-                             <li>
-                                 <a target="_blank" title="" href="https://facebook.com/QuanticaLabs" class="social_icon facebook">
-                                     &nbsp;
-                                 </a>
-                             </li>
-                             <li>
-                                 <a target="_blank" title="" href="https://twitter.com/QuanticaLabs" class="social_icon twitter">
-                                     &nbsp;
-                                 </a>
-                             </li>
-                             <li>
-                                 <a title="" href="mailto:contact@pressroom.com" class="social_icon mail">
-                                     &nbsp;
-                                 </a>
-                             </li>
-                             <li>
-                                 <a title="" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" class="social_icon skype">
-                                     &nbsp;
-                                 </a>
-                             </li>
-                             <li>
-                                 <a title="" href="https://1.envato.market/quanticalabs" class="social_icon envato">
-                                     &nbsp;
-                                 </a>
-                             </li>
-                             <li>
-                                 <a title="" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" class="social_icon instagram">
-                                     &nbsp;
-                                 </a>
-                             </li>
-                             <li>
-                                 <a title="" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" class="social_icon pinterest">
-                                     &nbsp;
-                                 </a>
-                             </li>
-                         </ul>
-                     </div>
-                     <div class="column column_1_3">
-                         <h4 class="box_header">Latest Posts</h4>
-                         <div class="vertical_carousel_container clearfix">
-                             <a class="slider_control up slider_control_0" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="prev" style=""></a><div class="caroufredsel_wrapper caroufredsel_wrapper_vertical_carousel" style="text-align: start; float: none; position: relative; inset: auto; z-index: auto; width: 330px; height: 390px; margin: 0px; overflow: hidden;">
-                                 <ul class="blog small vertical_carousel autoplay-1 scroll-1 navigation-1 easing-easeInOutQuint duration-750 pr_preloader_vl_0" style="text-align: left; float: none; position: absolute; inset: 0px auto auto 0px; margin: 0px; height: 1430px; width: 330px; z-index: auto;">
+                        </ul>
+
+                    </div>
+
+                    <div class="column column_1_4">
+
+                        <a class="scroll_top" href="#top" title="Scroll to top">
+                            Top
+                        </a>
+
+                    </div>
+
+                </div>
+
+                <div class="row copyright_row">
+
+                    <div class="column column_2_3">
+                        © Copyright
+                        <a href="/" title="@siteSettings.SiteTitle">
+                            @siteSettings.SiteTitle
+                        </a>
 
 
+                    </div>
+
+                    <div class="column column_1_3">
+
+                        <ul class="footer_menu">
+                            @foreach (var xpage in itemWebPages.Where(x => x.ShowInFooter))
+                            {
+                                <li>
+                                    <h6>
+                                        @if (xpage.EnableDirectLink)
+                                        {
+                                            <a href="@xpage.DirectLinkUrl" target="@(xpage.DirectLinkOpenInNewTab ? "_blank" : "_self")" title="@xpage.Title">
+                                                @xpage.Title
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-page="/Webpage" asp-route-slug="@xpage.Slug" title="@xpage.Title">
+                                                @xpage.Title
+                                            </a>
+                                        }
+                                    </h6>
+                                </li>
+                            }
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="background_overlay"></div>
+    <!--js-->
+    <script type="text/javascript" src="~/assets/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.ba-bbq.min.js"></script>
+    <script type="text/javascript" src="~/assets/jquery-ui-1.12.1.custom.min.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.easing.1.4.1.min.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.carouFredSel-6.2.1-packed.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.touchSwipe.min.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.transit.min.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.sliderControl.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.timeago.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.hint.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.prettyPhoto.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.qtip.min.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="~/assets/jquery.imagesloaded-packed.js"></script>
+    <script type="text/javascript" src="~/assets/main.js"></script>
+    <script type="text/javascript" src="~/assets/odometer.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="~/assets/style_selector.css">
+    <script type="text/javascript" src="~/assets/style_selector.js"></script>
+    <script>
+        $(document).on("click", "#subscribeBtn", function () {
+            var email = $("#newsletterEmail").val();
+            var token = $("#__RequestVerificationToken").val();
+            var messageEl = $("#subscribeMessage");
+
+            $.ajax({
+                type: "POST",
+                url: "/Index?handler=Subscribe",
+                data: {
+                    NewsletterEmail: email,
+                    __RequestVerificationToken: token
+                },
+                success: function (res) {
+                    messageEl.text(res.message);
+                    messageEl.css("color", res.success ? "green" : "yellow");
+                    if (res.success) {
+                        $("#newsletterEmail").val("");
+                    }
+                },
+                error: function () {
+                    messageEl.text("Something went wrong.").css("color", "red");
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @Html.Raw(siteSettings.CustomFooterScript)
 
 
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Nuclear Fusion Closer to Becoming a Reality">
-                                             <img src="~/assets/image_13(1).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="post_content">
-                                             <h5>
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Nuclear Fusion Closer to Becoming a Reality">Nuclear Fusion Closer to Becoming a Reality</a>
-                                             </h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="SCIENCE">SCIENCE</a></li>
-                                                 <li class="date">
-                                                     10:11 PM, Feb 02
-                                                 </li>
-                                             </ul>
-                                         </div>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">
-                                             <span class="icon small gallery" style="display: block;"></span>
-                                             <img src="~/assets/image_06(1).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="post_content">
-                                             <h5>
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Study Linking Illnes and Salt Leaves Researchers Doubtful">Study Linking Illnes and Salt Leaves Researchers Doubtful</a>
-                                             </h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="HEALTH">HEALTH</a></li>
-                                                 <li class="date">
-                                                     10:11 PM, Feb 02
-                                                 </li>
-                                             </ul>
-                                         </div>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Syrian Civilians Trapped For Months Continue To Be Evacuated">
-                                             <img src="~/assets/image_12.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="post_content">
-                                             <h5>
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Syrian Civilians Trapped For Months Continue To Be Evacuated">Syrian Civilians Trapped For Months Continue To Be Evacuated</a>
-                                             </h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="WORLD">WORLD</a></li>
-                                                 <li class="date">
-                                                     10:11 PM, Feb 02
-                                                 </li>
-                                             </ul>
-                                         </div>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">
-                                             <img src="~/assets/image_02(1).jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <div class="post_content">
-                                             <h5>
-                                                 <a href="https://quanticalabs.com/Pressroom/Template/?page=post" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a>
-                                             </h5>
-                                             <ul class="post_details simple">
-                                                 <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                                 <li class="date">
-                                                     10:11 PM, Feb 02
-                                                 </li>
-                                             </ul>
-                                         </div>
-                                     </li>
-                                 </ul>
-                             </div><a class="slider_control down slider_control_0" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="next" style=""></a>
-                         </div>
-                     </div>
-                     <div class="column column_1_3">
-                         <h4 class="box_header">Latest Galleries</h4>
-                         <div class="horizontal_carousel_container big page_margin_top">
-                             <a class="slider_control left slider_control_1" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="prev" style=""></a><div class="caroufredsel_wrapper caroufredsel_wrapper_hortizontal_carousel" style="text-align: start; float: none; position: relative; inset: auto; z-index: auto; width: 360px; height: 328.8px; margin: 0px; overflow: hidden;">
-                                 <ul class="blog horizontal_carousel visible-1 autoplay-0 scroll-1 navigation-1 easing-easeInOutQuint duration-750 pr_preloader_1" style="display: block; text-align: left; float: none; position: absolute; inset: 0px auto auto 0px; margin: 0px; width: 2520px; height: 328.8px;">
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Struggling Nuremberg Sack Coach Verbeek">
-                                             <span class="icon gallery" style="display: block;"></span>
-                                             <img src="~/assets/image_03.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5 class="with_number">
-                                             <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Struggling Nuremberg Sack Coach Verbeek">Struggling Nuremberg Sack Coach Verbeek</a>
-                                             <a class="comments_number" href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery#comments_list" title="2 comments">2<span class="arrow_comments"></span></a>
-                                         </h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Built on Brotherhood, Club Lives Up to Name">
-                                             <span class="icon gallery" style="display: block;"></span>
-                                             <img src="~/assets/image_14.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5 class="with_number">
-                                             <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="Built on Brotherhood, Club Lives Up to Name">Built on Brotherhood, Club Lives Up to Name</a>
-                                             <a class="comments_number" href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery#comments_list" title="2 comments">2<span class="arrow_comments"></span></a>
-                                         </h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                     <li class="post">
-                                         <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="New Painkiller Rekindles Addiction Concerns">
-                                             <span class="icon gallery" style="display: block;"></span>
-                                             <img src="~/assets/image_04.jpg" alt="img" style="display: block;">
-                                         </a>
-                                         <h5 class="with_number">
-                                             <a href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery" title="New Painkiller Rekindles Addiction Concerns">New Painkiller Rekindles Addiction Concerns</a>
-                                             <a class="comments_number" href="https://quanticalabs.com/Pressroom/Template/?page=post_gallery#comments_list" title="2 comments">2<span class="arrow_comments"></span></a>
-                                         </h5>
-                                         <ul class="post_details simple">
-                                             <li class="category"><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="SPORTS">SPORTS</a></li>
-                                             <li class="date">
-                                                 10:11 PM, Feb 02
-                                             </li>
-                                         </ul>
-                                     </li>
-                                 </ul>
-                             </div><a class="slider_control right slider_control_1" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#" title="next" style=""></a>
-                         </div>
-                     </div>
-                 </div>
-                 <div class="row page_margin_top_section">
-                     <div class="column column_3_4">
-                         <ul class="footer_menu">
-                             <li>
-                                 <h4><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=world" title="World">World</a></h4>
-                             </li>
-                             <li>
-                                 <h4><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=health" title="Health">Health</a></h4>
-                             </li>
-                             <li>
-                                 <h4><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=sports" title="Sports">Sports</a></h4>
-                             </li>
-                             <li>
-                                 <h4><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=science" title="Science">Science</a></h4>
-                             </li>
-                             <li>
-                                 <h4><a href="https://quanticalabs.com/Pressroom/Template/?page=category&amp;cat=lifestyle" title="Lifestyle">Lifestyle</a></h4>
-                             </li>
-                         </ul>
-                     </div>
-                     <div class="column column_1_4">
-                         <a class="scroll_top" href="https://quanticalabs.com/Pressroom/Template/?page=home_4#top" title="Scroll to top">Top</a>
-                     </div>
-                 </div>
-                 <div class="row copyright_row">
-                     <div class="column column_2_3">
-                         © Copyright <a href="https://quanticalabs.com/" title="QuanticaLabs" target="_blank">QuanticaLabs</a> - PressRoom Template. <a href="https://1.envato.market/c/296919/275988/4415?u=https://themeforest.net/cart/add_items?item_ids=9066845&amp;ref=QuanticaLabs" title="PressRoom Template" target="_blank">Click here to buy it</a>
-                     </div>
-                     <div class="column column_1_3">
-                         <ul class="footer_menu">
-                             <li>
-                                 <h6><a href="https://quanticalabs.com/Pressroom/Template/?page=about" title="About">About</a></h6>
-                             </li>
-                             <li>
-                                 <h6><a href="https://quanticalabs.com/Pressroom/Template/?page=authors" title="Authors">Authors</a></h6>
-                             </li>
-                             <li>
-                                 <h6><a href="https://quanticalabs.com/Pressroom/Template/?page=contact" title="Contact Us">Contact Us</a></h6>
-                             </li>
-                         </ul>
-                     </div>
-                 </div>
-             </div>
-         </div>
-     </div>
-     <div class="background_overlay"></div>
-     <!--js-->
-     <script type="text/javascript" src="~/assets/jquery-3.6.0.min.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.ba-bbq.min.js"></script>
-     <script type="text/javascript" src="~/assets/jquery-ui-1.12.1.custom.min.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.easing.1.4.1.min.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.carouFredSel-6.2.1-packed.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.touchSwipe.min.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.transit.min.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.sliderControl.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.timeago.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.hint.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.prettyPhoto.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.qtip.min.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.blockUI.js"></script>
-     <script type="text/javascript" src="~/assets/jquery.imagesloaded-packed.js"></script>
-     <script type="text/javascript" src="~/assets/main.js"></script>
-     <script type="text/javascript" src="~/assets/odometer.min.js"></script>
-     <link rel="stylesheet" type="text/css" href="~/assets/style_selector.css">
-     <script type="text/javascript" src="~/assets/style_selector.js"></script>
-
-     @RenderBody()
-     @await RenderSectionAsync("Scripts", required: false)
-      
-
- </body>
+</body>
 </html>
 
