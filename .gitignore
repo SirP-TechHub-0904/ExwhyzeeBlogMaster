@@ -367,3 +367,25 @@ appsettings*.json
 
 # Ignore environment files
 .env
+# Ignore local secrets or configs
+secrets.json
+*.secret.json
+
+# Ignore any local settings overrides
+*.local.json
+
+# Ignore any .env variants
+.env.*
+.env.local
+.env.development
+.env.production
+
+# Ignore sensitive key/certificate files
+*.key
+*.crt
+*.pem
+*.p12
+
+# Ignore any backup files that may contain config
+*.bak
+*.backup
