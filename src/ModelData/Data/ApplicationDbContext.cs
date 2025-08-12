@@ -15,7 +15,9 @@ namespace ModelData.Data
             _httpContextAccessor = httpContextAccessor;
         }
         private readonly IHttpContextAccessor _httpContextAccessor;
-        //
+        /// <summary>
+        /// /
+        /// </summary>
         public DbSet<Category> Categories { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<WebPage> Pages { get; set; }
