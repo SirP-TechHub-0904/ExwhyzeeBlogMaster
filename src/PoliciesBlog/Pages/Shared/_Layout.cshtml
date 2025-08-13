@@ -1,0 +1,945 @@
+﻿@using Microsoft.AspNetCore.Hosting
+@using Microsoft.AspNetCore.Mvc.ViewEngines
+@inject IWebHostEnvironment Environment
+@inject ICompositeViewEngine Engine
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@inject ICategoryServices CategoryServices
+@inject IWebPageService WebPageService
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+
+@using Microsoft.AspNetCore.Identity
+@using ModelData.Models  <!-- Replace with actual namespace -->
+@inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+    List<ModelData.Models.Category> itemCategories = await CategoryServices.GetCategoriesAsync();
+    List<ModelData.Models.WebPage> itemWebPages = await WebPageService.GetPublishedPages();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts();
+    List<ModelData.Models.Post> mostViewdPosts = await PostServices.GetTopViewedPostsAsync(count: 3);
+    List<ModelData.Models.Post> breakingNew = await PostServices.GetBrakingNews(count: 10);
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+
+    var plainDescription = System.Text.RegularExpressions.Regex.Replace(siteSettings.SiteDescription ?? "", "<.*?>", "");
+}
+
+
+
+<!DOCTYPE html>
+
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="description" content="24h News - Broadcast News TV Channel &amp; News Magazine Template">
+
+    <meta name="author" content="Via-Theme">
+
+
+    <!-- Mobile Metas -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        @($"{ViewBag.Title} | {siteSettings.SiteTitle} | {plainDescription}")
+    </title>
+    <link rel="icon" href="@siteSettings.FaviconUrl" type="image/png">
+    <partial name="_MetaTags" />
+    <!-- Web Fonts  -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed%7CRoboto+Slab:300,400,700%7CRoboto:300,400,500,700" rel="stylesheet">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="~/assets/bootstrap.min.css">
+
+    <link rel="stylesheet" href="~/assets/main.css">
+
+    <link rel="stylesheet" href="~/assets/style.css">
+
+    <link rel="stylesheet" href="~/assets/colors.css">
+
+    <link rel="stylesheet" href="~/assets/responsive.css">
+
+    <link rel="stylesheet" href="~/assets/jquery-ui.min.css">
+
+    <link rel="stylesheet" href="~/assets/weather-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <!-- Font Awesome 4.0.3 CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css">
+
+    <!--[if lt IE 9]>
+
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js">
+    </script>
+
+    <![endif]-->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mousewheel/3.1.13/jquery.mousewheel.min.js"></script>
+
+    <style id="fit-vids-style">
+        .fluid-width-video-wrapper {
+            width: 100%;
+            position: relative;
+            padding: 0;
+        }
+
+            .fluid-width-video-wrapper iframe, .fluid-width-video-wrapper object, .fluid-width-video-wrapper embed {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+    </style>
+    <link href="~/css/site.css" rel="stylesheet" />
+    <style>
+ @Html.Raw(siteSettings.CustomCSS)
+    </style>
+    @Html.Raw(siteSettings.CustomHeadScript)
+    @Html.Raw(siteSettings.GoogleAnalyticsId)
+    @Html.Raw(siteSettings.GoogleTagManagerId)
+    @Html.Raw(siteSettings.FacebookPixelId)
+
+</head>
+<body>
+    @Html.Raw(siteSettings.CustomJS)
+    @if (siteSettings.EnableLiveChat)
+    {
+        @siteSettings.LiveChatScript
+    }
+    <div id="pageloader" style="display: none;">
+
+        <div class="loader-item" style="display: none;">
+            <img src="~/assets/load.gif" alt="loader">
+        </div>
+
+    </div>
+
+    <!--========== BEGIN #WRAPPER ==========-->
+
+    <div id="wrapper" data-color="red">
+
+        <!--========== BEGIN #HEADER ==========-->
+
+        <header id="header">
+
+            <!-- Begin .top-menu -->
+
+            <div class="top-menu">
+
+                <!-- Begin .container -->
+
+                <div class="container">
+
+                    <!-- Begin .left-top-menu -->
+
+                    <ul class="left-top-menu">
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.FacebookUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.FacebookUrl" class="facebook" target="_blank">
+                                    <i class="fa fa-facebook"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.TwitterUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.TwitterUrl" class="twitter" target="_blank">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.YouTubeUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.YouTubeUrl" class="youtube" target="_blank">
+                                    <i class="fa fa-youtube"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.LinkedInUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.LinkedInUrl" class="linkedin" target="_blank">
+                                    <i class="fa fa-linkedin"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.InstagramUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.InstagramUrl" class="instagram" target="_blank">
+                                    <i class="fa fa-instagram"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.ContactPhone))
+                        {
+                            <li class="address">
+                                <a href="tel:@siteSettings.ContactPhone">
+                                    <i class="fa fa-phone"></i> @Html.Raw(siteSettings.ContactPhone)
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.ContactEmail))
+                        {
+                            <li class="address">
+                                <a href="mailto:@siteSettings.ContactEmail">
+                                    <i class="fa fa-envelope-o"></i> @Html.Raw(siteSettings.ContactEmail)
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+
+
+                    <!-- End .left-top-menu -->
+                    <!-- Begin .right-top-menu -->
+
+                    <ul class="right-top-menu pull-right">
+
+                        <partial name="_LoginPartial" />
+
+                        <li>
+                            <form method="get" asp-page="/Search">
+                                <div class="search-container">
+
+                                    <div class="search-icon-btn">
+                                        <span style="cursor:pointer">
+                                            <i class="fa fa-search">
+                                            </i>
+                                        </span>
+                                    </div>
+
+                                    <div class="search-input">
+                                        <input type="search" name="Query" class="search-bar" placeholder="Search..." title="Search">
+                                    </div>
+
+
+                                </div>
+                            </form>
+
+                        </li>
+
+                    </ul>
+
+                    <!-- End .right-top-menu -->
+
+                </div>
+
+                <!-- End .container -->
+
+            </div>
+
+            <!-- End .top-menu -->
+            <!-- Begin .container -->
+
+            <div class="container">
+
+                <!-- Begin .header-logo -->
+
+                <div class="header-logo">
+
+                    <a href="/">
+
+                        <img src="@siteSettings.SiteLogoUrl" alt="@siteSettings.SiteTitle" />
+
+                    </a>
+
+                </div>
+
+                <!-- End .header-logo -->
+                <!-- Begin .header-add-place -->
+
+                <div class="header-add-place">
+
+                    <div class="desktop-add">
+
+                        @{
+                            ModelData.Models.Advert sideadvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.MainTop);
+                        }
+                        @if (sideadvert != null)
+                        {
+                            <a href="@sideadvert.Link" target="_blank">
+                                <img src="@sideadvert.ImageUrl" alt="@sideadvert.Title" class="img-fluid" />
+                            </a>
+                        }
+                    </div>
+
+                </div>
+
+                <!-- End .header-add-place -->
+                <!--========== BEGIN .NAVBAR #MOBILE-NAV ==========-->
+
+                <nav class="navbar navbar-default headroom headroom--not-bottom headroom-pinned headroom--top affix-top" id="mobile-nav">
+
+                    <div class="navbar-header">
+
+                        <button type="button" class="navbar-toggle" id="sidenav-toggle">
+                            <span class="icon-bar">
+                            </span>
+                            <span class="icon-bar">
+                            </span>
+                            <span class="icon-bar">
+                            </span>
+                        </button>
+
+                        <div class="sidenav-header-logo">
+
+                            <a href="/">
+                                <img src="@siteSettings.SiteLogoUrl" alt="@siteSettings.SiteTitle" />
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                    <div class="sidenav" data-sidenav="" data-sidenav-toggle="#sidenav-toggle">
+
+                       
+                        <div class="sidenav-brand d-flex align-items-center justify-content-between" style="padding: 10px;">
+                            <div class="sidenav-header-logo">
+                                <a href="/">
+                                    <img src="@siteSettings.SiteLogoUrl" alt="@siteSettings.SiteTitle" />
+                                </a>
+                            </div>
+
+                            <button type="button" class="close" aria-label="Close" id="sidenav-toggle">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                             
+
+                        </div>
+                        <ul class="sidenav-menu">
+
+
+                            <li>
+                                <a href="/">Home</a>
+                            </li>
+                            @foreach (var sitepage in itemWebPages.Where(x => x.ShowInMenu == true).Where(x => x.MenuSortOrder > 0))
+                            {
+                                <li>
+                                    @if (sitepage.EnableDirectLink)
+                                    {
+                                        <a href="@sitepage.DirectLinkUrl" target="@(sitepage.DirectLinkOpenInNewTab ? "_blank" : "_self")">@sitepage.Title</a>
+
+                                    }
+                                    else
+                                    {
+                                        <a asp-page="/Webpage" asp-route-slug="@sitepage.Slug">@sitepage.Title</a>
+                                    }
+                                </li>
+                            }
+
+
+                            @foreach (var sitecategory in itemCategories.Where(x => x.ShowInMenu == true))
+                            {
+                                @if (sitecategory.Children.Count() > 0)
+                                {
+                                    <li>
+                                        <a asp-page="/CategoryPage" asp-route-slug="@sitecategory.Slug">
+                                            @sitecategory.Title
+
+                                        </a>
+                                        <div class="icon-sub-menu" data-sidenav-dropdown-toggle="">
+                                            <span class="sidenav-dropdown-icon show" data-sidenav-dropdown-icon="">
+                                            </span>
+                                            <span class="sidenav-dropdown-icon up-icon" data-sidenav-dropdown-icon="">
+                                            </span>
+                                        </div>
+                                        <!-- Submenu Start -->
+                                        <ul class="sidenav-dropdown" data-sidenav-dropdown="">
+                                            @foreach (var list in sitecategory.Children.Where(x => x.IsPublished == true))
+                                            {
+                                                <li>
+                                                    <a asp-page="/CategoryPage" asp-route-slug="@list.Slug">@list.Title</a>
+                                                </li>
+                                            }
+                                        </ul><!-- Submenu End -->
+
+                                    </li>
+
+                                }
+                                else
+                                {
+                                    <li> <a asp-page="/CategoryPage" asp-route-slug="@sitecategory.Slug">@sitecategory.Title</a></li>
+                                }
+
+                            }
+                            @foreach (var sitepage in itemWebPages.Where(x => x.ShowInMenu == true).Where(x => x.MenuSortOrder < 0))
+                            {
+                                <li>
+                                    @if (sitepage.EnableDirectLink)
+                                    {
+                                        <a href="@sitepage.DirectLinkUrl" target="@(sitepage.DirectLinkOpenInNewTab ? "_blank" : "_self")">@sitepage.Title</a>
+
+                                    }
+                                    else
+                                    {
+                                        <a asp-page="/Webpage" asp-route-slug="@sitepage.Slug">@sitepage.Title</a>
+                                    }
+                                </li>
+                            }
+
+                        </ul>
+
+                    </div>
+
+                </nav>
+
+                <!--========== END .NAVBAR #MOBILE-NAV ==========-->
+
+            </div>
+
+            <!-- End .container -->
+            <!--========== BEGIN .NAVBAR #FIXED-NAVBAR ==========-->
+
+            <div class="navbar headroom headroom--not-bottom headroom-pinned headroom--top affix-top" id="fixed-navbar">
+
+                <!--========== BEGIN MAIN-MENU .NAVBAR-COLLAPSE COLLAPSE #FIXED-NAVBAR-TOOGLE ==========-->
+
+                <div class="main-menu nav navbar-collapse collapse" id="fixed-navbar-toggle">
+
+                    <!--========== BEGIN .CONTAINER ==========-->
+
+                    <div class="container">
+
+                        <!-- Begin .nav navbar-nav -->
+
+                        <ul class="nav navbar-nav">
+
+                            <li>
+                                <a href="/">Home</a>
+                            </li>
+                            @foreach (var sitepage in itemWebPages.Where(x => x.ShowInMenu == true).Where(x => x.MenuSortOrder > 0))
+                            {
+                                <li>
+                                    @if (sitepage.EnableDirectLink)
+                                    {
+                                        <a href="@sitepage.DirectLinkUrl" target="@(sitepage.DirectLinkOpenInNewTab ? "_blank" : "_self")">@sitepage.Title</a>
+
+                                    }
+                                    else
+                                    {
+                                        <a asp-page="/Webpage" asp-route-slug="@sitepage.Slug">@sitepage.Title</a>
+                                    }
+                                </li>
+                            }
+
+                            @foreach (var sitecategory in itemCategories.Where(x => x.ShowInMenu == true))
+                            {
+                                @if (sitecategory.Children.Count() > 0)
+                                {
+                                    <li class="dropdown">
+                                        <a asp-page="/CategoryPage" asp-route-slug="@sitecategory.Slug">
+                                            @sitecategory.Title
+                                            <span class="dropdown-toggle" data-toggle="dropdown"></span>
+                                        </a>
+                                        
+                                        <!-- Submenu Start -->
+                                        <ul class="dropdown-menu">
+                                            @foreach (var list in sitecategory.Children.Where(x => x.IsPublished == true))
+                                            {
+                                                <li>
+                                                    <a asp-page="/CategoryPage" asp-route-slug="@list.Slug">@list.Title</a>
+                                                </li>
+                                            }
+                                        </ul><!-- Submenu End -->
+
+                                    </li>
+
+                                }
+                                else
+                                {
+                                    <li> <a asp-page="/CategoryPage" asp-route-slug="@sitecategory.Slug">@sitecategory.Title</a></li>
+                                }
+
+                            }
+
+
+                            @foreach (var sitepage in itemWebPages.Where(x => x.ShowInMenu == true).Where(x => x.MenuSortOrder < 0))
+                            {
+                                <li>
+                                    @if (sitepage.EnableDirectLink)
+                                    {
+                                        <a href="@sitepage.DirectLinkUrl" target="@(sitepage.DirectLinkOpenInNewTab ? "_blank" : "_self")">@sitepage.Title</a>
+
+                                    }
+                                    else
+                                    {
+                                        <a asp-page="/Webpage" asp-route-slug="@sitepage.Slug">@sitepage.Title</a>
+                                    }
+                                </li>
+                            }
+
+                        </ul>
+
+                        <!--========== END .NAV NAVBAR-NAV ==========-->
+
+                    </div>
+
+                    <!--========== END .CONTAINER ==========-->
+
+                </div>
+
+                <!--========== END MAIN-MENU .NAVBAR-COLLAPSE COLLAPSE #FIXED-NAVBAR-TOOGLE ==========-->
+                <!--========== BEGIN .SECOND-MENU NAVBAR #NAV-BELOW-MAIN ==========-->
+
+                <div class="second-menu navbar" id="nav-below-main">
+
+                    <!-- Begin .container -->
+
+                    <div class="container">
+
+                        <!-- Begin .collapse navbar-collapse -->
+
+                        <div class="collapse navbar-collapse nav-below-main">
+
+                            <!-- Begin .nav navbar-nav -->
+
+                            <ul class="nav navbar-nav">
+                            </ul>
+
+                            <!-- End .nav navbar-nav -->
+
+                        </div>
+
+                        <!-- End .collapse navbar-collapse -->
+                        <!-- Begin .clock -->
+
+                        <div class="clock">
+                            <div id="time"></div>
+                            <div id="date"></div>
+                        </div>
+
+                        <!-- End .clock -->
+
+                    </div>
+
+                    <!-- End .container -->
+
+                </div>
+
+                <!--========== END .SECOND-MENU NAVBAR #NAV-BELOW-MAIN ==========-->
+
+            </div>
+
+            <!--========== END .NAVBAR #FIXED-NAVBAR ==========-->
+
+        </header>
+
+        <!--========== END #HEADER ==========-->
+        <!--========== BEGIN #MAIN-SECTION ==========-->
+
+        <section id="main-section">
+
+            @RenderBody()
+
+        </section>
+
+        <!--========== END #MAIN-SECTION ==========-->
+        <!--========== BEGIN #FOOTER ==========-->
+
+        <footer id="footer">
+
+            <!-- Begin .parallax -->
+
+            <div id="parallax-section2">
+
+                <div class="bg parallax2 overlay img-overlay2">
+
+                    <div class="container">
+
+                        <div class="row no-gutter">
+
+                            <div class="col-sm-6 col-md-3">
+
+                                <h3 class="title-left title-style03 underline03">
+                                    @siteSettings.SiteTitle
+                                </h3>
+
+                                <p class="about-us">
+                                    @plainDescription
+
+                                </p>
+
+                                <div class="site-logo">
+
+                                    <a href="/">
+                                        <img src="@siteSettings.SiteLogoUrl" alt="@siteSettings.SiteTitle" />
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-sm-6 col-md-3">
+
+                                <h3 class="title-left title-style03 underline03">
+                                    Pages
+                                </h3>
+
+                                <div class="footer-post">
+
+                                    <ul class="nav ft-pages">
+                                        @foreach (var xpage in itemWebPages.Where(x => x.ShowInFooter))
+                                        {
+                                            <li>
+                                                @if (xpage.EnableDirectLink)
+                                                {
+                                                    <a href="@xpage.DirectLinkUrl" target="@(xpage.DirectLinkOpenInNewTab ? "_blank" : "_self")">
+                                                        <i class="fa flm fa-angle-right">
+                                                        </i>  @xpage.Title
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <a asp-page="/Webpage" asp-route-slug="@xpage.Slug">
+                                                        <i class="fa flm fa-angle-right">
+                                                        </i>  @xpage.Title
+                                                    </a>
+                                                }
+                                            </li>
+                                        }
+
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-sm-6 col-md-3">
+
+                                <h3 class="title-left title-style03 underline03">
+                                    Our Categories
+                                </h3>
+
+                                <div class="footer-post">
+
+                                    <ul class="nav ft-pages">
+                                        @foreach (var cat in itemCategories.Where(x => x.ShowInFooter))
+                                        {
+                                            <li>
+
+                                                <a asp-page="/CategoryPage" asp-route-slug="@cat.Slug">
+                                                    <i class="fa flm fa-angle-right">
+                                                    </i>  @cat.Title
+                                                </a>
+
+                                            </li>
+                                        }
+
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-sm-6 col-md-3">
+
+                                <h3 class="title-left title-style03 underline03">
+                                    Tags
+                                </h3>
+
+                                <div class="tagcloud">
+                                    @{
+                                        var allTags = itemPost
+.Where(p => p.Tags != null && p.Tags.Any())
+.SelectMany(p => p.Tags)
+.Distinct()
+.ToList();
+
+
+                                        foreach (var item in allTags)
+                                        {
+                                            <a href="#">
+                                                @item
+                                            </a>
+                                        }
+                                    }
+
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                    @{
+                        var widgets = new List<string>();
+
+                        if (!string.IsNullOrWhiteSpace(siteSettings.FacebookWidget)) widgets.Add(siteSettings.FacebookWidget);
+                        if (!string.IsNullOrWhiteSpace(siteSettings.TwitterWidget)) widgets.Add(siteSettings.TwitterWidget);
+                        if (!string.IsNullOrWhiteSpace(siteSettings.InstagramWidget)) widgets.Add(siteSettings.InstagramWidget);
+                        if (!string.IsNullOrWhiteSpace(siteSettings.YouTubeWidget)) widgets.Add(siteSettings.YouTubeWidget);
+                        if (!string.IsNullOrWhiteSpace(siteSettings.LinkedInWidget)) widgets.Add(siteSettings.LinkedInWidget);
+                        if (!string.IsNullOrWhiteSpace(siteSettings.TikTokWidget)) widgets.Add(siteSettings.TikTokWidget);
+
+                        int count = widgets.Count;
+                        string columnClass = count switch
+                        {
+                            1 => "col-12 text-center",   // Full width, center
+                            2 => "col-md-6",             // Two equal columns
+                            3 => "col-md-4",             // Three equal columns
+                            4 => "col-md-3",             // Four equal columns
+                            5 => "col",                  // Auto for 5
+                            6 => "col-md-2",             // Six equal columns
+                            _ => "col"                   // Default fallback
+                        };
+                    }
+
+                    @if (widgets.Any())
+                    {
+                        <div class="container">
+                            <div class="row g-4 justify-content-center">
+                                @foreach (var widget in widgets)
+                                {
+                                    <div class="@columnClass">
+                                        @Html.Raw(widget)
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+            <!-- End .parallax -->
+
+        </footer>
+
+        <!--========== END #FOOTER ==========-->
+        <!--========== BEGIN #COPYRIGHTS ==========-->
+
+        <div id="copyrights">
+
+            <!-- Begin .container -->
+
+            <div class="container">
+
+                <!-- Begin .copyright -->
+
+                <div class="copyright">
+                    © @DateTime.UtcNow.Year, Copyrights @siteSettings.SiteTitle. All Rights Reserved
+                </div>
+
+                <!-- End .copyright -->
+                <!--  Begin .footer-social-icons -->
+
+                <div class="footer-social-icons">
+
+                    <ul>
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.FacebookUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.FacebookUrl" class="facebook" target="_blank">
+                                    <i class="fa fa-facebook"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.TwitterUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.TwitterUrl" class="twitter" target="_blank">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.InstagramUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.InstagramUrl" class="instagram" target="_blank">
+                                    <i class="fa fa-instagram"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.YouTubeUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.YouTubeUrl" class="youtube" target="_blank">
+                                    <i class="fa fa-youtube"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.LinkedInUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.LinkedInUrl" class="linkedin" target="_blank">
+                                    <i class="fa fa-linkedin"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.TikTokUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.TikTokUrl" class="tiktok" target="_blank">
+                                    <i class="fa fa-music"></i>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+
+                <!--  End .footer-social-icons -->
+
+            </div>
+
+            <!-- End .container -->
+
+        </div>
+        <!--========== END #COPYRIGHTS ==========-->
+    </div>
+
+    <!--========== END #WRAPPER ==========-->
+    <!-- External JavaScripts -->
+
+    <script src="~/assets/jquery-3.1.1.min.js"></script>
+
+    <script src="~/assets/bootstrap.min.js"></script>
+
+    <script src="~/assets/jquery-ui.min.js"></script>
+
+    <script src="~/assets/plugins.js"></script>
+    <div id="lightboxOverlay" class="lightboxOverlay" style="display: none;">
+    </div>
+    <div id="lightbox" class="lightbox" style="display: none;">
+        <div class="lb-outerContainer">
+            <div class="lb-container">
+                <img class="lb-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+                <div class="lb-nav">
+                    <a class="lb-prev" href="">
+                    </a>
+                    <a class="lb-next" href="">
+                    </a>
+                </div>
+                <div class="lb-loader">
+                    <a class="lb-cancel">
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="lb-dataContainer">
+            <div class="lb-data">
+                <div class="lb-details">
+                    <span class="lb-caption">
+                    </span>
+                    <span class="lb-number">
+                    </span>
+                </div>
+                <div class="lb-closeContainer">
+                    <a class="lb-close">
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- JavaScripts -->
+
+    <script src="~/assets/functions.js"></script>
+    <a href="#" id="toTop" style="display: none;">
+        <span id="toTopHover">
+        </span>To Top
+    </a>
+     
+    <script>
+        function updateClock() {
+            const now = new Date();
+
+            // Format time
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 becomes 12
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+
+            const timeString = `${hours}:${minutes}:${seconds} ${ampm}`;
+
+            // Format date
+            const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            const months = [
+                "January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            const dateString = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+
+            // Update DOM
+            document.getElementById('time').textContent = timeString;
+            document.getElementById('date').textContent = dateString;
+        }
+
+        // Update every second
+        setInterval(updateClock, 1000);
+
+        // Run immediately on page load
+        updateClock();
+    </script>
+
+
+    <script>
+        $(document).on("click", "#subscribeBtn", function () {
+            var email = $("#newsletterEmail").val();
+            var token = $("#__RequestVerificationToken").val();
+            var messageEl = $("#subscribeMessage");
+
+            $.ajax({
+                type: "POST",
+                url: "/Index?handler=Subscribe",
+                data: {
+                    NewsletterEmail: email,
+                    __RequestVerificationToken: token
+                },
+                success: function (res) {
+                    messageEl.text(res.message);
+                    messageEl.css("color", res.success ? "green" : "yellow");
+                    if (res.success) {
+                        $("#newsletterEmail").val("");
+                    }
+                },
+                error: function () {
+                    messageEl.text("Something went wrong.").css("color", "red");
+                }
+            });
+        });
+    </script>
+   
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+    @Html.Raw(siteSettings.CustomFooterScript)
+
+
+</body>
+
+</html>

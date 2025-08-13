@@ -1,0 +1,126 @@
+﻿@page "/page/{slug}"
+@model PoliciesBlog.Pages.WebpageModel
+
+@{
+}
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+}
+
+
+ 
+<div class="container" style="margin-top:10px;">
+    <div class="row no-gutter">
+        <!--========== BEGIN .COL-MD-8 ==========-->
+        <div class="col-md-8">
+            <!--========== BEGIN .POST ==========-->
+            <div class="post post-full clearfix">
+                <div class="entry-media mx-media-post">
+                    <a href="#">
+                        @if (!string.IsNullOrWhiteSpace(Model.PageContent?.ImageUrl))
+                        {
+                            <img src="@Model.PageContent.ImageUrl" class="img-fluid mb-4" alt="@Model.PageContent.Title" />
+                        } 
+                    </a>
+                </div>
+                <div class="entry-main">
+                    <div class="entry-title">
+                        <h4 class="entry-title"><a href="#">@Model.PageContent?.Title</a></h4>
+                    </div>
+
+                    <div class="entry-content" id="">
+                        @Html.Raw(Model.PageContent?.Content)
+
+                    </div>
+                    @if (Model.PageContent?.Form != null && Model.PageContent.Form.IsActive)
+                    {
+                        <div class="card mt-5 shadow custom-form-x">
+                            <div class="card-header text-white">
+                                <h4 class="mb-0">@Model.PageContent.Form.Title</h4>
+                            </div>
+                            <div class="card-body">
+                                @if (!string.IsNullOrWhiteSpace(Model.PageContent.Form.Description))
+                                {
+                                    <p class="text-muted">@Model.PageContent.Form.Description</p>
+                                }
+
+                                <form method="post" asp-page-handler="SubmitForm">
+                                    @foreach (var field in Model.PageContent.Form.Fields)
+                                    {
+                                        <div class="mb-4">
+                                            <label class="form-label fw-semibold">@field.Label</label>
+
+                                            @if (field.FieldType == "textarea")
+                                            {
+                                                <textarea name="field_@field.Id"
+                                                          placeholder="@field.Placeholder"
+                                                          class="form-control"
+                                                          rows="4"
+                                                          @(field.IsRequired ? "required" : "")></textarea>
+                                            }
+                                            else if (field.FieldType == "dropdown" || field.FieldType == "checkbox")
+                                            {
+                                                var options = System.Text.Json.JsonSerializer.Deserialize<List<string>>(field.OptionsJson ?? "[]");
+                                                if (options != null)
+                                                {
+                                                    foreach (var option in options)
+                                                    {
+                                                        var inputId = $"field_{field.Id}_{option.GetHashCode()}";
+                                                        <div class="form-check">
+                                                            <input type="@(field.FieldType == "dropdown" ? "radio" : "checkbox")"
+                                                                   name="field_@field.Id"
+                                                                   value="@option"
+                                                                   class="form-check-input"
+                                                                   id="@inputId" />
+                                                            <label class="form-check-label" for="@inputId">@option</label>
+                                                        </div>
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <input type="@field.FieldType"
+                                                       name="field_@field.Id"
+                                                       placeholder="@field.Placeholder"
+                                                       class="form-control"
+                                                       @(field.IsRequired ? "required" : "") />
+                                            }
+                                        </div>
+                                    }
+
+                                    <div class="d-grid">
+                                        <button type="submit" class="btn btn-dark">Submit</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+        </div>
+        <!--========== END .COL-MD-8 ==========-->
+        <!--========== BEGIN .COL-MD-4==========-->
+        <div class="col-md-4">
+            <partial name="_TopSideBar" />
+
+            <partial name="_TopSideBarBottom" />
+
+
+        </div>
+        <!--========== END .COL-MD-4 ==========-->
+    </div>
+
+</div>
+ 
+
+
+
+
+
+

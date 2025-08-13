@@ -1,0 +1,103 @@
+﻿@using ModelData.Services;
+@inject ICategoryServices CategoryServices
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+
+
+@{
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts(showInHero: true);
+
+}
+<!--========== BEGIN .TV SCHEDULE ==========-->
+
+<div class="sidebar-schedule">
+
+    <!-- Begin .block-title-2 -->
+
+    <div class="block-title-2">
+
+        @{
+            ModelData.Models.Advert sideadvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.SidebarTop);
+        }
+        @if (sideadvert != null)
+        {
+            <a href="@sideadvert.Link" target="_blank">
+                <img src="@sideadvert.ImageUrl" alt="@sideadvert.Title" class="img-fluid" data-rjs="2" data-rjs-processed="true">
+            </a>
+        }
+    </div>
+
+    <!-- End .block-title-2 -->
+
+
+
+</div>
+<!-- Begin .block-title-2 -->
+
+<div class="block-title-2">
+
+    <h3>
+        <a href="#">
+            <strong>
+                Latest News
+            </strong> 
+        </a>
+    </h3>
+
+</div>
+
+<!-- End .block-title-2 -->
+<!--========== BEGIN .SIDEBAR-POST ==========-->
+
+<div class="sidebar-post">
+
+    <ul>
+        @{
+            // Get the 4 most recent posts
+            var recentPosts = (await PostServices.GetRecentPosts()) // Or GetPosts() depending on your service
+                                .OrderByDescending(p => p.PublishedAt ?? p.Date)
+                                .Take(8)
+                                .ToList();
+            int sn = 0;
+        }
+
+        @foreach (var post in recentPosts)
+        {
+            var imageUrl = post.PostImages?.FirstOrDefault(pi => pi.IsDefault)?.ImageUrl ?? "~/assets/default.jpg";
+
+            <li>
+
+                <div class="item">
+
+                    <div class="item-image">
+                        <a class="img-link pst-recent" href="#">
+                            <img class="img-responsive img-full" src="@imageUrl" alt="@post.Title">
+                        </a>
+                    </div>
+
+                    <div class="item-content">
+
+                        <h3>
+                            @{ sn++;}
+                            @sn
+                        </h3>
+
+                        <p>
+                            <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="btn-link">
+                                @post.Title
+                            </a>
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </li>
+        }
+    </ul>
+
+</div>
+
+
+

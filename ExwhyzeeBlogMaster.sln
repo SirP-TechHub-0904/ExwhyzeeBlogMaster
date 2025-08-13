@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TalkDTalk", "src\TalkDTalk\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PeopleNewsBlog", "src\PeopleNewsBlog\PeopleNewsBlog.csproj", "{0D705968-11D7-422E-BF39-6F15EF255FE1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoliciesBlog", "src\PoliciesBlog\PoliciesBlog.csproj", "{0C8DE936-5041-4EED-A28C-B6CD9F06E75A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{0D705968-11D7-422E-BF39-6F15EF255FE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D705968-11D7-422E-BF39-6F15EF255FE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D705968-11D7-422E-BF39-6F15EF255FE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C8DE936-5041-4EED-A28C-B6CD9F06E75A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C8DE936-5041-4EED-A28C-B6CD9F06E75A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C8DE936-5041-4EED-A28C-B6CD9F06E75A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C8DE936-5041-4EED-A28C-B6CD9F06E75A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

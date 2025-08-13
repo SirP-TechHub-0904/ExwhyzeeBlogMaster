@@ -1,0 +1,75 @@
+﻿@using ModelData.Services;
+@inject ICategoryServices CategoryServices
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    var token = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+}
+
+
+@{
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts(showInHero: true);
+
+}
+ 
+<div class="block-title-2">
+
+    @{
+        ModelData.Models.Advert sideadvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.SidebarBottom);
+    }
+    @if (sideadvert != null)
+    {
+        <a href="@sideadvert.Link" target="_blank">
+            <img src="@sideadvert.ImageUrl" alt="@sideadvert.Title" class="img-fluid" style="width:100%;">
+        </a>
+    }
+
+</div>
+
+ 
+<div id="sidebar-newsletter">
+
+    <!-- Begin .title-style01 -->
+
+    <div class="title-style01">
+
+        <h3>
+            <strong>
+                Newsletter
+            </strong>
+        </h3>
+
+    </div>
+ 
+</div>
+ 
+<div class="sidebar-newsletter-form">
+    
+    <div class="form-horizontal">
+
+        <div class="input-group">
+
+            <input title="Newsletter" class="form-control" name="email" type="email" id="newsletterEmail" placeholder="Enter Your Email Address">
+            <input type="hidden" id="__RequestVerificationToken" value="@token" />
+            <span class="input-group-btn">
+
+                <button type="submit" name="subscribe" id="subscribeBtn" class="btn btn-success">
+                    Subscribe
+                </button>
+
+            </span>
+
+        </div>
+
+    </div>
+    <small id="subscribeMessage" class="text-black"></small>
+
+</div>
+
+
+
+
+
+

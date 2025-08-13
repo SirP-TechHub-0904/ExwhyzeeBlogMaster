@@ -57,7 +57,8 @@ namespace ModelData.Services
         }
         public async Task<List<Post>> GetBrakingNews(int count = 10)
         {
-            return await _context.Posts                
+            return await _context.Posts        
+                .Include(p => p.Category)
                 .Where(p => p.IsPublished)  
                 .Where(p => p.IsBreakingNews) 
                 .OrderByDescending(p => p.PublishedAt) // Sort by most viewed

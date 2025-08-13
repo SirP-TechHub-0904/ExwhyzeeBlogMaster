@@ -27,5 +27,6 @@ namespace ModelData.Models
         BetweenPosts,
         MainTop,
         Middle
+
     }
 }

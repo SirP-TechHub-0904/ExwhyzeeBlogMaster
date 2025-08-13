@@ -1,0 +1,551 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+@using ModelData.Services;
+@inject ICategoryServices CategoryServices
+@inject IPostServices PostServices
+@inject IAdvertService AdvertServices
+@inject ISettingsService SettingsService
+
+@{
+    List<ModelData.Models.Category> itemCategories = await CategoryServices.GetCategoriesAsync();
+    List<ModelData.Models.Advert> itemAdert = await AdvertServices.GetAdvertsAsync();
+    List<ModelData.Models.Post> itemPost = await PostServices.GetPublishedPosts();
+    List<ModelData.Models.Post> breakingNew = await PostServices.GetBrakingNews(count: 10);
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+
+}
+<!-- Hero Section Start -->
+
+@{
+    var heroPosts = itemPost?
+.Where(x => x != null)
+.OrderBy(x => x.HeroOrder)
+.Take(5)
+.ToList() ?? new();
+
+    var p1 = heroPosts.Take(1).FirstOrDefault();
+    var listPost = heroPosts.Skip(1).Take(7);
+}
+
+<!--========== BEGIN .MODULE ==========-->
+
+<section class="module-top">
+
+    <div class="container">
+
+        <!--========== BEGIN .BREAKING-NEWS ==========-->
+        <!-- Begin .outer -->
+
+        <div class="outer">
+
+            <div class="breaking-ribbon">
+
+                <h5>
+                    Breaking News
+                </h5>
+
+            </div>
+
+            <!-- Begin .newsticker -->
+
+            <div class="newsticker" style="position: relative; height: 40px; overflow: hidden;">
+
+                <ul style="margin: 0px; position: absolute; top: 0px;">
+
+                    @foreach (var item in breakingNew)
+                    {
+                        <li style="margin: 0px;">
+
+                            <h4>
+                                <span class="category">
+                                    @item.Category?.Title:
+                                </span>
+                                <a asp-page="/PostPage" asp-route-slug="@item.Slug">@item.Title</a>
+                            </h4>
+
+                        </li>
+                    }
+
+                </ul>
+
+                <div class="navi" style="margin: 0px;">
+
+                    <button class="up" style="margin: 0px;">
+                        <i class="fa fa-caret-left">
+                        </i>
+                    </button>
+
+                    <button class="down" style="margin: 0px;">
+                        <i class="fa fa-caret-right">
+                        </i>
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- End .newsticker -->
+
+        </div>
+
+        <!-- End .outer -->
+        <!--========== END .BREAKING-NEWS==========-->
+
+        <div class="row no-gutter">
+
+            <!--========== BEGIN .COL-MD-8 ==========-->
+            @if (p1 != null)
+            {
+                <div class="col-md-8">
+
+                    <!-- Begin .entry-block-full -->
+
+                    <div class="entry-block-full">
+
+                        <div class="image-full">
+                            <a asp-page="/PostPage" asp-route-slug="@p1.Slug">
+                                <img src="@(p1?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@p1.Title">
+                            </a>
+                        </div>
+
+                        <div class="content">
+
+                            <h3>
+                                @p1.Title
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <!-- End .entry-block-full -->
+
+                </div>
+            }
+            <!--========== END .COL-MD-8 ==========-->
+            <!--========== BEGIN .COL-MD-4 ==========-->
+
+            <div class="col-md-4">
+
+                <!--========== BEGIN #SIDEBAR-NEWSFEED ==========-->
+
+                <div class="sidebar-newsfeed">
+
+                    <!-- Begin .newsfeed -->
+
+                    <div class="newsfeed-3" style="position: relative; height: 524px; overflow: hidden;">
+
+                        <ul style="margin: 0px; position: absolute; top: 0px;">
+
+                            @foreach (var item in listPost)
+                            {
+                                <li style="margin: 0px;">
+                                    <div class="item">
+                                        <div class="item-image">
+                                            <a class="img-link" href="#">
+                                                <img class="img-responsive img-full" src="@(item?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@item?.Title">
+                                            </a>
+                                        </div>
+                                        <div class="item-content">
+                                            <h4 class="ellipsis">
+                                                <a asp-page="/CategoryPage" asp-route-slug="@item.Category?.Slug">
+                                                    @item.Category?.Title
+                                                </a>
+                                            </h4>
+                                            <p class="ellipsis">
+                                                <a asp-page="/PostPage" asp-route-slug="@item.Slug">
+                                                    @item.Title
+                                                </a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+
+                        </ul>
+
+                    </div>
+
+                    <!-- End .newsfeed -->
+
+                </div>
+
+                <!--========== END #SIDEBAR-NEWSFEED ==========-->
+                <!--========== BEGIN .SIDEBAR-SOCIAL-BUTTONS ==========-->
+
+                <div class="sidebar-social-icons">
+
+                    <ul>
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.FacebookUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.FacebookUrl" class="facebook" target="_blank">
+                                    <i class="fa fa-facebook"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.YouTubeUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.YouTubeUrl" class="youtube" target="_blank">
+                                    <i class="fa fa-youtube"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.TwitterUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.TwitterUrl" class="twitter" target="_blank">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                            </li>
+                        }
+
+                        @if (!string.IsNullOrWhiteSpace(siteSettings.LinkedInUrl))
+                        {
+                            <li>
+                                <a href="@siteSettings.LinkedInUrl" class="linkedin" target="_blank">
+                                    <i class="fa fa-linkedin"></i>
+                                </a>
+                            </li>
+                        }
+
+                    </ul>
+
+
+                </div>
+
+                <!--========== END .SIDEBAR-SOCIAL-BUTTONS ==========-->
+
+            </div>
+
+            <!--========== END .COL-MD-4 ==========-->
+
+        </div>
+
+    </div>
+
+</section>
+
+<section class="module highlight">
+
+    <div class="container">
+        @{
+            ModelData.Models.Advert topAdvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.MainTop);
+        }
+        @if (topAdvert != null)
+        {
+
+            <div class="bottom-add-place">
+                <a href="@topAdvert.Link" target="_blank">
+                    <div style="width: 100%; height: 200px; background-image: url('@topAdvert.ImageUrl'); background-size: cover; background-position: center; border-radius: 6px;"></div>
+
+                </a>
+            </div>
+        }
+
+    </div>
+</section>
+
+<section class="module highlight">
+
+    <div class="container">
+
+        <div class="row no-gutter">
+
+            <!--========== BEGIN .COL-MD-8 ==========-->
+
+            <div class="col-md-8">
+
+                <div class="module-title">
+
+                    <h3 class="title">
+                        <span class="bg-12">
+                            Featured News
+                        </span>
+                    </h3>
+
+
+                </div>
+
+                <!--========== BEGIN .NEWS ==========-->
+
+                <div class="news">
+
+                    <!-- Begin .item -->
+                    @{ var isFeaturedPosts = itemPost?
+.Where(x => x != null)
+.OrderBy(x => x.IsFeatured)
+.Take(6)
+.ToList() ?? new();
+
+            @if (isFeaturedPosts.Any())
+            {
+                foreach (var list in isFeaturedPosts)
+                {
+                    <div class="item ">
+
+                        <div class="item-image-3">
+                            <a class="img-link mx-feat-01" asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                <img class="img-responsive img-full" src="@(list?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@list.Title">
+                            </a>
+                        </div>
+
+                        <div class="item-content">
+
+                            <div class="title-left title-style04 underline04">
+
+                                <h3>
+                                    <a asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                        @list.Title
+                                    </a>
+                                </h3>
+
+                            </div>
+
+                            <p>
+                                <i class="fa fa-clock-o">
+                                </i>
+                                <span class="date">
+                                    @(list.PublishedAt?.ToString("MMM dd, yyyy hh:mm tt"))
+
+                                </span>
+                            </p>
+
+                            <p>
+                                <a asp-page="/PostPage" asp-route-slug="@list.Slug" class="external-link">
+                                    @list.ShortDescription
+                                </a>
+                            </p>
+
+                            <div>
+                                <a asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                    <span class="read-more">
+                                        Continue reading
+                                    </span>
+                                </a>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- End .item -->
+                }
+            }
+
+                    }
+                </div>
+
+                <!--========== END .NEWS ==========-->
+
+            </div>
+
+            <!--========== END .COL-MD-8 ==========-->
+            <!--========== BEGIN .COL-MD-4 ==========-->
+
+            <div class="col-md-4">
+                <div class="container">
+                    <partial name="_TopSideBar" />
+
+                </div>
+            </div>
+
+            <!--========== END .COL-MD-4 ==========-->
+
+        </div>
+
+    </div>
+
+</section>
+
+
+@{
+    ModelData.Models.Advert footerAdvert = itemAdert.FirstOrDefault(x => x.Position == ModelData.Models.AdvertPosition.Footer);
+}
+@if (footerAdvert != null)
+{
+
+
+    <div class="add-place">
+        <a href="@footerAdvert.Link" target="_blank">
+            <div style="width: 100%; height: 200px; background-image: url('@footerAdvert.ImageUrl'); background-size: cover; background-position: center; border-radius: 6px;"></div>
+
+        </a>
+    </div>
+}
+
+<section class="module highlight">
+    <div class="container">
+        <div class="row no-gutter">
+            <!--========== BEGIN .COL-MD-12 ==========-->
+            @{
+                // Get the 6th category (skip first 5 and take 1)
+                var subTCategory = itemCategories
+                    .Where(c => c.ShowInHomeMain)
+                    .Skip(1)
+                    .Take(2)
+                    .ToList();
+            }
+            @foreach (var clist in subTCategory)
+            {
+                <div class="col-md-12">
+                    <div class="module-title">
+                        <h3 class="title"><span class="bg-1"> @clist.Title</span></h3>
+
+                    </div>
+                    <!--========== BEGIN .ARTICLE ==========-->
+                    <div class="article">
+                        @{
+                            var listPosts = await PostServices.GetPostsByCategory(clist.Id);
+
+                            if (listPosts.Any())
+                            {
+
+                                @foreach (var post in listPosts.Take(3))
+                                {
+                                    <div class="entry-block">
+                                        <div class="entry-image">
+                                            <a class="img-link post-mx-tl" asp-page="/PostPage" asp-route-slug="@post.Slug">
+                                                <img class="img-responsive img-full" src="@(post?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@post.Title">
+                                            </a>
+                                        </div>
+                                        <div class="entry-content">
+                                            <div class="title-left title-style04 underline04">
+                                                <h3>
+                                                    <a asp-page="/PostPage" asp-route-slug="@post.Slug">
+                                                        <strong>@post.PostBy</strong>
+                                                    </a>
+                                                </h3>
+                                                <i class="fa fa-clock-o"></i> @(post.PublishedAt?.ToString("MMMM dd, yyyy")) <span class="hour">@(post.PublishedAt?.ToString("hh:mm tt"))</span>
+                                            </div>
+                                            <p>
+                                                <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="external-link">
+                                                    @post.Title
+                                                </a>
+                                            </p>
+                                            <p>
+                                                <a asp-page="/PostPage" asp-route-slug="@post.Slug" class="external-link">
+                                                    @post.ShortDescription
+                                                </a>
+                                            </p>
+                                            
+                                        </div>
+                                    </div>
+                                }} }
+                    </div>
+                    <!--========== END .ARTICLE ==========-->
+                </div>
+                <!--========== END .COL-MD-12 ==========-->
+            }
+        </div>
+    </div>
+</section>
+<!-- End .add-place -->
+<!--========== BEGIN .MODULE ==========-->
+
+<section class="module highlight">
+
+    <div class="container">
+
+        <div class="row no-gutter">
+
+            <!--========== BEGIN .COL-MD-8 ==========-->
+
+            <div class="col-md-8">
+
+                <div class="container">
+
+                    <div class="module-title">
+
+                        <h3 class="title">
+                            <span class="bg-11">
+                                More Update
+                            </span>
+                        </h3>
+
+
+                    </div>
+
+                    <!--========== BEGIN .ARTICLE ==========-->
+
+                    <div class="article">
+                        @{
+                            // Get the 4 most recent posts
+                            var otherPosts = (await PostServices.GetRecentPosts()) // Or GetPosts() depending on your service
+                                                .OrderByDescending(p => p.PublishedAt ?? p.Date)
+                                                .Skip(5).Take(9)
+                                                .ToList();
+
+                            foreach (var list in otherPosts)
+                            {
+                                <div class="entry-block-small">
+
+                                    <div class="entry-image">
+                                        <a class="img-link pstt-image" asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                            <img class="img-responsive img-full" src="@(list?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@list.Title">
+                                        </a>
+                                        <span>
+                                            <a class="label-1" asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                @(list.PublishedAt?.ToString("MMMM dd, yyyy"))
+                                            </a>
+                                        </span>
+                                    </div>
+
+                                    <div class="entry-content">
+
+                                        <h3>
+                                            <a asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                @list.Title
+                                            </a>
+                                        </h3>
+
+                                        <p>
+                                            <a asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                @list.ShortDescription
+                                            </a>
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            }
+                        }
+                    </div>
+
+                    <!--========== END .ARTICLE ==========-->
+
+                </div>
+                <div class="text-center mt-3">
+                    <a asp-page="/AllNews" class="btn btn-primary px-4">View More</a>
+                </div>
+            </div>
+
+            <!--========== END .COL-MD-8 ==========-->
+            <!--========== BEGIN .COL-MD-4 ==========-->
+
+            <div class="col-md-4">
+
+                <div class="container">
+                    <partial name="_TopSideBarBottom" />
+
+
+                </div>
+
+            </div>
+
+            <!--========== END .COL-MD-4 ==========-->
+
+        </div>
+
+    </div>
+
+</section>
+

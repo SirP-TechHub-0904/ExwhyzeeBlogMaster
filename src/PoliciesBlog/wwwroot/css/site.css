@@ -1,0 +1,453 @@
+.ft-pages > li {
+    position: relative;
+    display: block;
+    text-transform: uppercase;
+    border-left: 1px solid rgb(255 255 255 / 0%);
+}
+
+.footer-social-icons {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 40px;
+    width: 360px;
+    display: inline;
+}
+
+@media only screen and (max-width: 320px) {
+    .sidenav-header-logo img {
+        width: 100px;
+        margin: 4px 4px 4px 0;
+    }
+}
+
+.sidenav-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff; /* same background as menu header */
+    padding: 10px 15px;
+}
+
+    .sidenav-brand .close {
+        background: #f1f1f1;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        text-align: center;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+        .sidenav-brand .close:hover {
+            background: #ddd;
+        }
+
+.entry-block-full img {
+    max-width: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mx-feat-01 img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+}
+.pstt-image img{
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+}
+.pst-recent img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+}
+.post-mx-tl img{
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+}
+
+
+
+ 
+/* ------------------------------
+   SHARE BAR
+--------------------------------*/
+.post--social {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0 8px;
+    border-top: 1px solid var(--ui-border);
+    border-bottom: 1px solid var(--ui-border);
+    margin: 24px 0 18px;
+}
+
+    .post--social .title {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: var(--ui-bg-soft);
+        color: var(--ui-text);
+        box-shadow: var(--ui-shadow);
+    }
+
+.social--widget.style--4 .nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .social--widget.style--4 .nav li a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #111827; /* fallback */
+        color: #fff;
+        text-decoration: none;
+        transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
+        box-shadow: var(--ui-shadow);
+        border: 1px solid rgba(255,255,255,.15);
+    }
+
+/* Brand colors by destination (no HTML changes needed) */
+.social--widget .nav li a[href*="facebook.com"] {
+    background: #1877F2;
+}
+
+.social--widget .nav li a[href*="twitter.com"] {
+    background: #1DA1F2;
+}
+
+.social--widget .nav li a[href*="linkedin.com"] {
+    background: #0A66C2;
+}
+
+.social--widget .nav li a[href*="pinterest.com"] {
+    background: #E60023;
+}
+
+.social--widget .nav li a[href*="wa.me"],
+.social--widget .nav li a[href*="whatsapp.com"] {
+    background: #25D366;
+}
+
+/* Hover/active */
+.social--widget.style--4 .nav li a:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ui-shadow-strong);
+    filter: brightness(1.02);
+}
+
+.social--widget.style--4 .nav li a:active {
+    transform: translateY(0);
+    filter: brightness(.95);
+}
+
+/* Ensure FA icons center & size nicely */
+.social--widget .nav li a i {
+    font-size: 18px;
+    line-height: 1;
+}
+
+/* ------------------------------
+   PREV / NEXT PAGER
+--------------------------------*/
+.author-post .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 0 10px;
+    border-bottom: 1px solid var(--ui-border);
+}
+
+    .author-post .pager a {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        background: var(--ui-bg-soft);
+        color: var(--ui-text);
+        border: 1px solid var(--ui-border-strong);
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 600;
+        letter-spacing: .2px;
+        transition: background .2s ease, box-shadow .2s ease, transform .15s ease;
+        box-shadow: var(--ui-shadow);
+    }
+
+        .author-post .pager a:hover {
+            background: #eef2ff; /* subtle tint */
+            box-shadow: var(--ui-shadow-strong);
+            transform: translateY(-1px);
+        }
+
+        .author-post .pager a i {
+            font-size: 12px;
+        }
+
+/* ------------------------------
+   COMMENTS — CARD STYLE
+--------------------------------*/
+.comment-section {
+    margin-top: 28px;
+}
+
+.comment-title.title-style01 h4 {
+    margin: 0 0 14px;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ui-text);
+    border-bottom: 2px solid var(--ui-border);
+    padding-bottom: 8px;
+}
+
+.comments-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+    .comments-list > li {
+        margin-bottom: 14px;
+    }
+
+.comment--item {
+    background: var(--ui-bg);
+    border: 1px solid var(--ui-border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: var(--ui-shadow);
+}
+
+.comment--header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
+}
+
+    .comment--header .name {
+        margin: 0;
+        font-weight: 700;
+        color: var(--ui-text);
+    }
+
+    .comment--header .date {
+        margin: 0;
+        color: var(--ui-muted);
+        font-size: .92rem;
+    }
+
+    .comment--header .reply {
+        margin-left: auto;
+        color: var(--ui-muted);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        padding: 6px;
+        border-radius: 8px;
+        transition: background .2s ease, color .2s ease;
+    }
+
+        .comment--header .reply:hover {
+            background: var(--ui-bg-soft);
+            color: var(--ui-text);
+        }
+
+.comment--content p {
+    margin: 6px 0 0;
+    color: #111827;
+    line-height: 1.6;
+}
+
+/* ------------------------------
+   LOAD MORE COMMENTS BUTTON
+--------------------------------*/
+#loadMoreBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    border: 1px solid var(--ui-border-strong) !important;
+    background: var(--ui-bg-soft) !important;
+    color: var(--ui-text) !important;
+    font-weight: 600;
+    letter-spacing: .2px;
+    box-shadow: var(--ui-shadow);
+    transition: background .2s ease, box-shadow .2s ease, transform .15s ease;
+}
+
+    #loadMoreBtn:hover {
+        background: #eef2ff !important;
+        box-shadow: var(--ui-shadow-strong);
+        transform: translateY(-1px);
+    }
+
+/* ------------------------------
+   RESPONSIVE TWEAKS
+--------------------------------*/
+@media (max-width: 576px) {
+    .post--social {
+        flex-wrap: wrap;
+    }
+
+    .author-post .pager a {
+        flex: 1 1 auto;
+        justify-content: center;
+    }
+
+    .comment--item {
+        padding: 14px;
+    }
+}
+
+/* Optional: light border separators like in your screenshot */
+.comments-list > li:not(:last-child) .comment--item {
+    position: relative;
+}
+
+    .comments-list > li:not(:last-child) .comment--item::after {
+        content: "";
+        position: absolute;
+        left: 16px;
+        right: 16px;
+        bottom: -8px;
+        height: 1px;
+        background: var(--ui-border);
+        border-radius: 1px;
+    }
+.comment--item {
+    background: var(--ui-bg);
+    border: 1px solid var(--ui-border);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 1px 1px 1px 1px #ff000080;
+}
+
+.mx-media-post img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+    height: 400px !important;
+}
+
+
+/* ===== Search Card ===== */
+.search-card .card {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 14px rgba(2,6,23,.06);
+    transition: transform .15s ease, box-shadow .2s ease, border-color .2s ease;
+    background: #fff;
+    margin:10px;
+}
+
+    .search-card .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(2,6,23,.12);
+        border-color: #d1d5db;
+    }
+
+.search-card .card-body {
+    padding: 18px 20px;
+}
+
+/* Title link */
+.search-card .card-title {
+    margin: 0 0 .25rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+    .search-card .card-title a {
+        color: #0f172a; /* slate-900 */
+        text-decoration: none;
+    }
+
+        .search-card .card-title a:hover {
+            text-decoration: underline;
+        }
+
+/* Meta (source + date) */
+.search-card .text-muted {
+    color: #6b7280 !important; /* slate-500 */
+}
+
+.search-card .card-body > small.text-muted {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .25rem;
+}
+
+/* Date line spacing */
+.search-card .card-body > div > small.text-muted {
+    display: inline-block;
+    margin-top: .15rem;
+}
+
+/* Snippet */
+.search-card .card-text {
+    color: #111827; /* gray-900 */
+    margin-top: .5rem !important;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* clamp to 3 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Highlighted terms (Model.Snippet often wraps <mark>) */
+.search-card mark {
+    background: #fef08a; /* amber-200 */
+    padding: .1em .25em;
+    border-radius: 4px;
+}
+
+/* Read more button */
+.search-card .btn-outline-dark {
+    border-color: #1f2937;
+    color: #1f2937;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: .4rem .7rem;
+    transition: background .15s ease, color .15s ease, box-shadow .2s ease;
+}
+
+    .search-card .btn-outline-dark:hover {
+        background: #111827;
+        color: #fff;
+        box-shadow: 0 6px 18px rgba(2,6,23,.16);
+    }
+
+/* Optional: compact layout on small screens */
+@media (max-width:576px) {
+    .search-card .card-body {
+        padding: 16px;
+    }
+
+    .search-card .card-text {
+        -webkit-line-clamp: 4;
+    }
+    /* allow one more line on mobile */
+}

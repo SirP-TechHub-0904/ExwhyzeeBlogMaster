@@ -1,0 +1,154 @@
+﻿@page "/allnews"
+@model PoliciesBlog.Pages.AllNewsModel
+
+
+@using ModelData.Services;
+@inject ISettingsService SettingsService
+@{
+    ModelData.Models.Setting siteSettings = await SettingsService.GetSettingsAsync();
+
+}
+
+
+<div class="container" style="margin-top:10px;">
+    <div class="row no-gutter">
+        <div class="col-md-8">
+            <div class="post post-full clearfix">
+
+                <div class="entry-main">
+                    <div class="entry-title">
+                        <h4 class="entry-title"><a href="#">News Updates</a></h4>
+                    </div>
+
+                    <div class="entry-content" id="">
+                        @if (!Model.Posts.Any())
+                        {
+                            <div class="col-12">
+                                <div class="alert alert-info">No posts available in this category.</div>
+                            </div>
+                        }
+                        @{
+                            // Get the 4 most recent posts
+                            var otherPosts = Model.Posts;
+
+                        }
+                        <div class="article" id="post-container">
+
+                            @foreach (var list in otherPosts)
+                            {
+                                <div class="entry-block-small">
+
+                                    <div class="entry-image">
+                                        <a class="img-link pstt-image" asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                            <img class="img-responsive img-full" src="@(list?.PostImages?.FirstOrDefault(x => x.IsDefault)?.ImageUrl ?? "")" alt="@list.Title">
+                                        </a>
+                                        <span>
+                                            <a class="label-1" asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                @(list.PublishedAt?.ToString("MMMM dd, yyyy"))
+                                            </a>
+                                        </span>
+                                    </div>
+
+                                    <div class="entry-content">
+
+                                        <h3>
+                                            <a asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                @list.Title
+                                            </a>
+                                        </h3>
+
+                                        <p>
+                                            <a asp-page="/PostPage" asp-route-slug="@list.Slug">
+                                                @list.ShortDescription
+                                            </a>
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                            }
+                        </div>
+
+
+
+
+                    </div>
+
+                </div>
+            </div>
+            @if (Model.TotalPages > 1 && Model.CurrentPage < Model.TotalPages)
+            {
+                <div class="text-center" style="margin:10px;">
+                    <button id="load-more-btn" class="btn btn-primary mt-4" data-page="@Model.CurrentPage" data-total="@Model.TotalPages">
+                        Load More
+                    </button>
+                </div>
+            }
+        </div>
+        <div class="col-md-4">
+            <partial name="_TopSideBar" />
+
+            <partial name="_TopSideBarBottom" />
+
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script>
+        $(document).on("click", "#load-more-btn", function () {
+            var button = $(this);
+            var currentPage = parseInt(button.data("page")) || 1;
+            var page = currentPage + 1;
+            var total = parseInt(button.data("total")) || 1;
+            var tab = button.data("tab") || "featured";
+
+            console.log("➡ Load More: tab =", tab, ", page =", page);
+
+            $.get(`/allnews?handler=LoadMore&page=${page}`, function (response) {
+                if (response.success && response.posts.length > 0) {
+                    let postsHtml = '';
+
+                    $.each(response.posts, function (i, post) {
+                        postsHtml += `
+<div class="entry-block-small">
+    <div class="entry-image">
+        <a class="img-link pstt-image" href="/postpage?slug=${post.slug}">
+            <img class="img-responsive img-full" src="${post.imageUrl || ''}" alt="${post.title}">
+        </a>
+        <span>
+            <a class="label-1" href="/postpage?slug=${post.slug}">
+                ${post.publishedAt}
+            </a>
+        </span>
+    </div>
+    <div class="entry-content">
+        <h3>
+            <a href="/postpage?slug=${post.slug}">
+                ${post.title}
+            </a>
+        </h3>
+        <p>
+            <a href="/postpage?slug=${post.slug}">
+                ${post.shortDescription || ''}
+            </a>
+        </p>
+    </div>
+</div>`;
+                    });
+
+                    $('#post-container').append(postsHtml);
+
+                    button.data("page", page); // Update page
+                    if (page >= total) {
+                        button.remove(); // remove if no more pages
+                    }
+                }
+            });
+        });
+    </script>
+}
