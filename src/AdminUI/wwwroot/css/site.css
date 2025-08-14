@@ -161,3 +161,6 @@ th.sort-active {
 .action-col {
     min-width: 110px;
 }
+#generate-spinner {
+    margin-right: 6px;
+}

@@ -35,6 +35,13 @@ namespace ModelData
 
                 return new UploadService(env, setting.MaxImageSizeKB, setting.MaxVideoSizeKB, context);
             });
+            services.AddScoped<GeminiService>(sp =>
+            {
+                var db = sp.GetRequiredService<ApplicationDbContext>();
+                var settings = db.Settings.FirstOrDefault();
+                return new GeminiService(settings ?? new Setting());
+            });
+           services.AddHttpClient();
 
             return services;
         }

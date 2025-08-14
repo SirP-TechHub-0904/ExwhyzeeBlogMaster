@@ -4,9 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using ModelData.Data;
 using ModelData.Models;
 using ModelData.Services;
+using System.Net.Http;
+using System.Text;
 using System.Text.Json;
 
 namespace AdminUI.Areas.Admin.Pages.Posts
@@ -17,11 +20,16 @@ namespace AdminUI.Areas.Admin.Pages.Posts
     {
         private readonly ApplicationDbContext _context;
         private readonly UploadService _uploadService;
-
-        public ManagePostModel(ApplicationDbContext context, UploadService uploadService)
+        private readonly GeminiService _geminiService;
+        private readonly ISettingsService _settingsService;
+        private readonly IHttpClientFactory _httpClientFactory;
+        public ManagePostModel(ApplicationDbContext context, UploadService uploadService, GeminiService geminiService, ISettingsService settingsService, IHttpClientFactory httpClientFactory)
         {
             _context = context;
             _uploadService = uploadService;
+            _geminiService = geminiService;
+            _settingsService = settingsService;
+            _httpClientFactory = httpClientFactory;
         }
 
         [BindProperty] public Post Post { get; set; } = new();
@@ -49,7 +57,7 @@ namespace AdminUI.Areas.Admin.Pages.Posts
         {
             await LoadCategoriesAsync();
 
-         
+
 
             // ? Always regenerate slug before saving
             var newSlug = await GenerateUniqueSlugAsync(Post.Title, Post.Id == 0 ? null : Post.Id);
@@ -206,7 +214,7 @@ namespace AdminUI.Areas.Admin.Pages.Posts
 
             postToUpdate.Tags = tags;
             // ? Update only settings
-            postToUpdate.CategoryId = Post.CategoryId; 
+            postToUpdate.CategoryId = Post.CategoryId;
             postToUpdate.IsFeatured = Post.IsFeatured;
             postToUpdate.IsBreakingNews = Post.IsBreakingNews;
             postToUpdate.ShowInHero = Post.ShowInHero;
@@ -355,7 +363,69 @@ namespace AdminUI.Areas.Admin.Pages.Posts
             TempData["success"] = "Post schedule has been cancelled.";
             return RedirectToPage(new { id = post.Id, tab = "post" });
         }
+        public async Task<IActionResult> OnGetGenerateAiContent(string prompt, string tone, int wordCount)
+        {
+            if (string.IsNullOrWhiteSpace(prompt))
+            {
+                return new JsonResult(new { message = "Prompt is required" })
+                {
+                    StatusCode = StatusCodes.Status400BadRequest
+                };
+            }
+
+            // Format the full prompt
+            string fullPrompt = $"Write an article in {tone} tone, about '{prompt}', around {wordCount} words.";
+
+            try
+            {
+                AiContentResult result = await _geminiService.GenerateContentAsync(prompt);
+                if (result.IsError)
+                {
+                    return new JsonResult(new { message = result.ErrorMessage })
+                    {
+                        StatusCode = StatusCodes.Status400BadRequest
+                    };
+                }
+                return new JsonResult(new
+                {
+                    Title = result.Title,
+                    ShortDescription = result.ShortDescription,
+                    Content = result.FullContentHtml
+                });
+            }
+            catch (Exception ex)
+            {
+                return new JsonResult(new
+                {
+                    message = "Failed to generate content",
+                    error = ex.Message
+                })
+                {
+                    StatusCode = StatusCodes.Status500InternalServerError
+                };
+            }
+
+        }
 
     }
+    public class AiRequestModel
+    {
+        public string Prompt { get; set; }
+        public string Tone { get; set; }
+        public int WordCount { get; set; }
+    }
 
+    public class AiRequest
+    {
+        public string Prompt { get; set; }
+        public string Tone { get; set; }
+        public int WordCount { get; set; }
+    }
+
+    public class AiResponse
+    {
+        public string Title { get; set; }
+        public string Content { get; set; }
+    }
 }
+

@@ -66,6 +66,9 @@
         // === Maintenance Mode ===
         public bool IsMaintenanceMode { get; set; }
         public string? MaintenanceMessage { get; set; }
+
+        // === AI & Automation ===
+        public string? GeminiApiKey { get; set; } // <-- NEW: Gemini API Key
     }
 
 

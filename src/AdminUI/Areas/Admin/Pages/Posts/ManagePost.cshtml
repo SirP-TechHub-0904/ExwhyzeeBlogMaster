@@ -8,6 +8,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">@(isEditing ? "Edit Post" : "Create Post")</h2>
 
+
     <div class="d-flex justify-content-between align-items-center mb-3">
 
         <div class="d-flex align-items-center gap-2">
@@ -90,10 +91,16 @@
         </span>
     </div>
 }
+<div class="alert alert-info py-2 px-3 small mb-3 mt-3" role="alert">
+    <strong>Note:</strong> you can now create content using our AI prompt.
+</div>
 <!-- ✅ Tabs -->
 <ul class="nav nav-tabs">
     <li class="nav-item">
         <a class="nav-link @(activeTab=="post" ? "active" : "")" data-bs-toggle="tab" href="#tab-post">Post</a>
+    </li>
+    <li class="nav-item" role="presentation">
+        <a class="nav-link" id="ai-tab" data-bs-toggle="tab" href="#aiAssistant" role="tab">AI Assistant</a>
     </li>
     <li class="nav-item">
         <a class="nav-link @(activeTab=="images" ? "active" : "") @(isEditing ? "" : "disabled")" data-bs-toggle="tab" href="#tab-images">Images</a>
@@ -121,21 +128,63 @@
 
             <div class="form-group">
                 <label>Title</label>
-                <input asp-for="Post.Title" class="form-control" required />
+                <input asp-for="Post.Title" id="PostTitle" class="form-control" required />
             </div>
             <div class="form-group">
                 <label>Short Description</label>
-                <textarea asp-for="Post.ShortDescription" class="form-control" rows="3"></textarea>
+                <textarea asp-for="Post.ShortDescription" id="PostSummary" class="form-control" rows="3"></textarea>
             </div>
             <div class="form-group">
                 <label>Content</label>
-                <textarea asp-for="Post.Content" class="form-control summernote_basic" rows="5"></textarea>
+                <textarea asp-for="Post.Content" id="PostBody" class="form-control summernote_basic" rows="5"></textarea>
             </div>
 
             <button type="submit" class="btn btn-primary">Save & Continue</button>
         </form>
     </div>
+    <!-- AI Assistant Tab -->
+    <div class="tab-pane fade" id="aiAssistant" role="tabpanel">
+        <div class="mb-3">
+            <label class="form-label">Prompt</label>
+            <textarea id="prompt" class="form-control" rows="4" placeholder="Describe the blog you want..."></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Tone</label>
+            <select id="tone" class="form-select">
+                <option value="Professional">Professional</option>
+                <option value="Casual">Casual</option>
+                <option value="Informative">Informative</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Word Count</label>
+            <input type="number" id="wordCount" class="form-control" value="500" />
+        </div>
 
+        @*<button type="button" id="generate-ai-btn" class="btn btn-primary">Generate</button>*@
+        <button type="button" id="generate-ai-btn" class="btn btn-primary">
+            <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+            <span class="btn-text">Generate</span>
+        </button>
+
+
+        <div id="aiPreview" class="mt-4" style="display:none;">
+            <h5>Generated Title</h5>
+            <input type="text" id="aiGeneratedTitle" class="form-control mb-3" readonly />
+
+            <h5>Short Description</h5>
+            <textarea id="aiShortDescription" class="form-control mb-3" rows="3" readonly></textarea>
+
+            <h5>Generated Content</h5>
+            <div id="aiGeneratedContent" class="form-control summernote_basic" style="min-height: 200px; overflow: auto;"></div>
+            <div class="alert alert-info py-2 px-3 small mb-3 mt-3" role="alert">
+                <strong>Note:</strong> you can now insert to the post and edit.
+            </div>
+
+            <button type="button" id="insertAiContent" class="btn btn-success mt-3">Insert into Post</button>
+        </div>
+
+    </div>
     <!-- 🔹 TAB 2 – Images -->
     <div class="tab-pane fade @(activeTab=="images" ? "show active" : "")" id="tab-images">
         @if (isEditing)
@@ -252,7 +301,7 @@
                             </span>
                         }
                         <input type="text" id="tag-input" class="border-0 flex-grow-1" placeholder="Type tag and press Enter" />
-                    </div> 
+                    </div>
                     <input type="hidden" name="TagsJson" id="tags-json" />
 
                 </div>
@@ -345,47 +394,112 @@
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
- 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const tagContainer = document.getElementById("tag-container");
-        const tagInput = document.getElementById("tag-input");
-        const tagsJson = document.getElementById("tags-json");
 
-        function updateHiddenInput() {
-            const tags = [...tagContainer.querySelectorAll(".tag-chip")].map(chip => chip.dataset.tag);
-            tagsJson.value = JSON.stringify(tags);
-        }
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tagContainer = document.getElementById("tag-container");
+            const tagInput = document.getElementById("tag-input");
+            const tagsJson = document.getElementById("tags-json");
 
-        function addTag(tag) {
-            if (!tag) return;
-            const chip = document.createElement("span");
-            chip.className = "badge bg-primary me-2 mb-2 tag-chip";
-            chip.dataset.tag = tag;
-            chip.innerHTML = `${tag} <button type="button" class="btn-close btn-close-white btn-sm ms-2 remove-tag"></button>`;
-            tagContainer.insertBefore(chip, tagInput);
-            updateHiddenInput();
-        }
-
-        tagInput.addEventListener("keydown", function (e) {
-            if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                const tag = tagInput.value.trim();
-                if (tag) {
-                    addTag(tag);
-                    tagInput.value = "";
-                }
+            function updateHiddenInput() {
+                const tags = [...tagContainer.querySelectorAll(".tag-chip")].map(chip => chip.dataset.tag);
+                tagsJson.value = JSON.stringify(tags);
             }
-        });
 
-        tagContainer.addEventListener("click", function (e) {
-            if (e.target.classList.contains("remove-tag")) {
-                e.target.parentElement.remove();
+            function addTag(tag) {
+                if (!tag) return;
+                const chip = document.createElement("span");
+                chip.className = "badge bg-primary me-2 mb-2 tag-chip";
+                chip.dataset.tag = tag;
+                chip.innerHTML = `${tag} <button type="button" class="btn-close btn-close-white btn-sm ms-2 remove-tag"></button>`;
+                tagContainer.insertBefore(chip, tagInput);
                 updateHiddenInput();
             }
+
+            tagInput.addEventListener("keydown", function (e) {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    const tag = tagInput.value.trim();
+                    if (tag) {
+                        addTag(tag);
+                        tagInput.value = "";
+                    }
+                }
+            });
+
+            tagContainer.addEventListener("click", function (e) {
+                if (e.target.classList.contains("remove-tag")) {
+                    e.target.parentElement.remove();
+                    updateHiddenInput();
+                }
+            });
+
+            updateHiddenInput();
+        });
+    </script>
+    <script>
+        $('#generate-ai-btn').on('click', function () {
+            var prompt = $('#prompt').val();
+            var tone = $('#tone').val();
+            var wordCount = $('#wordCount').val();
+            // Show loading spinner and disable button
+            $('#generate-ai-btn .spinner-border').removeClass('d-none');
+            $('#generate-ai-btn .btn-text').text('Generating...').prop('disabled', true);
+
+
+            $.get(`/Admin/Posts/ManagePost?handler=GenerateAiContent`,
+                { prompt: prompt, tone: tone, wordCount: wordCount },
+                function (response) {
+                    console.log(response);
+                    $('#aiGeneratedTitle').val(response.title);
+                    $('#aiShortDescription').val(response.shortDescription);
+                    //$('#aiGeneratedContent').val(response.content);
+                    $('#aiGeneratedContent').summernote('code', response.content);
+
+                    $('#aiPreview').show();
+                }
+            ).fail(function (xhr) {
+                console.error(xhr.responseJSON?.message || "Error generating AI content");
+            }).always(function () {
+                // Hide spinner and re-enable button
+                $('#generate-ai-btn .spinner-border').addClass('d-none');
+                $('#generate-ai-btn .btn-text').text('Generate').prop('disabled', false);
+
+            });
+        });
+        $('#insertAiContent').on('click', function () {
+            $('#PostTitle').val($('#aiGeneratedTitle').val());
+            $('textarea[name="Post.ShortDescription"]').val($('#aiShortDescription').val());
+            $('#PostBody').summernote('code', $('#aiGeneratedContent').val());
+
+            $('a[data-bs-toggle="tab"][href="#tab-post"]').tab('show');
         });
 
-        updateHiddenInput();
-    });
-</script>
+
+    </script>
+    <script>
+        function checkFormInputs() {
+            const prompt = $('#prompt').val().trim();
+            const tone = $('#tone').val().trim();
+            const wordCount = $('#wordCount').val().trim();
+
+            if (prompt !== "" && tone !== "" && wordCount !== "") {
+                $('#generate-ai-btn').prop('disabled', false);
+            } else {
+                $('#generate-ai-btn').prop('disabled', true);
+            }
+        }
+
+        $(document).ready(function () {
+            // Initial check
+            checkFormInputs();
+
+            // Recheck on input changes
+            $('#prompt, #tone, #wordCount').on('input change', function () {
+                checkFormInputs();
+            });
+        });
+    </script>
+
+
 }
