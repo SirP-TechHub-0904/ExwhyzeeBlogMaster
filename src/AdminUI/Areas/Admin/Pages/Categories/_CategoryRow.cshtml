@@ -9,7 +9,11 @@
 
 <tr>
     @{ int newpadding = (Model.Indent * 20) + 10; }
-    <td style="padding-left:@(newpadding)px">@currentPrefix. @Model.Cat.Title</td>
+    <td style="padding-left:@(newpadding)px">
+        <a asp-page="/Posts/Index" asp-route-categoryId="@Model.Cat.Id">
+            @currentPrefix. @Model.Cat.Title
+        </a>
+  </td>
     <td>@Model.Cat.IsPublished</td>
     <td>@Model.Cat.SortOrder</td>
     <td>@Model.Cat.ShowInMenu</td>

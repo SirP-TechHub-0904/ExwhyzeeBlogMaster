@@ -66,6 +66,7 @@ namespace AdminUI.Areas.Admin.Pages.Posts
             {
                 // ? Create new post
                 Post.Slug = newSlug;
+                Post.Date = DateTime.UtcNow;
                 Post.PublishedAt = DateTime.UtcNow;
                 Post.PostBy = User.FindFirst("FullName")?.Value
                               ?? User.Identity?.Name

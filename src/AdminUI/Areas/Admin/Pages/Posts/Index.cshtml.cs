@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ModelData.Data;
 using ModelData.Models;
+using static AdminUI.Areas_Admin_Pages_Posts.IndexModel;
 
 namespace AdminUI.Areas_Admin_Pages_Posts
 {
@@ -25,9 +26,10 @@ namespace AdminUI.Areas_Admin_Pages_Posts
         public string Filter { get; set; } = "";
         public string SortBy { get; set; } = "Date"; // Default column
         public bool SortAsc { get; set; } = false;   // Default to descending
-
-
-        public async Task OnGetAsync(string? query, string? filter, int resultPage = 1, string? sortBy = "Date", bool sortAsc = false)
+        public int? CategoryId { get; set; }
+        public string CategoryTitle { get; set; } = "";
+         public IList<CategoryOption> CategoryOptions { get; set; } = new List<CategoryOption>();
+        public async Task OnGetAsync(string? query, string? filter, int resultPage = 1, string? sortBy = "Date", bool sortAsc = false, int? categoryId = null)
         {
             Query = query ?? "";
             Filter = filter ?? "";
@@ -35,6 +37,7 @@ namespace AdminUI.Areas_Admin_Pages_Posts
             SortAsc = sortAsc;
             CurrentPage = resultPage < 1 ? 1 : resultPage;
             int pageSize = 50;
+            CategoryId = categoryId;
 
             var postQuery = _context.Posts
                 .Include(p => p.Category)
@@ -59,7 +62,18 @@ namespace AdminUI.Areas_Admin_Pages_Posts
             {
                 postQuery = postQuery.Where(p => p.IsScheduled);
             }
+            if (CategoryId.HasValue && CategoryId.Value > 0)
+            {
+                postQuery = postQuery.Where(p => p.CategoryId == CategoryId.Value);
 
+                var category = await _context.Categories
+                    .FirstOrDefaultAsync(c => c.Id == CategoryId.Value);
+
+                if (category != null)
+                {
+                    CategoryTitle = category.Title;
+                }
+            }
             // Sorting
             postQuery = SortBy switch
             {
@@ -82,6 +96,66 @@ namespace AdminUI.Areas_Admin_Pages_Posts
             TotalPages = (int)Math.Ceiling(TotalCount / (double)pageSize);
 
             Posts = await postQuery.Skip((CurrentPage - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var allCategories = await _context.Categories
+        .Include(c => c.ParentCategory)
+        .OrderBy(c => c.SortOrder)
+        .ToListAsync();
+            // Build dropdown options hierarchically
+            CategoryOptions = BuildCategoryOptions(allCategories);
+
+            // Apply category filter
+            if (CategoryId.HasValue && CategoryId.Value > 0)
+            {
+                var selected = allCategories.FirstOrDefault(c => c.Id == CategoryId.Value);
+                if (selected != null)
+                {
+                    CategoryTitle = selected.Title;
+                }
+            }
         }
+        private IList<CategoryOption> BuildCategoryOptions(List<Category> allCategories)
+        {
+            var options = new List<CategoryOption>();
+            var topLevel = allCategories
+                .Where(c => c.ParentCategoryId == null)
+                .OrderBy(c => c.SortOrder)
+                .ToList();
+
+            int serial = 1;
+            foreach (var cat in topLevel)
+            {
+                AddCategoryWithChildren(cat, allCategories, options, serial.ToString(), 1);
+                serial++;
+            }
+
+            return options;
+        }
+
+        private void AddCategoryWithChildren(Category cat, List<Category> all, List<CategoryOption> options, string prefix, int depth)
+        {
+            options.Add(new CategoryOption
+            {
+                Id = cat.Id,
+                DisplayText = $"{prefix}. {cat.Title}"
+            });
+
+            var children = all.Where(c => c.ParentCategoryId == cat.Id)
+                              .OrderBy(c => c.SortOrder)
+                              .ToList();
+
+            for (int i = 0; i < children.Count; i++)
+            {
+                var childPrefix = $"{prefix}.{i + 1}";
+                AddCategoryWithChildren(children[i], all, options, childPrefix, depth + 1);
+            }
+        }
+
+       
+    }
+    public class CategoryOption
+    {
+        public int Id { get; set; }
+        public string DisplayText { get; set; } = "";
     }
 }

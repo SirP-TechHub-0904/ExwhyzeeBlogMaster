@@ -46,11 +46,7 @@
 
                                     <div class="post--info">
                                         <ul class="nav meta">
-                                            <li>
-                                                <a href="#">
-                                                    @p1.PostBy
-                                                </a>
-                                            </li>
+                                           
                                             <li>
                                                 <a asp-page="/PostPage" asp-route-slug="@p1.Slug">
                                                     @(p1.PublishedAt?.ToString("dd MMMM yyyy") ?? "")
@@ -85,11 +81,7 @@
 
                                             <div class="post--info">
                                                 <ul class="nav meta">
-                                                    <li>
-                                                        <a href="#">
-                                                            @p2.PostBy
-                                                        </a>
-                                                    </li>
+                                                   
                                                     <li>
                                                         <a href="#">
                                                             @(p2.PublishedAt?.ToString("dd MMMM yyyy") ?? "")
@@ -122,11 +114,7 @@
 
                                             <div class="post--info">
                                                 <ul class="nav meta">
-                                                    <li>
-                                                        <a href="#">
-                                                            @p3.PostBy
-                                                        </a>
-                                                    </li>
+                                                  
                                                     <li>
                                                         <a href="#">
                                                             @(p3.PublishedAt?.ToString("dd MMMM yyyy") ?? "")
@@ -159,11 +147,7 @@
 
                                             <div class="post--info">
                                                 <ul class="nav meta">
-                                                    <li>
-                                                        <a asp-page="/PostPage" asp-route-slug="@p4.Slug">
-                                                            @p4.PostBy
-                                                        </a>
-                                                    </li>
+                                                   
                                                     <li>
                                                         <a asp-page="/PostPage" asp-route-slug="@p4.Slug">
                                                             @(p4.PublishedAt?.ToString("dd MMMM yyyy") ?? "")
@@ -336,8 +320,8 @@
                                         if (listPosts.Any())
                                         {
 
-                                            var firstSet = isFeaturedPosts.Where((post, index) => index % 2 == 0).Take(4).ToList();  // Even indexes
-                                            var secondSet = isFeaturedPosts.Where((post, index) => index % 2 != 0).Take(4).ToList(); // Odd indexes
+                                            var firstSet = listPosts.Where((post, index) => index % 2 == 0).Take(4).ToList();  // Even indexes
+                                            var secondSet = listPosts.Where((post, index) => index % 2 != 0).Take(4).ToList(); // Odd indexes
 
 
                                             <li class="col-md-6">
@@ -387,11 +371,7 @@
                                                                     </a>
                                                                     <div class="post--info">
                                                                         <ul class="nav meta">
-                                                                            <li>
-                                                                                <a href="#">
-                                                                                    @post.PostBy
-                                                                                </a>
-                                                                            </li>
+                                                                             
                                                                             <li>
                                                                                 <a href="#">
                                                                                     @(post.PublishedAt?.ToString("MMMM dd, yyyy"))

@@ -42,7 +42,7 @@ namespace ModelData
                 return new GeminiService(settings ?? new Setting());
             });
            services.AddHttpClient();
-
+            //
             return services;
         }
     }
