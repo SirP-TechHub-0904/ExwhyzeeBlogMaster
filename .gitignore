@@ -375,10 +375,13 @@ secrets.json
 *.local.json
 
 # Ignore any .env variants
+.env
 .env.*
 .env.local
 .env.development
 .env.production
+!.env.example
+!**/.env.example
 
 # Ignore sensitive key/certificate files
 *.key

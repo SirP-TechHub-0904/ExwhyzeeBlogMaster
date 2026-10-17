@@ -1,0 +1,216 @@
+name: Deploy PeopleNewsBlog
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'src/PeopleNewsBlog/**'
+      - 'src/ModelData/**'
+      - 'src/AdminUI/**'
+      - 'src/BlogWorkerService/**'
+      - '.github/workflows/deploy-peoplenewsblog.yml'
+  workflow_dispatch:
+    inputs:
+      port_override:
+        description: 'Optional port override (leave blank to auto-detect free port)'
+        required: false
+        default: ''
+
+jobs:
+  deploy:
+    name: Build & Deploy PeopleNewsBlog to Hostinger
+    runs-on: ubuntu-latest
+
+    env:
+      APP_NAME: peoplenewsblog
+      BINARY_NAME: PeopleNewsBlog
+      SERVICE_NAME: peoplenewsblog
+      APP_DIR: /var/www/peoplenewsblog
+      DEFAULT_CONN_STR: "Server=147.93.128.160,1433;Initial Catalog=db_PeoplesNewsAfr;User Id=user_db;Password=Exwhyzee@123;TrustServerCertificate=True;MultipleActiveResultSets=true"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK 9.0
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Publish PeopleNewsBlog (Self-Contained Linux x64)
+        run: |
+          dotnet publish src/PeopleNewsBlog/PeopleNewsBlog.csproj \
+            -c Release \
+            -r linux-x64 \
+            --self-contained true \
+            -o ./publish
+
+      - name: Compress Release Artifact
+        run: |
+          tar -czf app.tar.gz -C ./publish .
+
+      - name: Setup SSH Connection
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.HOSTINGER_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.HOSTINGER_SSH_PORT }} -H ${{ secrets.HOSTINGER_SERVER_IP }} >> ~/.ssh/known_hosts 2>/dev/null || true
+
+      - name: Transfer Artifact to Hostinger VPS
+        run: |
+          scp -P ${{ secrets.HOSTINGER_SSH_PORT }} -o StrictHostKeyChecking=no \
+            app.tar.gz \
+            ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SERVER_IP }}:/tmp/${{ env.APP_NAME }}-release.tar.gz
+
+      - name: Execute Server Deployment
+        run: |
+          ssh -p ${{ secrets.HOSTINGER_SSH_PORT }} -o StrictHostKeyChecking=no \
+            ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SERVER_IP }} \
+            "bash -s" << 'EOF'
+            set -e
+
+            APP_NAME="${{ env.APP_NAME }}"
+            BINARY_NAME="${{ env.BINARY_NAME }}"
+            SERVICE_NAME="${{ env.SERVICE_NAME }}"
+            APP_DIR="${{ env.APP_DIR }}"
+            DEFAULT_CONN_STR='${{ env.DEFAULT_CONN_STR }}'
+            OVERRIDE_PORT="${{ github.event.inputs.port_override }}"
+            SERVER_IP="${{ secrets.HOSTINGER_SERVER_IP }}"
+
+            SUDO=""
+            if [ "$(id -u)" -ne 0 ]; then
+              SUDO="sudo"
+            fi
+
+            echo "=================================================="
+            echo "🚀 DEPLOYING: ${APP_NAME} (${BINARY_NAME})"
+            echo "=================================================="
+
+            $SUDO mkdir -p "${APP_DIR}/wwwroot/Uploads"
+
+            # Function to detect free port (5001 - 6000)
+            find_free_port() {
+              local start_p=5001
+              local end_p=6000
+              for p in $(seq $start_p $end_p); do
+                if ss -tuln 2>/dev/null | grep -E "(:| )${p}( |$)" >/dev/null 2>&1; then
+                  continue
+                fi
+                if command -v netstat >/dev/null 2>&1 && netstat -tuln 2>/dev/null | grep -E "(:| )${p}( |$)" >/dev/null 2>&1; then
+                  continue
+                fi
+                if command -v lsof >/dev/null 2>&1 && lsof -i :${p} >/dev/null 2>&1; then
+                  continue
+                fi
+                if timeout 1 bash -c "cat < /dev/null > /dev/tcp/127.0.0.1/${p}" >/dev/null 2>&1; then
+                  continue
+                fi
+                echo "$p"
+                return 0
+              done
+              echo "5001"
+              return 1
+            }
+
+            # Check for existing .env vs First Deploy
+            if [ ! -f "${APP_DIR}/.env" ]; then
+              echo ">>> [FIRST DEPLOY] No .env found. Detecting free port..."
+              if [ -n "$OVERRIDE_PORT" ]; then
+                PORT="$OVERRIDE_PORT"
+                echo ">>> Using manual override port: ${PORT}"
+              else
+                PORT=$(find_free_port)
+                echo ">>> Auto-detected free port: ${PORT}"
+              fi
+
+              $SUDO bash -c "cat <<ENV_EOF > ${APP_DIR}/.env
+PORT=${PORT}
+ASPNETCORE_URLS=http://0.0.0.0:${PORT}
+ASPNETCORE_ENVIRONMENT=Production
+ConnectionStrings__DefaultConnection=${DEFAULT_CONN_STR}
+ENV_EOF"
+              $SUDO chmod 600 "${APP_DIR}/.env"
+              echo ">>> [FIRST DEPLOY] Initial .env created at ${APP_DIR}/.env"
+            else
+              echo ">>> [SUBSEQUENT DEPLOY] Existing .env file found. Preserving intact."
+              if [ -n "$OVERRIDE_PORT" ]; then
+                PORT="$OVERRIDE_PORT"
+                echo ">>> Updating port in .env to override: ${PORT}"
+                $SUDO sed -i -E "s/^PORT=.*/PORT=${PORT}/" "${APP_DIR}/.env"
+                $SUDO sed -i -E "s|^ASPNETCORE_URLS=.*|ASPNETCORE_URLS=http://0.0.0.0:${PORT}|" "${APP_DIR}/.env"
+              else
+                PORT=$(grep -E '^PORT=' "${APP_DIR}/.env" | cut -d '=' -f2 | tr -d '\r' | tr -d ' ' | tr -d '"')
+                if [ -z "$PORT" ]; then
+                  PORT=$(grep -E '^ASPNETCORE_URLS=' "${APP_DIR}/.env" | grep -o -E '[0-9]+' | tail -1)
+                fi
+                echo ">>> Preserved existing port: ${PORT}"
+              fi
+            fi
+
+            # Stop running service if active
+            if systemctl is-active --quiet "${SERVICE_NAME}" 2>/dev/null; then
+              echo ">>> Stopping ${SERVICE_NAME} for update..."
+              $SUDO systemctl stop "${SERVICE_NAME}"
+            fi
+
+            # Extract release files into APP_DIR while preserving .env and Uploads
+            echo ">>> Extracting release archive..."
+            $SUDO tar -xzf "/tmp/${APP_NAME}-release.tar.gz" -C "${APP_DIR}" --exclude='wwwroot/Uploads/*' --exclude='.env'
+            rm -f "/tmp/${APP_NAME}-release.tar.gz"
+
+            $SUDO chmod +x "${APP_DIR}/${BINARY_NAME}"
+            $SUDO chown -R $USER:$USER "${APP_DIR}"
+
+            # Create or update systemd service
+            SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
+            if [ ! -f "$SERVICE_FILE" ]; then
+              echo ">>> Creating systemd service file at ${SERVICE_FILE}..."
+              $SUDO bash -c "cat <<SERVICE_EOF > ${SERVICE_FILE}
+[Unit]
+Description=${APP_NAME} ASP.NET Core Web Application
+After=network.target
+
+[Service]
+WorkingDirectory=${APP_DIR}
+ExecStart=${APP_DIR}/${BINARY_NAME}
+Restart=always
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=${SERVICE_NAME}
+EnvironmentFile=${APP_DIR}/.env
+
+[Install]
+WantedBy=multi-user.target
+SERVICE_EOF"
+              $SUDO systemctl daemon-reload
+              $SUDO systemctl enable "${SERVICE_NAME}"
+            else
+              $SUDO systemctl daemon-reload
+            fi
+
+            # Start service
+            echo ">>> Starting ${SERVICE_NAME} service..."
+            $SUDO systemctl restart "${SERVICE_NAME}"
+            sleep 3
+
+            # Verify service
+            if systemctl is-active --quiet "${SERVICE_NAME}"; then
+              echo "=================================================="
+              echo "✅ DEPLOYMENT SUCCESSFUL!"
+              echo "🚀 Service '${SERVICE_NAME}' is ACTIVE"
+              echo "🌐 Live Test URL: http://${SERVER_IP}:${PORT}"
+              echo "=================================================="
+            else
+              echo "❌ Deployment verification failed! Service log:"
+              $SUDO journalctl -u "${SERVICE_NAME}" -n 30 --no-pager
+              exit 1
+            fi
+          EOF
+
+      - name: Deployment Summary
+        run: |
+          echo "### 🚀 PeopleNewsBlog Deployed Successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "- **Host:** \`${{ secrets.HOSTINGER_SERVER_IP }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Service:** \`${{ env.SERVICE_NAME }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Test URL:** Access via your configured port on \`http://${{ secrets.HOSTINGER_SERVER_IP }}:<PORT>\`" >> $GITHUB_STEP_SUMMARY
