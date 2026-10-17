@@ -68,144 +68,125 @@ jobs:
           ssh -p ${{ secrets.HOSTINGER_SSH_PORT }} -o StrictHostKeyChecking=no \
             ${{ secrets.HOSTINGER_SSH_USER }}@${{ secrets.HOSTINGER_SERVER_IP }} \
             "bash -s" << 'EOF'
-            set -e
+          set -e
 
-            APP_NAME="${{ env.APP_NAME }}"
-            BINARY_NAME="${{ env.BINARY_NAME }}"
-            SERVICE_NAME="${{ env.SERVICE_NAME }}"
-            APP_DIR="${{ env.APP_DIR }}"
-            DEFAULT_CONN_STR='${{ env.DEFAULT_CONN_STR }}'
-            OVERRIDE_PORT="${{ github.event.inputs.port_override }}"
-            SERVER_IP="${{ secrets.HOSTINGER_SERVER_IP }}"
+          APP_NAME="${{ env.APP_NAME }}"
+          BINARY_NAME="${{ env.BINARY_NAME }}"
+          SERVICE_NAME="${{ env.SERVICE_NAME }}"
+          APP_DIR="${{ env.APP_DIR }}"
+          DEFAULT_CONN_STR='${{ env.DEFAULT_CONN_STR }}'
+          OVERRIDE_PORT="${{ github.event.inputs.port_override }}"
+          SERVER_IP="${{ secrets.HOSTINGER_SERVER_IP }}"
 
-            SUDO=""
-            if [ "$(id -u)" -ne 0 ]; then
-              SUDO="sudo"
-            fi
+          SUDO=""
+          if [ "$(id -u)" -ne 0 ]; then
+            SUDO="sudo"
+          fi
 
-            echo "=================================================="
-            echo "🚀 DEPLOYING: ${APP_NAME} (${BINARY_NAME})"
-            echo "=================================================="
+          echo "=================================================="
+          echo "DEPLOYING: ${APP_NAME} (${BINARY_NAME})"
+          echo "=================================================="
 
-            $SUDO mkdir -p "${APP_DIR}/wwwroot/Uploads"
+          $SUDO mkdir -p "${APP_DIR}/wwwroot/Uploads"
 
-            # Function to detect free port (5001 - 6000)
-            find_free_port() {
-              local start_p=5001
-              local end_p=6000
-              for p in $(seq $start_p $end_p); do
-                if ss -tuln 2>/dev/null | grep -E "(:| )${p}( |$)" >/dev/null 2>&1; then
-                  continue
-                fi
-                if command -v netstat >/dev/null 2>&1 && netstat -tuln 2>/dev/null | grep -E "(:| )${p}( |$)" >/dev/null 2>&1; then
-                  continue
-                fi
-                if command -v lsof >/dev/null 2>&1 && lsof -i :${p} >/dev/null 2>&1; then
-                  continue
-                fi
-                if timeout 1 bash -c "cat < /dev/null > /dev/tcp/127.0.0.1/${p}" >/dev/null 2>&1; then
-                  continue
-                fi
-                echo "$p"
-                return 0
-              done
-              echo "5001"
-              return 1
-            }
-
-            # Check for existing .env vs First Deploy
-            if [ ! -f "${APP_DIR}/.env" ]; then
-              echo ">>> [FIRST DEPLOY] No .env found. Detecting free port..."
-              if [ -n "$OVERRIDE_PORT" ]; then
-                PORT="$OVERRIDE_PORT"
-                echo ">>> Using manual override port: ${PORT}"
-              else
-                PORT=$(find_free_port)
-                echo ">>> Auto-detected free port: ${PORT}"
+          # Function to detect free port (5001 - 6000)
+          find_free_port() {
+            local start_p=5001
+            local end_p=6000
+            for p in $(seq $start_p $end_p); do
+              if ss -tuln 2>/dev/null | grep -E "(:| )${p}( |$)" >/dev/null 2>&1; then
+                continue
               fi
-
-              $SUDO bash -c "cat <<ENV_EOF > ${APP_DIR}/.env
-PORT=${PORT}
-ASPNETCORE_URLS=http://0.0.0.0:${PORT}
-ASPNETCORE_ENVIRONMENT=Production
-ConnectionStrings__DefaultConnection=${DEFAULT_CONN_STR}
-ENV_EOF"
-              $SUDO chmod 600 "${APP_DIR}/.env"
-              echo ">>> [FIRST DEPLOY] Initial .env created at ${APP_DIR}/.env"
-            else
-              echo ">>> [SUBSEQUENT DEPLOY] Existing .env file found. Preserving intact."
-              if [ -n "$OVERRIDE_PORT" ]; then
-                PORT="$OVERRIDE_PORT"
-                echo ">>> Updating port in .env to override: ${PORT}"
-                $SUDO sed -i -E "s/^PORT=.*/PORT=${PORT}/" "${APP_DIR}/.env"
-                $SUDO sed -i -E "s|^ASPNETCORE_URLS=.*|ASPNETCORE_URLS=http://0.0.0.0:${PORT}|" "${APP_DIR}/.env"
-              else
-                PORT=$(grep -E '^PORT=' "${APP_DIR}/.env" | cut -d '=' -f2 | tr -d '\r' | tr -d ' ' | tr -d '"')
-                if [ -z "$PORT" ]; then
-                  PORT=$(grep -E '^ASPNETCORE_URLS=' "${APP_DIR}/.env" | grep -o -E '[0-9]+' | tail -1)
-                fi
-                echo ">>> Preserved existing port: ${PORT}"
+              if command -v netstat >/dev/null 2>&1 && netstat -tuln 2>/dev/null | grep -E "(:| )${p}( |$)" >/dev/null 2>&1; then
+                continue
               fi
-            fi
+              if command -v lsof >/dev/null 2>&1 && lsof -i :${p} >/dev/null 2>&1; then
+                continue
+              fi
+              if timeout 1 bash -c "cat < /dev/null > /dev/tcp/127.0.0.1/${p}" >/dev/null 2>&1; then
+                continue
+              fi
+              echo "$p"
+              return 0
+            done
+            echo "5001"
+            return 1
+          }
 
-            # Stop running service if active
-            if systemctl is-active --quiet "${SERVICE_NAME}" 2>/dev/null; then
-              echo ">>> Stopping ${SERVICE_NAME} for update..."
-              $SUDO systemctl stop "${SERVICE_NAME}"
-            fi
-
-            # Extract release files into APP_DIR while preserving .env and Uploads
-            echo ">>> Extracting release archive..."
-            $SUDO tar -xzf "/tmp/${APP_NAME}-release.tar.gz" -C "${APP_DIR}" --exclude='wwwroot/Uploads/*' --exclude='.env'
-            rm -f "/tmp/${APP_NAME}-release.tar.gz"
-
-            $SUDO chmod +x "${APP_DIR}/${BINARY_NAME}"
-            $SUDO chown -R $USER:$USER "${APP_DIR}"
-
-            # Create or update systemd service
-            SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
-            if [ ! -f "$SERVICE_FILE" ]; then
-              echo ">>> Creating systemd service file at ${SERVICE_FILE}..."
-              $SUDO bash -c "cat <<SERVICE_EOF > ${SERVICE_FILE}
-[Unit]
-Description=${APP_NAME} ASP.NET Core Web Application
-After=network.target
-
-[Service]
-WorkingDirectory=${APP_DIR}
-ExecStart=${APP_DIR}/${BINARY_NAME}
-Restart=always
-RestartSec=10
-KillSignal=SIGINT
-SyslogIdentifier=${SERVICE_NAME}
-EnvironmentFile=${APP_DIR}/.env
-
-[Install]
-WantedBy=multi-user.target
-SERVICE_EOF"
-              $SUDO systemctl daemon-reload
-              $SUDO systemctl enable "${SERVICE_NAME}"
+          # Check for existing .env vs First Deploy
+          if [ ! -f "${APP_DIR}/.env" ]; then
+            echo ">>> [FIRST DEPLOY] No .env found. Detecting free port..."
+            if [ -n "$OVERRIDE_PORT" ]; then
+              PORT="$OVERRIDE_PORT"
+              echo ">>> Using manual override port: ${PORT}"
             else
-              $SUDO systemctl daemon-reload
+              PORT=$(find_free_port)
+              echo ">>> Auto-detected free port: ${PORT}"
             fi
 
-            # Start service
-            echo ">>> Starting ${SERVICE_NAME} service..."
-            $SUDO systemctl restart "${SERVICE_NAME}"
-            sleep 3
-
-            # Verify service
-            if systemctl is-active --quiet "${SERVICE_NAME}"; then
-              echo "=================================================="
-              echo "✅ DEPLOYMENT SUCCESSFUL!"
-              echo "🚀 Service '${SERVICE_NAME}' is ACTIVE"
-              echo "🌐 Live Test URL: http://${SERVER_IP}:${PORT}"
-              echo "=================================================="
+            printf "PORT=%s\nASPNETCORE_URLS=http://0.0.0.0:%s\nASPNETCORE_ENVIRONMENT=Production\nConnectionStrings__DefaultConnection=%s\n" \
+              "${PORT}" "${PORT}" "${DEFAULT_CONN_STR}" | $SUDO tee "${APP_DIR}/.env" > /dev/null
+            $SUDO chmod 600 "${APP_DIR}/.env"
+            echo ">>> [FIRST DEPLOY] Initial .env created at ${APP_DIR}/.env"
+          else
+            echo ">>> [SUBSEQUENT DEPLOY] Existing .env file found. Preserving intact."
+            if [ -n "$OVERRIDE_PORT" ]; then
+              PORT="$OVERRIDE_PORT"
+              echo ">>> Updating port in .env to override: ${PORT}"
+              $SUDO sed -i -E "s/^PORT=.*/PORT=${PORT}/" "${APP_DIR}/.env"
+              $SUDO sed -i -E "s|^ASPNETCORE_URLS=.*|ASPNETCORE_URLS=http://0.0.0.0:${PORT}|" "${APP_DIR}/.env"
             else
-              echo "❌ Deployment verification failed! Service log:"
-              $SUDO journalctl -u "${SERVICE_NAME}" -n 30 --no-pager
-              exit 1
+              PORT=$(grep -E '^PORT=' "${APP_DIR}/.env" | cut -d '=' -f2 | tr -d '\r' | tr -d ' ' | tr -d '"')
+              if [ -z "$PORT" ]; then
+                PORT=$(grep -E '^ASPNETCORE_URLS=' "${APP_DIR}/.env" | grep -o -E '[0-9]+' | tail -1)
+              fi
+              echo ">>> Preserved existing port: ${PORT}"
             fi
+          fi
+
+          # Stop running service if active
+          if systemctl is-active --quiet "${SERVICE_NAME}" 2>/dev/null; then
+            echo ">>> Stopping ${SERVICE_NAME} for update..."
+            $SUDO systemctl stop "${SERVICE_NAME}"
+          fi
+
+          # Extract release files into APP_DIR while preserving .env and Uploads
+          echo ">>> Extracting release archive..."
+          $SUDO tar -xzf "/tmp/${APP_NAME}-release.tar.gz" -C "${APP_DIR}" --exclude='wwwroot/Uploads/*' --exclude='.env'
+          rm -f "/tmp/${APP_NAME}-release.tar.gz"
+
+          $SUDO chmod +x "${APP_DIR}/${BINARY_NAME}"
+          $SUDO chown -R $USER:$USER "${APP_DIR}"
+
+          # Create or update systemd service
+          SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
+          if [ ! -f "$SERVICE_FILE" ]; then
+            echo ">>> Creating systemd service file at ${SERVICE_FILE}..."
+            printf "[Unit]\nDescription=%s ASP.NET Core Web Application\nAfter=network.target\n\n[Service]\nWorkingDirectory=%s\nExecStart=%s/%s\nRestart=always\nRestartSec=10\nKillSignal=SIGINT\nSyslogIdentifier=%s\nEnvironmentFile=%s/.env\n\n[Install]\nWantedBy=multi-user.target\n" \
+              "${APP_NAME}" "${APP_DIR}" "${APP_DIR}" "${BINARY_NAME}" "${SERVICE_NAME}" "${APP_DIR}" | $SUDO tee "${SERVICE_FILE}" > /dev/null
+            $SUDO systemctl daemon-reload
+            $SUDO systemctl enable "${SERVICE_NAME}"
+          else
+            $SUDO systemctl daemon-reload
+          fi
+
+          # Start service
+          echo ">>> Starting ${SERVICE_NAME} service..."
+          $SUDO systemctl restart "${SERVICE_NAME}"
+          sleep 3
+
+          # Verify service
+          if systemctl is-active --quiet "${SERVICE_NAME}"; then
+            echo "=================================================="
+            echo "DEPLOYMENT SUCCESSFUL!"
+            echo "Service '${SERVICE_NAME}' is ACTIVE"
+            echo "Live Test URL: http://${SERVER_IP}:${PORT}"
+            echo "=================================================="
+          else
+            echo "Deployment verification failed! Service log:"
+            $SUDO journalctl -u "${SERVICE_NAME}" -n 30 --no-pager
+            exit 1
+          fi
           EOF
 
       - name: Deployment Summary
