@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using ModelData.Data;
 using ModelData.Models;
@@ -15,6 +15,7 @@ namespace ModelData
     {
         public static IServiceCollection AddModelDataServices(this IServiceCollection services)
         {
+            services.AddScoped<CloudinaryService>();
             services.AddScoped<ISettingsService, SettingsService>();
             services.AddScoped<IPostServices, PostServices>();
             services.AddScoped<ICategoryServices, CategoryServices>();
@@ -27,13 +28,14 @@ namespace ModelData
             {
                 var context = provider.GetRequiredService<ApplicationDbContext>();
                 var env = provider.GetRequiredService<IWebHostEnvironment>(); 
+                var cloudinary = provider.GetRequiredService<CloudinaryService>();
                 var setting = context.Settings.FirstOrDefault() ?? new Setting
                 {
                     MaxImageSizeKB = 500,
                     MaxVideoSizeKB = 10240
                 };
 
-                return new UploadService(env, setting.MaxImageSizeKB, setting.MaxVideoSizeKB, context);
+                return new UploadService(env, setting.MaxImageSizeKB, setting.MaxVideoSizeKB, context, cloudinary);
             });
             services.AddScoped<GeminiService>(sp =>
             {

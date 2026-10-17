@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using ModelData.Data;
 using ModelData.Models;
+using ModelData.Services;
 
 namespace AdminUI.Areas.Admin.Pages.Adverts
 {
@@ -13,11 +14,13 @@ namespace AdminUI.Areas.Admin.Pages.Adverts
     public class IndexModel : PageModel
     {
         private readonly ApplicationDbContext _context;
+        private readonly UploadService _uploadService;
         private readonly IWebHostEnvironment _env;
 
-        public IndexModel(ApplicationDbContext context, IWebHostEnvironment env)
+        public IndexModel(ApplicationDbContext context, UploadService uploadService, IWebHostEnvironment env)
         {
             _context = context;
+            _uploadService = uploadService;
             _env = env;
         }
 
@@ -29,8 +32,6 @@ namespace AdminUI.Areas.Admin.Pages.Adverts
         [BindProperty]
         public IFormFile? File { get; set; }
 
-        private readonly long _maxImageSize = 2 * 1024 * 1024; // 2MB
-
         public async Task OnGetAsync()
         {
             Adverts = await _context.Adverts
@@ -40,30 +41,16 @@ namespace AdminUI.Areas.Admin.Pages.Adverts
 
         public async Task<IActionResult> OnPostAsync()
         {
-            
-
             if (File != null)
             {
-                if (File.Length > _maxImageSize)
+                var result = await _uploadService.UploadMediaAsync(File, isVideo: false);
+                if (!result.Success)
                 {
-                    TempData["error"] = "Image size exceeds 2MB.";
+                    TempData["error"] = result.Error ?? "Failed to upload image.";
                     return RedirectToPage();
                 }
 
-                var extension = Path.GetExtension(File.FileName);
-                var fileName = $"advert-{DateTime.UtcNow.Ticks}{extension}";
-                var uploadDir = Path.Combine(_env.WebRootPath, "Uploads");
-
-                if (!Directory.Exists(uploadDir))
-                    Directory.CreateDirectory(uploadDir);
-
-                var fullPath = Path.Combine(uploadDir, fileName);
-                using (var stream = new FileStream(fullPath, FileMode.Create))
-                {
-                    await File.CopyToAsync(stream);
-                }
-
-                NewAdvert.ImageUrl = $"/Uploads/{fileName}";
+                NewAdvert.ImageUrl = result.FilePath;
             }
 
             NewAdvert.CreatedAt = DateTime.UtcNow;

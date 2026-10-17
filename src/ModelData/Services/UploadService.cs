@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using ModelData.Data;
 using ModelData.Models;
@@ -16,12 +16,15 @@ namespace ModelData.Services
         private readonly long _maxImageSize;
         private readonly long _maxVideoSize;
         private readonly ApplicationDbContext _context;
-        public UploadService(IWebHostEnvironment env, long maxImageSizeKB, long maxVideoSizeKB, ApplicationDbContext context)
+        private readonly CloudinaryService _cloudinary;
+
+        public UploadService(IWebHostEnvironment env, long maxImageSizeKB, long maxVideoSizeKB, ApplicationDbContext context, CloudinaryService? cloudinary = null)
         {
             _env = env;
             _maxImageSize = maxImageSizeKB * 1024;
             _maxVideoSize = maxVideoSizeKB * 1024;
             _context = context;
+            _cloudinary = cloudinary ?? new CloudinaryService();
         }
 
         public async Task<(bool Success, string? FilePath, string? Error)> UploadMediaAsync(IFormFile file, bool isVideo = false)
@@ -29,10 +32,8 @@ namespace ModelData.Services
             if (file == null || file.Length == 0)
                 return (false, null, "File is empty.");
 
-            var extension = Path.GetExtension(file.FileName);
-
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
             isVideo = extension == ".mp4" || extension == ".mov" || extension == ".avi" || extension == ".mkv" || extension == ".webm";
-
 
             if (isVideo && file.Length > _maxVideoSize)
                 return (false, null, $"Video size exceeds {_maxVideoSize / 1024}KB.");
@@ -40,28 +41,20 @@ namespace ModelData.Services
             if (!isVideo && file.Length > _maxImageSize)
                 return (false, null, $"Image size exceeds {_maxImageSize / 1024}KB.");
 
-            var originalName = Path.GetFileNameWithoutExtension(file.FileName);
-             
-
-            var prefix = isVideo ? "upload-video" : "upload-image";
-            var fileName = $"{prefix}-{DateTime.UtcNow.Ticks}{extension}";
-            var uploadDir = Path.Combine(_env.WebRootPath, "Uploads");
-
-            if (!Directory.Exists(uploadDir))
-                Directory.CreateDirectory(uploadDir);
-
-            var fullPath = Path.Combine(uploadDir, fileName);
-            using (var stream = new FileStream(fullPath, FileMode.Create))
+            // ✅ Upload to Cloudinary
+            var uploadResult = await _cloudinary.UploadFileAsync(file);
+            if (!uploadResult.Success || string.IsNullOrEmpty(uploadResult.Url))
             {
-                await file.CopyToAsync(stream);
+                return (false, null, uploadResult.Error ?? "Failed to upload file to Cloudinary.");
             }
 
-            var dbPath = $"/{"Uploads"}/{fileName}";
+            var remoteUrl = uploadResult.Url;
+            var originalName = Path.GetFileNameWithoutExtension(file.FileName);
 
             // ✅ Save to database
             var media = new MediaFile
             {
-                Url = dbPath,
+                Url = remoteUrl,
                 AltText = originalName ?? "altText",
                 UploadedAt = DateTime.UtcNow
             };
@@ -69,7 +62,7 @@ namespace ModelData.Services
             _context.MediaFiles.Add(media);
             await _context.SaveChangesAsync();
 
-            return (true, dbPath, null);
+            return (true, remoteUrl, null);
         }
     }
 }
